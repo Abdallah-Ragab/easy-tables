@@ -1,0 +1,28 @@
+{
+  "name": "easytables",
+  "version": "0.0.1",
+  "description": "A simple library to make html tables easy.",
+  "main": "./dist/easytables.bundle.js",
+  "scripts": {
+    "serve": "webpack-dev-server --mode=development",
+    "watch": "webpack --mode=development --watch",
+    "build": "webpack --mode=production"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/core": "^7.18.13",
+    "@babel/preset-env": "^7.18.10",
+    "autoprefixer": "^10.4.8",
+    "babel-loader": "^8.2.5",
+    "css-loader": "^6.7.1",
+    "postcss": "^8.4.16",
+    "postcss-loader": "^7.0.1",
+    "style-loader": "^3.3.1",
+    "tailwindcss": "^3.1.8",
+    "webpack": "^5.74.0",
+    "webpack-cli": "^4.10.0",
+    "webpack-dev-server": "^4.10.0"
+  }
+}
