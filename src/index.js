@@ -1,4 +1,8 @@
 import './styles/main.css';
-import Table from './modules/Table';
+import { HtmlTable, JsonTable } from './modules/Table';
 
-export { Table }
+document.querySelectorAll(`[${HtmlTable.attributes.tableContainer}]`).forEach(table => {
+    table.tableObject = new HtmlTable(table)
+});
+
+export { HtmlTable, JsonTable }

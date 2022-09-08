@@ -3,17 +3,17 @@
 @tailwind utilities;
 
 
-[data-direction]{
+[data-sort-direction]{
     width: 9px;
     cursor: pointer;
 }
-[data-direction] path {
+[data-sort-direction] path {
     fill:darkgray
 }
-[data-direction][active] path {
+[data-sort-direction][active] path {
     fill:rgb(90, 90, 90)
 }
-[data-direction="desc"] {
+[data-sort-direction="desc"] {
     transform: rotate(180deg);
 }
 [data-type="filter"] {
