@@ -1,10 +1,28 @@
 # Easy Tables
-### make html tables responsive with sorting and selecting functionality.
-## Usage :
-### **Method 1** : using attributes on an existing table :
-#### - **Setup** :
-1. #### Create a container with the attribute **"table-container"** .
-2. #### Create the table inside the container using the following structure :
+### A UI Library For Creating Html Tables With Ease. Or Make Your Existing Html Tables Responsive With Sorting And Selecting Functionality.
+
+# Table of content :
+
+  ## [ Usage :](#usage-)
+  - ### [Method 1 : using attributes on an existing table](#method-1--using-attributes-on-an-existing-table-)
+    - [Setup](#--setup-)
+    - [Options](#--options-)
+  - ### [Method 2 : using javascript on an existing table](#method-2--using-javascript-on-an-existing-table-)
+    - [Setup](#--setup--1)
+    - [Parameters](#--parameters-)
+  - ### [Method 3 : Creating a table from a json object](#method-3--creating-a-table-from-a-json-object-)
+    - [Setup](#--setup--2)
+    - [Parameters](#--parameters--1)
+  
+  -  ### [Retrieving the selected rows](#retrieving-the-selected-rows)
+
+  -  ### [Accessing the class instance of an specific existing table](#accessing-the-class-instance-of-an-specific-existing-table)
+
+# Usage :
+## **Method 1** : using attributes on an existing table :
+### - **Setup** :
+1. ### Create a container with the attribute **"table-container"** .
+2. ### Create the table inside the container using the following structure :
     ```
     <table>
         <thead>
@@ -22,7 +40,7 @@
         </tbody>
     </table>
     ```
-3. #### each row should have a unique identifier set by either adding the attribute **"unique-identifier"** to a head column like the following :
+3. ### each row should have a unique identifier set by either adding the attribute **"unique-identifier"** to a head column like the following :
     ```
     <thead>
         <tr>
@@ -31,7 +49,7 @@
         </tr>
     </thead>
     ```
-    #### or by setting the attribute **"row-id"** of each body row manually like the following :
+    ### or by setting the attribute **"row-id"** of each body row manually like the following :
     ```
     <tbody>
         <tr row-id="0"></tr>
@@ -39,14 +57,14 @@
         ...
     </tbody>
     ```
-4. #### if the the **"td"** or **"th"** tags are not a direct parent of the cell text, the **"data-container"** attribute should be added to the direct parent of the text. for example :
+4. ### if the the **"td"** or **"th"** tags are not a direct parent of the cell text, the **"data-container"** attribute should be added to the direct parent of the text. for example :
     ```
         <th>
             <div>...</div>
             <span data-container>First Name</span>
         </th>
     ```
-5. #### if any columns does not have a data inside them and should not have a sorting functionality like columns that contains buttons or any other html elements, you should add the attribute **"non-data"** to there perspective **"th"** tags, for example :
+5. ### if any columns does not have a data inside them and should not have a sorting functionality like columns that contains buttons or any other html elements, you should add the attribute **"non-data"** to there perspective **"th"** tags, for example :
     ```
         // A cell with a button:
         <td>
@@ -58,16 +76,16 @@
             Edit
         </th>
     ```
-#### - **Options** :
-- #### to enable sorting add the attribute **"sort"** to the container .
-- #### to enable selecting add the attribute **"select"** to the container .
+### - **Options** :
+- ### to enable sorting add the attribute **"sort"** to the container .
+- ### to enable selecting add the attribute **"select"** to the container .
 
 
-### **Method 2** : using javascript on an existing table :
-#### - **Setup** :
-1.  #### Create a container .
-2.  #### Create the table inside the container using the same structure in **Method 1**.
-3. #### Define a table object like the following:
+## **Method 2** : using javascript on an existing table :
+### - **Setup** :
+1.  ### Create a container .
+2.  ### Create the table inside the container using the same structure in **Method 1**.
+3. ### Define a table object like the following:
     ```
     const myTable = new easytables.HtmlTable(
         wrapper :str,
@@ -79,9 +97,9 @@
         enableSelect :bool,
     )
     ```
-#### - **Parameters** :
-- #### **wrapper** : the css selector for the created container. for example : `"#my-container"`
-- #### **uniqueIdentifierIndex** : the index of the column that's value is unique and can be used to identify each row. for example :
+### - **Parameters** :
+- ### **wrapper** : the css selector for the created container. for example : `"#my-container"`
+- ### **uniqueIdentifierIndex** : the index of the column that's value is unique and can be used to identify each row. for example :
     ```
     // giving the following head structure:
 
@@ -97,7 +115,7 @@
     // the index of the "customer id" column among its siblings is 0
     // therefore the value of "uniqueIdentifierIndex" parameter should be 0
     ``` 
-- #### **ignoredColumns** : An array of the indexes of the the column that does not have a data inside them and should not have a sorting functionality like columns that contains buttons or any other html elements. for example :
+- ### **ignoredColumns** : An array of the indexes of the the column that does not have a data inside them and should not have a sorting functionality like columns that contains buttons or any other html elements. for example :
     ```
     // giving the following table structure:
     <table>
@@ -122,7 +140,7 @@
     // where the the column with the index of 2 does not contain data and should not not be treated as data
     // therefore the value of "ignoredColumns" parameter should be [2]
     ``` 
-- #### **customHeadSelector** : An Object of head columns where **"th"** tags are not a direct parent of the head text. therefore the css selectors of the direct parent of the text should be specified using this object. for example :
+- ### **customHeadSelector** : An Object of head columns where **"th"** tags are not a direct parent of the head text. therefore the css selectors of the direct parent of the text should be specified using this object. for example :
     ```
     // giving the following head structure:
     <thead>
@@ -144,7 +162,7 @@
     // the css selector of the span tag starting from the "th" tag is > "div>span"
     // therefore the value of "ignoredColumns" parameter should be {"2": "div>span", ....}
     ``` 
-- #### **customBodySelector** : An Object of row cells where **"td"** tags are not a direct parent of the cell value. therefore the css selectors of the direct parent of the value should be specified using this object. for example :
+- ### **customBodySelector** : An Object of row cells where **"td"** tags are not a direct parent of the cell value. therefore the css selectors of the direct parent of the value should be specified using this object. for example :
     ```
     // giving the following body structure:
     <tbody>
@@ -162,12 +180,12 @@
     // the css selector of the span tag starting from the "td" tag is > "span"
     // therefore the value of "ignoredColumns" parameter should be {"0": "span", ....}
     ``` 
-- #### **enableSort** : a boolean that specifies whether to enable the sorting functionality or not. default value is **true**. 
-- #### **enableSelect** : a boolean that specifies whether to enable the selecting functionality or not. default value is **true**. 
+- ### **enableSort** : a boolean that specifies whether to enable the sorting functionality or not. default value is **true**. 
+- ### **enableSelect** : a boolean that specifies whether to enable the selecting functionality or not. default value is **true**. 
 
-### **Method 3** : Creating a table from a json object :
-#### - **Setup** :
-1. #### Define a table object like the following:
+## **Method 3** : Creating a table from a json object :
+### - **Setup** :
+1. ### Define a table object like the following:
     ```
     const myTable = new easytables.JsonTable(
         wrapper :str,
@@ -175,16 +193,16 @@
         uniqueIdentifierIndex :int,
     )
     ```
-#### - **Parameters** :
-- #### **wrapper** : the css selector for the created container. for example : `"#my-container"`
-- #### **data** : the data object which contains the columns and rows of the table. the data property is defined as following :
+### - **Parameters** :
+- ### **wrapper** : the css selector for the created container. for example : `"#my-container"`
+- ### **data** : the data object which contains the columns and rows of the table. the data property is defined as following :
     ```
     data : {
         "columns" : [...],
         "rows": [...]
     }
     ```
-    - #### the **"columns"** property is an array of head columns, defined as following :
+    - ### the **"columns"** property is an array of head columns, defined as following :
         ```
         "columns" : [
             {
@@ -208,13 +226,13 @@
             {...}
         ]   
         ```
-        - #### **"text"** is a required property which represents the value of the column head.
-        - #### **"type"** is an optional property that represents the type of the cell which can be one of the following `["text", "bold", "image", "label", "button"]` .
-        - #### **"filter"** is an optional function. if set the a filter button will be added on the column head. when clicked the function will be called.
-        - #### **"sort"** is an optional property which specify whether to enable sorting using this column or not. default value is **false**.
-        - #### **"color"** is an optional property specific for the columns with the type of "button". it represents the color of the button. the value can be one of the following colors : `[slate, gray, zinc, neutral, stone, red, orange, amber, yellow, lime, green, emerald, teal, cyan, sky, blue, indigo, violet, purple, fuchsia, pink, rose]` .
-        - #### **"callback"** is an optional property specific for the columns with the type of "button". it represents a callback function which will be called once the button was clicked.
-        - #### **"colorCode"** is an optional property specific for the columns with the type of "label". which is an array that can be used to set the color of the label dynamically using a pre-defined conditions. for example:
+        - ### **"text"** is a required property which represents the value of the column head.
+        - ### **"type"** is an optional property that represents the type of the cell which can be one of the following `["text", "bold", "image", "label", "button"]` .
+        - ### **"filter"** is an optional function. if set the a filter button will be added on the column head. when clicked the function will be called.
+        - ### **"sort"** is an optional property which specify whether to enable sorting using this column or not. default value is **false**.
+        - ### **"color"** is an optional property specific for the columns with the type of "button". it represents the color of the button. the value can be one of the following colors : `[slate, gray, zinc, neutral, stone, red, orange, amber, yellow, lime, green, emerald, teal, cyan, sky, blue, indigo, violet, purple, fuchsia, pink, rose]` .
+        - ### **"callback"** is an optional property specific for the columns with the type of "button". it represents a callback function which will be called once the button was clicked.
+        - ### **"colorCode"** is an optional property specific for the columns with the type of "label". which is an array that can be used to set the color of the label dynamically using a pre-defined conditions. for example:
             ```
             "colorCode" : [
 
@@ -233,7 +251,7 @@
                 },
             ]
             ```
-    - #### the **"rows"** property is an array of objects. each object represents the data of a single body row, defined as following :
+    - ### the **"rows"** property is an array of objects. each object represents the data of a single body row, defined as following :
         ```
         "rows": [
             {
@@ -269,11 +287,11 @@
         ```
 
 ### **Retrieving the selected rows**:
-#### Selected rows can be retrieved by calling the **"getSelectedRows"** function which returns a list of the unique identifiers of the selected rows.
+Selected rows can be retrieved by calling the **"getSelectedRows"** function which returns a list of the unique identifiers of the selected rows.
 
 ### **Accessing the class instance of an specific existing table**:
-#### In the case of an existing table initiated by attributes where you have no access to the initiated class instance you can access the class instance using the property **"tableInstance"** of the table container node object.
-#### for example :
+In the case of an existing table initiated by attributes where you have no access to the initiated class instance you can access the class instance using the property **"tableInstance"** of the table container node object.
+for example :
 ```
 // if the html structure is like following
 <html>
