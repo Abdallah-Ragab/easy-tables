@@ -16,6 +16,10 @@ const jsonTable = new easytables.JsonTable(
                 "filter" : ()=>{console.log("filtering by email ..")},
             },
             {
+                "text" : "avatar",
+                "type" : "image",
+            },
+            {
                 "text" : "status",
                 "type" : "label",
                 "sort" : false,
@@ -55,26 +59,31 @@ const jsonTable = new easytables.JsonTable(
                 "username" : 'kyle232',
                 "phone number" : "464564631",
                 "email" : "nomadkyle12@mail.com",
+                "avatar" : "https://picsum.photos/300/300",
                 "status" : "online",
             },
             {
                 "username" : 'ahmed565',
                 "phone number" : "56465465",
                 "email" : "ahmedemad21@mail.com",
+                "avatar" : "https://picsum.photos/300/300",
                 "status" : "online",
             },
             {
                 "username" : 'salah11',
                 "phone number" : "52415651",
                 "email" : "mosalah@mail.com",
+                "avatar" : "https://picsum.photos/300/300",
                 "status" : "Pending",
             },
             {
                 "username" : 'samehthesecond',
                 "phone number" : "46546464",
                 "email" : "sameh2th@mail.com",
+                "avatar" : "https://picsum.photos/300/300",
                 "status" : "offline",
             },
         ]
-    }
+    },
+    '2'
 )

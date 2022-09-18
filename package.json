@@ -2,7 +2,7 @@
   "name": "easy-tables",
   "version": "0.0.2",
   "description": "A simple library to make html tables easy.",
-  "main": "./dist/easytables.bundle.js",
+  "main": "./dist/production.bundle.js",
   "scripts": {
     "serve": "webpack-dev-server --config webpack.development.js",
     "watch": "webpack --config webpack.development.js --watch",

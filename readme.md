@@ -16,7 +16,7 @@
   
   -  ### [Retrieving the selected rows](#retrieving-the-selected-rows)
 
-  -  ### [Accessing the class instance of an specific existing table](#accessing-the-class-instance-of-an-specific-existing-table)
+  -  ### [Accessing the class instance of a table initiated by attributes](#accessing-the-class-instance-of-an-specific-existing-table)
 
 # Usage :
 ## **Method 1** : using attributes on an existing table :
@@ -289,7 +289,7 @@
 ### **Retrieving the selected rows**:
 Selected rows can be retrieved by calling the **"getSelectedRows"** function which returns a list of the unique identifiers of the selected rows.
 
-### **Accessing the class instance of an specific existing table**:
+### **Accessing the class instance of a table initiated by attributes**:
 In the case of an existing table initiated by attributes where you have no access to the initiated class instance you can access the class instance using the property **"tableInstance"** of the table container node object.
 for example :
 ```

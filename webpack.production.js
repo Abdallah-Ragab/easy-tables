@@ -2,12 +2,12 @@ const path = require("path");
 
 module.exports = {
     mode: 'production',
-    entry: {easytables: "./src/index.js"},
+    entry: {production: "./src/index.js"},
     output: {
         path: path.resolve(__dirname, "dist"),
         filename: "[name].bundle.js",
         libraryTarget: "umd",
-        library: "[name]",
+        library: "easytables",
     },
     module: {
         rules: [
@@ -26,5 +26,4 @@ module.exports = {
             },
         ]
     },
-
 }
