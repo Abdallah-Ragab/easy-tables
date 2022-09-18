@@ -1,5 +1,5 @@
 # Easy Tables
-### A UI Library For Creating Html Tables With Ease. Or Make Your Existing Html Tables Responsive With Sorting And Selecting Functionality.
+### A UI Library For Creating Html Tables With Ease. And Making Your Existing Html Tables Responsive With Sorting And Selecting Functionality.
 
 # Table of content :
 - ## [Getting Started](#getting-started-)
