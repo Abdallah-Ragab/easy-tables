@@ -2,8 +2,8 @@
 ### A UI Library For Creating Html Tables With Ease. Or Make Your Existing Html Tables Responsive With Sorting And Selecting Functionality.
 
 # Table of content :
-
-  ## [ Usage :](#usage-)
+- ## [Getting Started](#getting-started-)
+- ## [ Usage :](#usage-)
   - ### [Method 1 : using attributes on an existing table](#method-1--using-attributes-on-an-existing-table-)
     - [Setup](#--setup-)
     - [Options](#--options-)
@@ -18,6 +18,11 @@
 
   -  ### [Accessing the class instance of a table initiated by attributes](#accessing-the-class-instance-of-an-specific-existing-table)
 
+# Getting Started :
+```
+<script defer src="https://unpkg.com/easy-tables@0.1.0/dist/production.bundle.js"></script>
+
+```
 # Usage :
 ## **Method 1** : using attributes on an existing table :
 ### - **Setup** :
