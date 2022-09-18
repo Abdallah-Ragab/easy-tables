@@ -4,9 +4,9 @@
   "description": "A simple library to make html tables easy.",
   "main": "./dist/easytables.bundle.js",
   "scripts": {
-    "serve": "webpack-dev-server --mode=development",
-    "watch": "webpack --mode=development --watch",
-    "build": "webpack --mode=production"
+    "serve": "webpack-dev-server --config webpack.development.js",
+    "watch": "webpack --config webpack.development.js --watch",
+    "build": "webpack --config webpack.production.js"
   },
   "keywords": [],
   "author": "",

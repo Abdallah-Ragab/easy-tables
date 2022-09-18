@@ -95,6 +95,7 @@ class Table {
         }
     }
     readPrimaryHtmlElements(){
+        this.tableWrapperElement.tableInstance = this
         this.tableElement = this.tableWrapperElement.querySelector('table')
         this.headElement = this.tableElement.tHead.rows[0]
         this.headColumnsElements = Array.from(this.tableElement.tHead.rows[0].children)
@@ -244,8 +245,6 @@ class Table {
                 this.updateSelectedRows('none')
             }
         }
-
-        console.log(this.getSelectedRows())
     }
     updateSelectedRows(operation, rowID=null){
         switch(operation){
@@ -280,9 +279,6 @@ class Table {
         } else {
             var hasUniqueIDByIndex = (this.uniqueIdentifierIndex !== null)
             var uniqueIDIndex = this.uniqueIdentifierIndex
-            console.log(this.uniqueIdentifierIndex)
-            console.log(hasUniqueIDByIndex)
-            console.log(uniqueIDIndex)
             if(!hasUniqueIDByIndex){
                 console.error(`Missing parameter 'uniqueIdentifierIndex' at '${this.constructor.name}' initialization: the parameter is essential to differentiate the rows by a unique value.`)
             }
@@ -362,7 +358,6 @@ export class HtmlTable extends Table{
             this.ignoredColumns.push(0)
         }
         this.tableDataObject = this.extractDataFromHtml()
-        console.log(this.tableDataObject)
         if(this.enableSort){
             this.renderSort()
         }
@@ -418,8 +413,6 @@ export class JsonTable extends Table{
         this.tableWrapper = wrapper
         this.dataInput = data
         this.uniqueIdentifierIndex = uniqueIdentifierIndex
-        console.log(uniqueIdentifierIndex)
-        console.log(this.uniqueIdentifierIndex)
         this.ignoredColumns = ignoredColumns
         this.enableSort = enableSort
         this.enableSelect = enableSelect
@@ -438,16 +431,6 @@ export class JsonTable extends Table{
         this.setTableWrapperClasses()
         this.tableDataObject = this.extractDataFromHtml
         ()
-        console.log(this.tableDataObject)
-        // if(this.enableSelect){
-        //     this.renderSelect()
-        //     this.readPrimaryHtmlElements()
-        //     this.ignoredColumns.push(0)
-        // }
-        // this.tableDataObject = this.extractDataFromHtml()
-        // if(this.enableSort){
-        //     this.renderSort()
-        // }
         if(this.enableSelect){
             this.getUniqueIdentifiers()
         }
@@ -566,10 +549,6 @@ export class JsonTable extends Table{
                             cellExtras['color'] = cond.color
                             return true
                         }
-                        console.log(cellValue)
-                        eval("'" + cellValue + "'" + conditionsDictionary[cond.condition] + "'" + cond.value.toLowerCase() + "'") ? console.log(" = ") : console.log("!=")
-                        console.log(cond.value.toLowerCase())
-                        console.log("==============================")
                     }) 
                 }
                 if(cell.type == 'button'){

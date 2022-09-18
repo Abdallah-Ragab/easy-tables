@@ -19,4 +19,4 @@
 // text-purple-800 text-purple-700 bg-purple-100 
 // text-fuchsia-800 text-fuchsia-700 bg-fuchsia-100 
 // text-pink-800 text-pink-700 bg-pink-100 
-// text-rose-800 text-rose-700 bg-rose-100 
+// text-rose-800 text-rose-700 bg-rose-100
