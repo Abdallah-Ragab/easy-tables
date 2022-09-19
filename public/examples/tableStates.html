@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Table's States</title>
+</head>
+<body class="flex flex-col w-screen h-screen">
+    <div class="flex w-full h-half">
+        <div class="h-full w-half">
+            <h3>Empty Table</h3>
+            <div id="empty-table"></div>
+        </div>
+        <div class="h-full w-half">
+            <h3>Empty Body</h3>
+            <div id="empty-body"></div>
+        </div>
+    </div>
+    <div class="flex w-full h-half">
+        <div class="h-full w-half">
+            <h3>Loading Table</h3>
+            <button onclick="loadingTable.loadingTable()">Click to start loading</button>
+            <div id="loading-table"></div>
+        </div>
+        <div class="h-full w-half">
+            <h3>Loading Body</h3>
+            <button onclick="loadingBody.loadingBody()">Click to start loading</button>
+            <div id="loading-body"></div>
+        </div>
+    </div>
+</body>
+</html>
+<script src="../../dist/development.bundle.js"></script>
+<script>
+    const emptyTable = new easytables.JsonTable(
+        wrapper = '#empty-table',
+        data = {
+            "columns" : [],
+            "rows": []
+        },
+        uniqueIdentifierIndex="0",
+    )
+    const emptyBody = new easytables.JsonTable(
+        wrapper = '#empty-body',
+        data = {
+            "columns" : [
+            {
+                "text" : "username",
+                "type" : "bold",
+                "filter" : ()=>{console.log("filtering by username ..")},
+            },
+            {
+                "text" : "phone number",
+                "filter" : ()=>{console.log("filtering by phone number ..")},
+            },
+            {
+                "text" : "email",
+                "filter" : ()=>{console.log("filtering by email ..")},
+            },
+            {
+                "text" : "status",
+                "type" : "label",
+                "sort" : false,
+                "colorCode" : [
+                    {
+                        "condition" : "equal",
+                        "value" : "pending",
+                        "color" : "yellow"
+                    },
+                    {
+                        "condition" : "equal",
+                        "value" : "online",
+                        "color" : "green"
+                    },
+                    {
+                        "condition" : "equal",
+                        "value" : "offline",
+                        "color" : "red"
+                    },
+                ]
+            },
+            {
+                "text" : "view",
+                "type" : "button",
+                "color" : "green",
+                "callback" : ()=>{console.log("hello")}
+            },
+            {
+                "text" : "delete",
+                "type" : "button",
+                "color" : "red",
+                "callback" : ()=>{alert('Deleted Successfully')}
+            }
+        ],
+            "rows": []
+        },
+        uniqueIdentifierIndex="0",
+    )
+    const loadingTable = new easytables.JsonTable(
+        wrapper = '#loading-table',
+        data = {
+            "columns" : [
+            {
+                "text" : "username",
+                "type" : "bold",
+                "filter" : ()=>{console.log("filtering by username ..")},
+            },
+            {
+                "text" : "phone number",
+                "filter" : ()=>{console.log("filtering by phone number ..")},
+            },
+            {
+                "text" : "email",
+                "filter" : ()=>{console.log("filtering by email ..")},
+            },
+            {
+                "text" : "status",
+                "type" : "label",
+                "sort" : false,
+                "colorCode" : [
+                    {
+                        "condition" : "equal",
+                        "value" : "pending",
+                        "color" : "yellow"
+                    },
+                    {
+                        "condition" : "equal",
+                        "value" : "online",
+                        "color" : "green"
+                    },
+                    {
+                        "condition" : "equal",
+                        "value" : "offline",
+                        "color" : "red"
+                    },
+                ]
+            },
+            {
+                "text" : "view",
+                "type" : "button",
+                "color" : "green",
+                "callback" : ()=>{console.log("hello")}
+            },
+            {
+                "text" : "delete",
+                "type" : "button",
+                "color" : "red",
+                "callback" : ()=>{alert('Deleted Successfully')}
+            }
+        ],
+            "rows": [
+                {
+                    "username" : 'kyle232',
+                    "phone number" : "464564631",
+                    "email" : "nomadkyle12@mail.com",
+                    "status" : "online",
+                },
+                {
+                    "username" : 'ahmed565',
+                    "phone number" : "56465465",
+                    "email" : "ahmedemad21@mail.com",
+                    "status" : "online",
+                },
+                {
+                    "username" : 'salah11',
+                    "phone number" : "52415651",
+                    "email" : "mosalah@mail.com",
+                    "status" : "Pending",
+                },
+                {
+                    "username" : 'samehthesecond',
+                    "phone number" : "46546464",
+                    "email" : "sameh2th@mail.com",
+                    "status" : "offline",
+                },
+            ]
+        },
+        uniqueIdentifierIndex="0",
+    )
+    const loadingBody = new easytables.JsonTable(
+        wrapper = '#loading-body',
+        data = {
+            "columns" : [
+            {
+                "text" : "username",
+                "type" : "bold",
+                "filter" : ()=>{console.log("filtering by username ..")},
+            },
+            {
+                "text" : "phone number",
+                "filter" : ()=>{console.log("filtering by phone number ..")},
+            },
+            {
+                "text" : "email",
+                "filter" : ()=>{console.log("filtering by email ..")},
+            },
+            {
+                "text" : "status",
+                "type" : "label",
+                "sort" : false,
+                "colorCode" : [
+                    {
+                        "condition" : "equal",
+                        "value" : "pending",
+                        "color" : "yellow"
+                    },
+                    {
+                        "condition" : "equal",
+                        "value" : "online",
+                        "color" : "green"
+                    },
+                    {
+                        "condition" : "equal",
+                        "value" : "offline",
+                        "color" : "red"
+                    },
+                ]
+            },
+            {
+                "text" : "view",
+                "type" : "button",
+                "color" : "green",
+                "callback" : ()=>{console.log("hello")}
+            },
+            {
+                "text" : "delete",
+                "type" : "button",
+                "color" : "red",
+                "callback" : ()=>{alert('Deleted Successfully')}
+            }
+        ],
+            "rows": [
+                {
+                    "username" : 'kyle232',
+                    "phone number" : "464564631",
+                    "email" : "nomadkyle12@mail.com",
+                    "status" : "online",
+                },
+                {
+                    "username" : 'ahmed565',
+                    "phone number" : "56465465",
+                    "email" : "ahmedemad21@mail.com",
+                    "status" : "online",
+                },
+                {
+                    "username" : 'salah11',
+                    "phone number" : "52415651",
+                    "email" : "mosalah@mail.com",
+                    "status" : "Pending",
+                },
+                {
+                    "username" : 'samehthesecond',
+                    "phone number" : "46546464",
+                    "email" : "sameh2th@mail.com",
+                    "status" : "offline",
+                },
+            ]
+        },
+        uniqueIdentifierIndex="0",
+    )
+</script>
+<style>
+    h3 {
+        display: inline-block;
+        font-size: large;
+        font-weight: 600;
+    }
+    button {
+        display: inline-block;
+        color: #cfcfcf;
+        background-color: #303030;
+        border-radius: 5px;
+        padding: 2px 10px;
+        margin: 8px;
+    }
+    .flex{
+        display: flex;
+    }
+    .flex-col {
+        flex-direction: column;
+    }
+    .w-screen {
+        width: 100vw;
+    }
+    .h-screen {
+        height: 100vh;
+    }
+    .w-full {
+        width: 100%;
+    }
+    .h-full {
+        height: 100%;
+    }
+    .h-half {
+        height: 50%;
+    }
+    .w-half {
+        width: 50%;
+    }
+    /* body {
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        align-items: center;
+    }
+    #table-container-json {
+        width: fit-content;
+        min-width: 50%;
+    } */
+</style>

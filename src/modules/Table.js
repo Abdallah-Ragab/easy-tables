@@ -381,8 +381,8 @@ export class JsonTable extends Table{
             this.tableWrapperElement = this.tableWrapper
         }
 
-        this.emptyHead = (this.dataInput.columns.length === 0)
-        this.emptyBody = (this.dataInput.rows.length === 0)
+        this.emptyHead = (this.dataInput.columns.length === 0) || (this.dataInput.columns === undefined)
+        this.emptyBody = (this.dataInput.rows.length === 0) || (this.dataInput.rows === undefined)
         this.emptyTable = (this.emptyBody && this.emptyHead)
 
         this.setTableWrapperClasses()
@@ -453,8 +453,8 @@ export class JsonTable extends Table{
     }
     
     // Building & Rendering a html table from json
-    renderTable(bodyLoading){
-        var tableHtml = this.buildTableHtml(bodyLoading)
+    renderTable(bodyLoading, headLoading){
+        var tableHtml = this.buildTableHtml(bodyLoading, headLoading)
         this.tableWrapperElement.replaceChildren();
         if(this.emptyTable) {
             const emptyTemplate = this.constructor.htmlTemplates.emptyTablePlaceholder
@@ -467,56 +467,66 @@ export class JsonTable extends Table{
             this.tableWrapperElement.insertAdjacentHTML('beforeend', emptyTemplate)  
         }      
     }
-    buildTableHtml(bodyLoading) {
-        var theadHtml = this.buildHeadHtml()
-        var tbodyHtml = this.buildBodyHtml(bodyLoading)
+    buildTableHtml(bodyLoading, headLoading) {
+        var theadHtml = this.buildHeadHtml(headLoading)
+        var tbodyHtml = this.buildBodyHtml(bodyLoading, headLoading)
         var tableTemplate = this.constructor.htmlTemplates['table']
         var tableHtml = this.evaluateTemplate(tableTemplate, {"thead": theadHtml, "tbody": tbodyHtml})
         return tableHtml
     }
-    buildHeadHtml(){
-        let headColumnTemplate = this.constructor.htmlTemplates['headColumn']
-        let headColumns = this.dataInput.columns
-
-        let headColumnsHtml = headColumns.map(col => {
-            let extras = {}
-            if(col.type == 'button'){
-                return this.evaluateTemplate(headColumnTemplate)
-            }
-            if(col.type == 'image'){
-                col['sort'] = false
-            }
-            if ((this.enableSort && !col.hasOwnProperty('sort')) || (this.enableSort && col['sort'])) {
-                extras["sort"] = this.evaluateTemplate(this.constructor.htmlTemplates['headSort']) 
-            }
-            if (this.filter && col['filter']) {
-                extras["filter"] = this.evaluateTemplate(this.constructor.htmlTemplates['headFilter']) 
-            }
-            return this.evaluateTemplate(headColumnTemplate, {"text": col.text, ...extras})
-        })
-
-        if(this.enableSelect) {
-            let headSelectTemplate = this.constructor.htmlTemplates['headSelect']
-            headColumnsHtml.unshift(this.evaluateTemplate(headSelectTemplate))
+    buildHeadHtml(headLoading){
+        if (headLoading){
+            return this.constructor.htmlTemplates.headRowProp
         }
-
-        let headRowHtml = headColumnsHtml.join(' ')
-        let theadTemplate = this.constructor.htmlTemplates['headRow']
-        let theadHtml = this.evaluateTemplate(theadTemplate, {"row": headRowHtml})
-
-        return theadHtml
+        else {
+            const headColumnTemplate = this.constructor.htmlTemplates.headColumn
+            const headColumns = this.dataInput.columns
+    
+            const headColumnsHtml = headColumns.map(col => {
+                let extras = {}
+                if(col.type == 'button'){
+                    return this.evaluateTemplate(headColumnTemplate)
+                }
+                if(col.type == 'image'){
+                    col['sort'] = false
+                }
+                if ((this.enableSort && !col.hasOwnProperty('sort')) || (this.enableSort && col['sort'])) {
+                    extras["sort"] = this.evaluateTemplate(this.constructor.htmlTemplates.headSort) 
+                }
+                if (this.filter && col['filter']) {
+                    extras["filter"] = this.evaluateTemplate(this.constructor.htmlTemplates.headFilter) 
+                }
+                return this.evaluateTemplate(headColumnTemplate, {"text": col.text, ...extras})
+            })
+    
+            if(this.enableSelect) {
+                let headSelectTemplate = this.constructor.htmlTemplates.headSelect
+                headColumnsHtml.unshift(this.evaluateTemplate(headSelectTemplate))
+            }
+    
+            const headRowHtml = headColumnsHtml.join('')
+            const theadTemplate = this.constructor.htmlTemplates.headRow
+            const theadHtml = this.evaluateTemplate(theadTemplate, {"row": headRowHtml})
+    
+            return theadHtml
+        }
     }
-    buildBodyHtml(bodyLoading){
+    buildBodyHtml(bodyLoading, headLoading){
         if (bodyLoading){
-            const rowsCount = this.dataInput.rows.length
-            const columnsCount = this.dataInput.columns.length
+            if (headLoading){
+                var columnsCount = 3
+                var rowsCount = 5
+            } else {
+                var rowsCount = this.dataInput.rows.length
+                var columnsCount = this.dataInput.columns.length
+            }
             const tbodyArray = [...Array(rowsCount)].map(() => {
                 const propRowTemplate = this.constructor.htmlTemplates.bodyRowProp
                 const propCellTemplate = this.constructor.htmlTemplates.bodyCellProp
                 const propCellsHtmlArray = [...Array(columnsCount)].map(()=>{
                     return propCellTemplate
                 })
-                if(this.enableSelect) { propCellsHtmlArray.unshift(this.evaluateTemplate(this.constructor.htmlTemplates['rowSelect'])) }
+                if(this.enableSelect && !headLoading) { propCellsHtmlArray.unshift(this.evaluateTemplate(this.constructor.htmlTemplates['rowSelect'])) }
                 const propCellsHtml = propCellsHtmlArray.join("")
                 return this.evaluateTemplate(propRowTemplate, {"row": propCellsHtml})
             })
@@ -571,7 +581,10 @@ export class JsonTable extends Table{
     }
 
     // Loading
-    replaceBodyWithLoading(){
+    loadingBody(){
         this.renderTable(true)
+    }
+    loadingTable(){
+        this.renderTable(true, true)
     }
 } 

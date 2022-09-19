@@ -64,7 +64,7 @@ export const tableTemplates =  {
         },
         "rowSelect" : `
             <td non-data class="sticky -left-px bg-white px-4 py-2 w-0"><input type="checkbox"></td>
-            `,
+        `,
         "emptyBodyPlaceholder" : `
             <div class="flex justify-center items-center w-100 sticky left-0 h-16 text-lg text-gray-600 font-bold capitalize">No data found</div>  
         `,
@@ -76,6 +76,13 @@ export const tableTemplates =  {
                 </svg>
                 <span class="text-gray-600 font-semibold text-4xl uppercase mt-3">No Data Found</span>
             </div>  
+        `,
+        "headRowProp" : `
+            <tr class="bg-gray-200 whitespace-nowrap text-gray-700 font-semibold capitalize sticky -top-1 z-10 animate-pulse">
+                <th class="h-10 w-4/12"></th>
+                <th class="h-10 w-2/12"></th>
+                <th class="h-10 w-6/12"></th>
+            </tr>
         `,
         "bodyRowProp" : `
             <tr class="border-b border-gray-150 whitespace-nowrap text-gray-500 text-sm animate-pulse">\${data['row']}</tr>
