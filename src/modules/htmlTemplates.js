@@ -72,6 +72,6 @@ export const tableTemplates =  {
             <tr class="border-b border-gray-150 whitespace-nowrap text-gray-500 text-sm animate-pulse">\${data['row']}</tr>
         `,
         "bodyCellProp" : `
-            <td class="px-4"><div class="m-1 bg-gray-300 h-4 rounded">&nbsp;</div></td>
+            <td class="px-4"><div class="my-2.5 mx-1 bg-gray-200 h-5 rounded">&nbsp;</div></td>
         `,
 }

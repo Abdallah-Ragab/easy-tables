@@ -452,23 +452,24 @@ export class JsonTable extends Table{
     }
     
     // Building & Rendering a html table from json
-    renderTable(){
-        var tableHtml = this.buildTableHtml()
+    renderTable(bodyLoading){
+        var tableHtml = this.buildTableHtml(bodyLoading)
+        this.tableWrapperElement.replaceChildren();
         this.tableWrapperElement.insertAdjacentHTML('afterbegin', tableHtml)  
         if(this.emptyBody) {
             const emptyTemplate = this.constructor.htmlTemplates.emptyBodyAlert
             this.tableWrapperElement.insertAdjacentHTML('beforeend', emptyTemplate)  
         }      
     }
-    buildTableHtml() {
+    buildTableHtml(bodyLoading) {
         var theadHtml = this.buildHeadHtml()
-        var tbodyHtml = this.buildBodyHtml()
-        var tableTemplate = Table.htmlTemplates['table']
+        var tbodyHtml = this.buildBodyHtml(bodyLoading)
+        var tableTemplate = this.constructor.htmlTemplates['table']
         var tableHtml = this.evaluateTemplate(tableTemplate, {"thead": theadHtml, "tbody": tbodyHtml})
         return tableHtml
     }
     buildHeadHtml(){
-        let headColumnTemplate = Table.htmlTemplates['headColumn']
+        let headColumnTemplate = this.constructor.htmlTemplates['headColumn']
         let headColumns = this.dataInput.columns
 
         let headColumnsHtml = headColumns.map(col => {
@@ -480,61 +481,77 @@ export class JsonTable extends Table{
                 col['sort'] = false
             }
             if ((this.enableSort && !col.hasOwnProperty('sort')) || (this.enableSort && col['sort'])) {
-                extras["sort"] = this.evaluateTemplate(Table.htmlTemplates['headSort']) 
+                extras["sort"] = this.evaluateTemplate(this.constructor.htmlTemplates['headSort']) 
             }
             if (this.filter && col['filter']) {
-                extras["filter"] = this.evaluateTemplate(Table.htmlTemplates['headFilter']) 
+                extras["filter"] = this.evaluateTemplate(this.constructor.htmlTemplates['headFilter']) 
             }
             return this.evaluateTemplate(headColumnTemplate, {"text": col.text, ...extras})
         })
 
         if(this.enableSelect) {
-            let headSelectTemplate = Table.htmlTemplates['headSelect']
+            let headSelectTemplate = this.constructor.htmlTemplates['headSelect']
             headColumnsHtml.unshift(this.evaluateTemplate(headSelectTemplate))
         }
 
         let headRowHtml = headColumnsHtml.join(' ')
-        let theadTemplate = Table.htmlTemplates['headRow']
+        let theadTemplate = this.constructor.htmlTemplates['headRow']
         let theadHtml = this.evaluateTemplate(theadTemplate, {"row": headRowHtml})
 
         return theadHtml
     }
-    buildBodyHtml(){
-        const bodyRows = this.dataInput.rows
-        const tbodyHtml = bodyRows.map(row => {
-            const rowCells = this.dataInput.columns 
-            const cellsHtml = rowCells.map(cell => {
-                let cellValue = row[cell.text]
-                const cellType = cell.hasOwnProperty('type') ? cell.type : 'text'
-                const cellExtras = {}
-                const cellTemplate = Table.htmlTemplates.bodyCell[cellType]
-                if (cell.colorCode) {
-                    cellValue = cellValue.toLowerCase()
-                    const conditionsDictionary = {'equal': '==='}
-                    cell.colorCode.some((cond) => {
-                        if(eval("'" + cellValue + "'" + conditionsDictionary[cond.condition] + "'" + cond.value.toLowerCase() + "'")){
-                            cellExtras['color'] = cond.color
-                            return true
-                        }
-                    }) 
-                }
-                if(cell.type == 'button'){
-                    cellExtras['color'] = cell.color
-                    cellExtras['text'] = cell.text
-                }
-                const cellHtml = this.evaluateTemplate(cellTemplate, {"text": cellValue, ...cellExtras})
-                return cellHtml
+    buildBodyHtml(bodyLoading){
+        if (bodyLoading){
+            const rowsCount = this.dataInput.rows.length
+            const columnsCount = this.dataInput.columns.length
+            const tbodyArray = [...Array(rowsCount)].map(() => {
+                const propRowTemplate = this.constructor.htmlTemplates.bodyRowProp
+                const propCellTemplate = this.constructor.htmlTemplates.bodyCellProp
+                const propCellsHtmlArray = [...Array(columnsCount)].map(()=>{
+                    return propCellTemplate
+                })
+                if(this.enableSelect) { propCellsHtmlArray.unshift(this.evaluateTemplate(this.constructor.htmlTemplates['rowSelect'])) }
+                const propCellsHtml = propCellsHtmlArray.join("")
+                return this.evaluateTemplate(propRowTemplate, {"row": propCellsHtml})
             })
-            if(this.enableSelect) {
-                let bodySelectTemplate = Table.htmlTemplates['rowSelect']
-                cellsHtml.unshift(this.evaluateTemplate(bodySelectTemplate))
-            }
-            var rowCellsHtml = cellsHtml.join('')
-            var rowTemplate = Table.htmlTemplates.bodyRow
-            var rowHtml = this.evaluateTemplate(rowTemplate, {"row": rowCellsHtml})
-            return rowHtml
-        }).join('')
-        return tbodyHtml
+            var tBodyHtml = tbodyArray.join("")
+        }
+        else {
+            const bodyRows = this.dataInput.rows
+            var tBodyHtml = bodyRows.map(row => {
+                const rowCells = this.dataInput.columns 
+                const rowCellsHtmlArray = rowCells.map(cell => {
+                    let cellValue = row[cell.text]
+                    const cellType = cell.hasOwnProperty('type') ? cell.type : 'text'
+                    const cellExtras = {}
+                    const cellTemplate = this.constructor.htmlTemplates.bodyCell[cellType]
+                    if (cell.colorCode) {
+                        cellValue = cellValue.toLowerCase()
+                        const conditionsDictionary = {'equal': '==='}
+                        cell.colorCode.some((cond) => {
+                            if(eval("'" + cellValue + "'" + conditionsDictionary[cond.condition] + "'" + cond.value.toLowerCase() + "'")){
+                                cellExtras['color'] = cond.color
+                                return true
+                            }
+                        }) 
+                    }
+                    if(cell.type == 'button'){
+                        cellExtras['color'] = cell.color
+                        cellExtras['text'] = cell.text
+                    }
+                    const cellHtml = this.evaluateTemplate(cellTemplate, {"text": cellValue, ...cellExtras})
+                    return cellHtml
+                })
+                if(this.enableSelect) {
+                    rowCellsHtmlArray.unshift(this.evaluateTemplate(this.constructor.htmlTemplates['rowSelect']))
+                }
+                const rowCellsHtml = rowCellsHtmlArray.join('')
+                const rowTemplate = this.constructor.htmlTemplates.bodyRow
+                const rowHtml = this.evaluateTemplate(rowTemplate, {"row": rowCellsHtml})
+                return rowHtml
+            }).join('')
+        }
+        return tBodyHtml
     }
     evaluateTemplate(template, args = {}){
         var variables = template.match(/(?<=\$\{data\[['"])[\w]*(?=['"]\]\})/gi)
@@ -549,6 +566,6 @@ export class JsonTable extends Table{
 
     // Loading
     replaceBodyWithLoading(){
-        this.renderTable()
+        this.renderTable(true)
     }
 } 
