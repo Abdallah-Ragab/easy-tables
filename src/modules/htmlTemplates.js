@@ -2,14 +2,14 @@ export const tableTemplates =  {
     "table" : `
         <table class='min-w-full rounded border-gray-700 bg-gray-50'>
             <thead>\${data['thead']}</thead>
-            <tbody class='odd:bg-white even:bg-slate'>\${data['tbody']}</tbody>
+            <tbody>\${data['tbody']}</tbody>
         </table>
         `,
     "headRow" : `
         <tr class="bg-gray-200 whitespace-nowrap text-gray-700 font-semibold capitalize sticky -top-1 z-10">\${data['row']}</tr>
         `,
     "headSelect" : `
-        <th non-data class=" sticky -left-px shadow bg-gray-200 shadow-xl text-start px-4 py-1 z-10"><input type="checkbox"></th>
+        <th non-data class=" sticky -left-px shadow bg-gray-200 shadow-xl text-start px-4 py-1 z-10 w-0"><input type="checkbox"></th>
         `,
     "transparentSelect" : `
         <th non-data><input type="checkbox"></th>
@@ -63,9 +63,15 @@ export const tableTemplates =  {
                 `,
         },
         "rowSelect" : `
-            <td non-data class="sticky -left-px bg-white px-4 py-2"><input type="checkbox"></td>
+            <td non-data class="sticky -left-px bg-white px-4 py-2 w-0"><input type="checkbox"></td>
             `,
-        "emptyBody" : `
+        "emptyBodyAlert" : `
             <div class="flex justify-center items-center w-100 sticky left-0 h-12 text-lg text-gray-600 font-bold">No data found.</div>  
+        `,
+        "bodyRowProp" : `
+            <tr class="border-b border-gray-150 whitespace-nowrap text-gray-500 text-sm animate-pulse">\${data['row']}</tr>
+        `,
+        "bodyCellProp" : `
+            <td class="px-4"><div class="m-1 bg-gray-300 h-4 rounded">&nbsp;</div></td>
         `,
 }

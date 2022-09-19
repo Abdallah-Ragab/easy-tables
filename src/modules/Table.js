@@ -227,19 +227,25 @@ class Table {
             var hasUniqueIDColumn = (UniqueIDColumn !== null)
         } else {
             var hasUniqueIDByIndex = (this.uniqueIdentifierIndex !== null)
-            var uniqueIDIndex = this.uniqueIdentifierIndex
+            var _uniqueIDIndex = this.uniqueIdentifierIndex
             if(!hasUniqueIDByIndex){
                 console.error(`Missing parameter 'uniqueIdentifierIndex' at '${this.constructor.name}' initialization: the parameter is essential to differentiate the rows by a unique value.`)
             }
         }
 
-        uniqueIDIndex = (this.enableSelect) ? parseInt(uniqueIDIndex) + 1 : parseInt(uniqueIDIndex)
+        uniqueIDIndex = (this.enableSelect) ? parseInt(_uniqueIDIndex) + 1 : parseInt(_uniqueIDIndex)
         
 
         if (hasUniqueIDByIndex) {
             if (Number.isInteger(uniqueIDIndex)) {
                 this.tableDataObject.body.rows = Array.from(this.tableDataObject.body.rows).map(row => {
-                    row.uniqueID = row.cells.find(cell => cell.ID === uniqueIDIndex).Value
+                    const uniqueIDExists = !(row.cells.find(cell => cell.ID === uniqueIDIndex) === undefined)
+                    if (uniqueIDExists){
+                        row.uniqueID = row.cells.find(cell => cell.ID === uniqueIDIndex).Value
+                    } else {
+                        console.error(`Invalid Index '${uniqueIDIndexAttribute}': No column found with the index of '${_uniqueIDIndex}'.`)
+                    }
+
                     return row
                 })
                 return
@@ -375,6 +381,11 @@ export class JsonTable extends Table{
         } else {
             this.tableWrapperElement = this.tableWrapper
         }
+
+        this.emptyHead = (this.dataInput.columns.length === 0)
+        this.emptyBody = (this.dataInput.rows.length === 0)
+        this.emptyTable = (this.emptyBody && this.emptyHead)
+
         this.renderTable()
         this.readPrimaryHtmlElements()
         this.setTableWrapperClasses()
@@ -443,7 +454,11 @@ export class JsonTable extends Table{
     // Building & Rendering a html table from json
     renderTable(){
         var tableHtml = this.buildTableHtml()
-        this.tableWrapperElement.insertAdjacentHTML('afterbegin', tableHtml)        
+        this.tableWrapperElement.insertAdjacentHTML('afterbegin', tableHtml)  
+        if(this.emptyBody) {
+            const emptyTemplate = this.constructor.htmlTemplates.emptyBodyAlert
+            this.tableWrapperElement.insertAdjacentHTML('beforeend', emptyTemplate)  
+        }      
     }
     buildTableHtml() {
         var theadHtml = this.buildHeadHtml()
@@ -460,6 +475,9 @@ export class JsonTable extends Table{
             let extras = {}
             if(col.type == 'button'){
                 return this.evaluateTemplate(headColumnTemplate)
+            }
+            if(col.type == 'image'){
+                col['sort'] = false
             }
             if ((this.enableSort && !col.hasOwnProperty('sort')) || (this.enableSort && col['sort'])) {
                 extras["sort"] = this.evaluateTemplate(Table.htmlTemplates['headSort']) 
@@ -527,5 +545,10 @@ export class JsonTable extends Table{
         })
         var evaluated = eval("`" + template + "`")
         return evaluated
+    }
+
+    // Loading
+    replaceBodyWithLoading(){
+        this.renderTable()
     }
 } 
