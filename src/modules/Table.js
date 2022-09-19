@@ -297,7 +297,6 @@ export class HtmlTable extends Table{
         this.enableSelect = enableSelect
 
         this.initiate()
-        this.initiateEvents()
     }
     initiate(){
         if(typeof(this.tableWrapper) === "string"){
@@ -319,6 +318,7 @@ export class HtmlTable extends Table{
         if(this.enableSelect){
             this.getUniqueIdentifiers()
         }
+        this.initiateEvents()
     }
     readInlineProperties(){
         if(this.htmlInitialized){
@@ -373,7 +373,6 @@ export class JsonTable extends Table{
         this.enableSelect = enableSelect
 
         this.initiate()
-        this.initiateEvents()
     }
     initiate(){
         if(typeof(this.tableWrapper) === "string"){
@@ -386,13 +385,15 @@ export class JsonTable extends Table{
         this.emptyBody = (this.dataInput.rows.length === 0)
         this.emptyTable = (this.emptyBody && this.emptyHead)
 
-        this.renderTable()
-        this.readPrimaryHtmlElements()
         this.setTableWrapperClasses()
-        this.tableDataObject = this.extractDataFromHtml
-        ()
-        if(this.enableSelect){
-            this.getUniqueIdentifiers()
+        this.renderTable()
+        if (!this.emptyTable){
+            this.readPrimaryHtmlElements()
+            this.tableDataObject = this.extractDataFromHtml()
+            if(this.enableSelect){
+                this.getUniqueIdentifiers()
+            }
+            this.initiateEvents()
         }
     }
     initiateEvents(){
@@ -455,9 +456,14 @@ export class JsonTable extends Table{
     renderTable(bodyLoading){
         var tableHtml = this.buildTableHtml(bodyLoading)
         this.tableWrapperElement.replaceChildren();
+        if(this.emptyTable) {
+            const emptyTemplate = this.constructor.htmlTemplates.emptyTablePlaceholder
+            this.tableWrapperElement.insertAdjacentHTML('afterbegin', emptyTemplate)
+            return
+        }      
         this.tableWrapperElement.insertAdjacentHTML('afterbegin', tableHtml)  
         if(this.emptyBody) {
-            const emptyTemplate = this.constructor.htmlTemplates.emptyBodyAlert
+            const emptyTemplate = this.constructor.htmlTemplates.emptyBodyPlaceholder
             this.tableWrapperElement.insertAdjacentHTML('beforeend', emptyTemplate)  
         }      
     }
