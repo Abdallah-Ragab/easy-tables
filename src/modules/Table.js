@@ -220,20 +220,30 @@ class Table {
         const rowIDAttribute = this.constructor.attributes.rowID
         
         if (this.htmlInitialized){
+            // If the table is initialized using inline html attributes
             var hasUniqueIDByIndex = this.tableWrapperElement.hasAttribute(uniqueIDIndexAttribute)
-            var uniqueIDIndex = hasUniqueIDByIndex ? this.tableWrapperElement.getAttribute(uniqueIDIndexAttribute) : null
+            var _uniqueIDIndex = hasUniqueIDByIndex ? this.tableWrapperElement.getAttribute(uniqueIDIndexAttribute) : null
             
             var UniqueIDColumn = this.headElement.querySelector(`[${uniqueIDColumnAttribute}]`)
             var hasUniqueIDColumn = (UniqueIDColumn !== null)
+            var uniqueIDIndex = (this.enableSelect) ? parseInt(_uniqueIDIndex) + 1 : parseInt(_uniqueIDIndex)
+            
+        }
+        else if (this.dataInput) {
+            // If the table is initialized using json data object
+            var hasUniqueIDByIndex = (this.uniqueIdentifierIndex !== null) 
+            var UniqueIDByJson = (this.dataInput.columns.find)
+            var hasUniqueIDByJson = (this.dataInput.columns.find)
+
         } else {
-            var hasUniqueIDByIndex = (this.uniqueIdentifierIndex !== null)
+            var hasUniqueIDByIndex = (this.uniqueIdentifierIndex !== null) 
             var _uniqueIDIndex = this.uniqueIdentifierIndex
             if(!hasUniqueIDByIndex){
                 console.error(`Missing parameter 'uniqueIdentifierIndex' at '${this.constructor.name}' initialization: the parameter is essential to differentiate the rows by a unique value.`)
             }
+            var uniqueIDIndex = (this.enableSelect) ? parseInt(_uniqueIDIndex) + 1 : parseInt(_uniqueIDIndex)
         }
 
-        uniqueIDIndex = (this.enableSelect) ? parseInt(_uniqueIDIndex) + 1 : parseInt(_uniqueIDIndex)
         
 
         if (hasUniqueIDByIndex) {
@@ -253,24 +263,25 @@ class Table {
                 console.error(`invalid attribute value: the value of '${uniqueIDIndexAttribute}' must be a number. at the table container.`)
             }
         }
-        if (!this.htmlInitialized) {return}
-        if (hasUniqueIDColumn) {
-            const uniqueIDColumnIndex = Array.from(this.headElement.children).indexOf(UniqueIDColumn)
-
-            this.tableDataObject.body.rows = Array.from(this.tableDataObject.body.rows).map(row => {
-                row.uniqueID = row.cells.find(cell => cell.ID === uniqueIDColumnIndex).Value
-                return row
-            })
-        } else {
-            this.tableDataObject.body.rows = Array.from(this.tableDataObject.body.rows).map(row => {
-                if (row.element.hasAttribute(rowIDAttribute)) {
-                    row.uniqueID = row.element.getAttribute(rowIDAttribute)
-                } else {
-                    console.error(`Missing attribute '${rowIDAttribute}': body row with index ${row.ID} is missing a unique id`)
-                    row.uniqueID = null
-                }
-                return row
-            })
+        if (this.htmlInitialized) {
+            if (hasUniqueIDColumn) {
+                const uniqueIDColumnIndex = Array.from(this.headElement.children).indexOf(UniqueIDColumn)
+    
+                this.tableDataObject.body.rows = Array.from(this.tableDataObject.body.rows).map(row => {
+                    row.uniqueID = row.cells.find(cell => cell.ID === uniqueIDColumnIndex).Value
+                    return row
+                })
+            } else {
+                this.tableDataObject.body.rows = Array.from(this.tableDataObject.body.rows).map(row => {
+                    if (row.element.hasAttribute(rowIDAttribute)) {
+                        row.uniqueID = row.element.getAttribute(rowIDAttribute)
+                    } else {
+                        console.error(`Missing attribute '${rowIDAttribute}': body row with index ${row.ID} is missing a unique id`)
+                        row.uniqueID = null
+                    }
+                    return row
+                })
+            }
         }
     }
     getSelectedRows(){
@@ -362,7 +373,7 @@ export class JsonTable extends Table{
         uniqueIdentifierIndex = null,
         ignoredColumns = [],
         enableSort = true,
-        enableSelect = true
+        enableSelect = true,
         ) {
         super()
         this.tableWrapper = wrapper

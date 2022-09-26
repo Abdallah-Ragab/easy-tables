@@ -1,6 +1,6 @@
 {
-  "name": "easy-tables",
-  "version": "0.1.0",
+  "name": "easy-tables-dev",
+  "version": "0.1.3",
   "description": "A simple library to make html tables easy.",
   "main": "./dist/production.bundle.js",
   "scripts": {
@@ -17,6 +17,7 @@
     "autoprefixer": "^10.4.8",
     "babel-loader": "^8.2.5",
     "css-loader": "^6.7.1",
+    "live-server": "^1.2.2",
     "postcss": "^8.4.16",
     "postcss-loader": "^7.0.1",
     "style-loader": "^3.3.1",
