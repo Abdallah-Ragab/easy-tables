@@ -194,7 +194,7 @@ export class Table {
                 this.updateSelectedRows('none')
             }
         }
-        console.log(this.getSelectedRows())
+        // console.log(this.getSelectedRows())
     }
     updateSelectedRows(operation, rowID=null){
         switch(operation){
@@ -224,7 +224,6 @@ export class Table {
         const uniqueIDColumnIndexSetByInitialization = this.hasOwnProperty("uniqueIdentifierIndex")
 
 
-        console.log(uniqueIDKeySet, uniqueIDColumnIndexSetByAttribute, uniqueIDColumnIndexSetByInitialization)
         const getUniqueIDByIndex = (row, index) => {
             return row.cells.find(cell => cell.ID === index).value   
         }
@@ -233,7 +232,6 @@ export class Table {
             const uniqueIDFromTable = cellOfUniqueIDFromTable ? cellOfUniqueIDFromTable.value : false
             const uniqueIDFromDataInput = this.dataInput[idx][key]
             const uniqueID = uniqueIDFromTable || uniqueIDFromDataInput
-            console.log(cellOfUniqueIDFromTable, uniqueIDFromTable, uniqueIDFromDataInput, uniqueID)
             return uniqueID
 
         }

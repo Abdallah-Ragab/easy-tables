@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>example table api 1</title>
+</head>
+<body>
+    <h2>API Table</h2>
+    <div id="table-container-json">
+    </div>
+</body>
+</html>
+<script src="../../dist/development.bundle.js"></script>
+<script>
+    const Table = new easytables.APITable(
+        wrapper = "#table-container-json",
+        data = [
+            {
+                "id": 1,
+                "name": "Edmond Schaden",
+                "image": "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/665.jpg",
+                "gender": "female",
+                "email": "Erika_Gibson@hotmail.com",
+                "phone": "+1 169-424-495",
+                "job": "International Accountability Representative",
+                "department": "Industrial",
+                "Company": "drive killer metrics",
+                "state": "offline"
+            },
+            {
+                "id": 2,
+                "name": "Steven Glover",
+                "image": "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/1064.jpg",
+                "gender": "female",
+                "email": "Abagail.Nolan82@hotmail.com",
+                "phone": "+1 818-158-915",
+                "job": "Chief Intranet Strategist",
+                "department": "Outdoors",
+                "Company": "synergize sexy portals",
+                "state": "offline"
+            },
+            {
+                "id": 3,
+                "name": "Frances Turcotte",
+                "image": "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/413.jpg",
+                "gender": "male",
+                "email": "Lesley_Stracke42@gmail.com",
+                "phone": "+1 853-964-857",
+                "job": "International Paradigm Executive",
+                "department": "Jewelery",
+                "Company": "monetize strategic eyeballs",
+                "state": "offline"
+            },
+            {
+                "id": 4,
+                "name": "Gabriel Lynch",
+                "image": "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/802.jpg",
+                "gender": "female",
+                "email": "Claudie55@hotmail.com",
+                "phone": "+1 638-760-160",
+                "job": "Corporate Creative Technician",
+                "department": "Health",
+                "Company": "reinvent robust vortals",
+                "state": "offline"
+            },
+            {
+                "id": 5,
+                "name": "Angelina Goyette MD",
+                "image": "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/864.jpg",
+                "gender": "male",
+                "email": "Aliya85@hotmail.com",
+                "phone": "+1 360-377-713",
+                "job": "Principal Research Representative",
+                "department": "Clothing",
+                "Company": "leverage B2C networks",
+                "state": "online"
+            },
+            {
+                "id": 6,
+                "name": "Edna Littel",
+                "image": "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/1151.jpg",
+                "gender": "male",
+                "email": "Crawford_Johnston23@yahoo.com",
+                "phone": "+1 759-074-355",
+                "job": "Forward Applications Manager",
+                "department": "Games",
+                "Company": "innovate intuitive interfaces",
+                "state": "offline"
+            },
+            {
+                "id": 7,
+                "name": "Kerry Bernier DDS",
+                "image": "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/110.jpg",
+                "gender": "female",
+                "email": "Durward.Jerde@gmail.com",
+                "phone": "+1 044-773-998",
+                "job": "Chief Program Technician",
+                "department": "Movies",
+                "Company": "aggregate rich schemas",
+                "state": "offline"
+            },
+            {
+                "id": 8,
+                "name": "Fernando Powlowski",
+                "image": "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/606.jpg",
+                "gender": "female",
+                "email": "Dan_Stiedemann@yahoo.com",
+                "phone": "+1 107-238-706",
+                "job": "Dynamic Functionality Designer",
+                "department": "Tools",
+                "Company": "generate global systems",
+                "state": "offline"
+            },
+            {
+                "id": 9,
+                "name": "Henrietta Willms",
+                "image": "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/775.jpg",
+                "gender": "male",
+                "email": "Toby.Shanahan@yahoo.com",
+                "phone": "+1 126-107-409",
+                "job": "Internal Tactics Engineer",
+                "department": "Shoes",
+                "Company": "deliver customized functionalities",
+                "state": "offline"
+            },
+            {
+                "id": 10,
+                "name": "Edna Steuber",
+                "image": "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/871.jpg",
+                "gender": "female",
+                "email": "Geovanny_Glover@gmail.com",
+                "phone": "+1 008-347-257",
+                "job": "Product Division Analyst",
+                "department": "Clothing",
+                "Company": "expedite world-class experiences",
+                "state": "online"
+            }
+        ],
+        options = {
+        "uniqueID": "id",
+        "headers": {
+            "id": {
+                "render": false
+            },
+            "name": {
+                "text": "Full Name",
+                "type": "bold",
+                filter: ()=>{console.log("Filtering ...")}
+            },
+            "image": {
+                "text": "Avatar",
+                "type": "image",
+                "sort": false
+            },
+            "gender": {
+                "type": "label",
+                "colorCode": [
+                    {
+                        "condition": "equal",
+                        "value": "female",
+                        "color": "pink"
+                    },
+                    {
+                        "condition": "equal",
+                        "value": "male",
+                        "color": "blue"
+                    }
+                ]
+            },
+            "state": {
+                "type": "label",
+                "colorCode": [
+                    {
+                        "condition": "equal",
+                        "value": "online",
+                        "color": "green"
+                    },
+                    {
+                        "condition": "equal",
+                        "value": "offline",
+                        "color": "red"
+                    }
+                ]
+            },
+            "edit": {
+                "type": "button",
+                "color": "red"
+            }
+        }
+    }
+    )
+</script>
+<style>
+    body {
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        align-items: center;
+    }
+    #table-container-json {
+        width: fit-content;
+        min-width: 50%;
+    }
+</style>

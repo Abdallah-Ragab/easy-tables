@@ -1,11 +1,12 @@
 {
   "name": "easy-tables-dev",
-  "version": "0.1.3",
+  "version": "0.1.0",
   "description": "A simple library to make html tables easy.",
   "main": "./dist/production.bundle.js",
   "scripts": {
-    "serve": "webpack-dev-server --config webpack.development.js",
+    "web-serve": "webpack-dev-server --config webpack.development.js",
     "watch": "webpack --config webpack.development.js --watch",
+    "serve": "live-server --port=1001 --watch=dist --open=/dist/development.bundle.js",
     "build": "webpack --config webpack.production.js"
   },
   "keywords": [],

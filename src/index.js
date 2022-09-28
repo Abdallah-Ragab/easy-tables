@@ -1,8 +1,10 @@
 import './styles/main.css';
-import { HtmlTable, JsonTable } from './modules/Table';
+import { APITable } from './modules/APITable';
+import { HTMLTable } from './modules/HTMLTable';
+import { JSONTable } from './modules/JSONTable';
 
-document.querySelectorAll(`[${HtmlTable.attributes.tableContainer}]`).forEach(table => {
-    table.tableInstance = new HtmlTable(table)
+document.querySelectorAll(`[${HTMLTable.attributes.tableContainer}]`).forEach(wrapper => {
+    wrapper.tableInstance = new HTMLTable(wrapper)
 });
 
-export { HtmlTable, JsonTable }
+export { HTMLTable, JSONTable, APITable }
