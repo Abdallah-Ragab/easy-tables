@@ -154,6 +154,9 @@
                 "type": "image",
                 "sort": false
             },
+            "department": {
+                "type": "bold",
+            },
             "gender": {
                 "type": "label",
                 "colorCode": [
@@ -186,7 +189,17 @@
             },
             "edit": {
                 "type": "button",
-                "color": "red"
+                "color": "red",
+                "value": "Edit me",
+                callback: ()=>{console.log("edited successfully")}
+            },
+            "man": {
+                "type": "label",
+                "text": "message",
+                "value": "hello world",
+                "color": "red",
+                "data": false,
+                sort: false
             }
         }
     }
