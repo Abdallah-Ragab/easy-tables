@@ -1,8 +1,8 @@
 export const tableTemplates =  {
     "table" : `
         <table class='min-w-full rounded border-gray-700 bg-gray-50'>
-            <thead>\${data['thead']}</thead>
-            <tbody>\${data['tbody']}</tbody>
+            <thead style="\${data['headStyle']}">\${data['thead']}</thead>
+            <tbody style="\${data['bodyStyle']}">\${data['tbody']}</tbody>
         </table>
         `,
     "headRow" : `
@@ -78,11 +78,10 @@ export const tableTemplates =  {
         </div>  
     `,
     "headRowProp" : `
-        <tr class="bg-gray-200 whitespace-nowrap text-gray-700 font-semibold capitalize sticky -top-1 z-10 animate-pulse">
-            <th class="h-10 w-4/12"></th>
-            <th class="h-10 w-2/12"></th>
-            <th class="h-10 w-6/12"></th>
-        </tr>
+        <tr class="bg-gray-200 whitespace-nowrap text-gray-700 font-semibold capitalize sticky -top-1 z-10 animate-pulse">\${data['columns']}</tr>
+    `,
+    "headColumnProp" : `
+        <th class="h-10"></th>
     `,
     "bodyRowProp" : `
         <tr class="border-b border-gray-150 whitespace-nowrap text-gray-500 text-sm animate-pulse">\${data['row']}</tr>

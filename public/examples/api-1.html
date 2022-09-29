@@ -10,6 +10,7 @@
     <h2>API Table</h2>
     <div id="table-container-json">
     </div>
+    <div class="rounded px-4 py-1 bg-lime-700 text-gray-100 cursor-pointer" onclick=handleClick()>Update Table</div>
 </body>
 </html>
 <script src="../../dist/development.bundle.js"></script>
@@ -203,6 +204,131 @@
         }
     }
     )
+    const handleClick = () => {
+        Table.update(
+            data = [
+                    {
+                        "id": 11,
+                        "name": "Maurice Crona DDS",
+                        "image": "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/477.jpg",
+                        "gender": "female",
+                        "email": "Vivian.Marquardt2@hotmail.com",
+                        "phone": "+1 380-116-093",
+                        "job": "Future Implementation Producer",
+                        "department": "Shoes",
+                        "Company": "engage robust partnerships",
+                        "state": "offline"
+                    },
+                    {
+                        "id": 12,
+                        "name": "Dr. Floyd Larkin",
+                        "image": "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/1076.jpg",
+                        "gender": "male",
+                        "email": "Rae_Gislason@gmail.com",
+                        "phone": "+1 929-362-509",
+                        "job": "Regional Paradigm Director",
+                        "department": "Games",
+                        "Company": "e-enable web-enabled methodologies",
+                        "state": "online"
+                    },
+                    {
+                        "id": 13,
+                        "name": "Celia Hudson",
+                        "image": "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/283.jpg",
+                        "gender": "male",
+                        "email": "Tyler_VonRueden@yahoo.com",
+                        "phone": "+1 741-002-324",
+                        "job": "Central Security Strategist",
+                        "department": "Jewelery",
+                        "Company": "seize dot-com blockchains",
+                        "state": "online"
+                    },
+                    {
+                        "id": 14,
+                        "name": "Russell Rippin",
+                        "image": "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/1209.jpg",
+                        "gender": "female",
+                        "email": "Tomas_Flatley59@gmail.com",
+                        "phone": "+1 602-926-774",
+                        "job": "Legacy Identity Architect",
+                        "department": "Clothing",
+                        "Company": "harness e-business content",
+                        "state": "online"
+                    },
+                    {
+                        "id": 15,
+                        "name": "Mr. Diana Ratke",
+                        "image": "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/1168.jpg",
+                        "gender": "male",
+                        "email": "Hope57@yahoo.com",
+                        "phone": "+1 689-577-023",
+                        "job": "Direct Research Supervisor",
+                        "department": "Outdoors",
+                        "Company": "optimize enterprise e-commerce",
+                        "state": "online"
+                    },
+                    {
+                        "id": 16,
+                        "name": "Ms. Leslie Huels",
+                        "image": "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/22.jpg",
+                        "gender": "male",
+                        "email": "Ryley.Douglas44@yahoo.com",
+                        "phone": "+1 438-908-287",
+                        "job": "Central Quality Executive",
+                        "department": "Books",
+                        "Company": "transition enterprise web-readiness",
+                        "state": "online"
+                    },
+                    {
+                        "id": 17,
+                        "name": "Alfonso Schmidt",
+                        "image": "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/610.jpg",
+                        "gender": "male",
+                        "email": "Alva.Farrell@gmail.com",
+                        "phone": "+1 314-168-926",
+                        "job": "District Implementation Planner",
+                        "department": "Baby",
+                        "Company": "enable plug-and-play networks",
+                        "state": "offline"
+                    },
+                    {
+                        "id": 18,
+                        "name": "Mr. Jessie Conroy",
+                        "image": "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/670.jpg",
+                        "gender": "male",
+                        "email": "Dessie.Mann3@gmail.com",
+                        "phone": "+1 720-710-963",
+                        "job": "Global Accountability Executive",
+                        "department": "Grocery",
+                        "Company": "incentivize plug-and-play schemas",
+                        "state": "online"
+                    },
+                    {
+                        "id": 19,
+                        "name": "Victoria Swaniawski",
+                        "image": "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/1175.jpg",
+                        "gender": "male",
+                        "email": "Amara.Wisozk@yahoo.com",
+                        "phone": "+1 346-354-592",
+                        "job": "District Factors Specialist",
+                        "department": "Computers",
+                        "Company": "mesh robust architectures",
+                        "state": "online"
+                    },
+                    {
+                        "id": 20,
+                        "name": "Beulah Russel PhD",
+                        "image": "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/672.jpg",
+                        "gender": "male",
+                        "email": "Maryse63@yahoo.com",
+                        "phone": "+1 105-261-311",
+                        "job": "Product Research Officer",
+                        "department": "Industrial",
+                        "Company": "redefine transparent applications",
+                        "state": "online"
+                    }   
+            ])
+        }
 </script>
 <style>
     body {

@@ -1,5 +1,9 @@
-// TODO: add cell type html
+// TODO: add support for cell type html : this.dataInput > {param1} && this.optionsInput.headers > 1.dynamic: template=`<h1>\${param1}</h1>` 2.static: value=`<h1>hello</h1>`
+// TODO: create update method that takes optionally the initialization params and updates it. rerendering the table.
+// TODO: add support for this.dataInput to be url:string where a request will be made to obtain the dataInput object from json response.
+// TODO: manage the table states along the request life cycle.
 // TODO: add support for non data headers 1.can be added to this.optionsInput.headers 2.gets added to this.dataColumnsKeys 3. limited to non data cel types 4. at render getting value is skipped
+
 
 import { Table } from './Table';
 export class APITable extends Table{
@@ -16,12 +20,27 @@ export class APITable extends Table{
         this.initiate()
     }
     initiate(){
+        this.findTableWrapper()
+        this.setTableWrapperClasses()
+        this.readInput()
+        this.renderTable()
+        if (!this.emptyTable){
+            this.readPrimaryHtmlElements()
+            this.tableDataObject = this.extractDataFromHtml()
+            if(this.enableSelect){
+                this.getUniqueIdentifiers()
+            }
+            this.initiateEvents()
+        }
+    }
+    findTableWrapper(){
         if(typeof(this.tableWrapper) === "string"){
             this.tableWrapperElement = document.querySelector(this.tableWrapper)
         } else {
             this.tableWrapperElement = this.tableWrapper
         }
-
+    }
+    readInput(){
         this.dataColumnsKeys = this.dataInput.length > 0 ? Object.keys(this.dataInput[0]) : []
         this.nonDataColumnsKeys = Object.keys(this.optionsInput.headers).filter(key => !(this.dataColumnsKeys.includes(key)))
         this.allColumnsKeys = this.dataColumnsKeys.concat(this.nonDataColumnsKeys)
@@ -33,16 +52,25 @@ export class APITable extends Table{
         this.emptyHead = (this.optionsInput.headers.length === 0) || (this.optionsInput.headers === undefined)
         this.emptyBody = (this.dataInput.length === 0) || (this.dataInput === undefined)
         this.emptyTable = (this.emptyBody && this.emptyHead)
-
-        this.setTableWrapperClasses()
-        this.renderTable()
-        if (!this.emptyTable){
-            this.readPrimaryHtmlElements()
-            this.tableDataObject = this.extractDataFromHtml()
-            if(this.enableSelect){
-                this.getUniqueIdentifiers()
-            }
-            this.initiateEvents()
+    }
+    update(data = null, options = null){
+        if (data){this.dataInput = data}
+        if (options){this.optionsInput = options}
+        if (data || options) {
+            this.readInput()
+            // this.loadingBody()
+            this.loadingTable()
+            // setTimeout(()=>{
+            //     this.renderTable()
+            //     if (!this.emptyTable){
+            //         this.readPrimaryHtmlElements()
+            //         this.tableDataObject = this.extractDataFromHtml()
+            //         if(this.enableSelect){
+            //             this.getUniqueIdentifiers()
+            //         }
+            //         this.initiateEvents()
+            //     }
+            // }, 5000)   
         }
     }
     initiateEvents(){
@@ -81,30 +109,42 @@ export class APITable extends Table{
     // Building & Rendering a html table from json
     renderTable(bodyLoading, headLoading){
         // DO: re-write the empty table / empty head logic
+        if (bodyLoading) { this.tbodyHeight = this.bodyElement ? this.bodyElement.clientHeight: null                    }
+        if (headLoading) { this.WrapperWidth = this.tableWrapperElement ? this.tableWrapperElement.clientWidth : null   }
 
-        var tableHtml = this.buildTableHtml(bodyLoading, headLoading)
         this.tableWrapperElement.replaceChildren();
-        if(this.emptyTable) {
-            const emptyTemplate = this.constructor.htmlTemplates.emptyTablePlaceholder
-            this.tableWrapperElement.insertAdjacentHTML('afterbegin', emptyTemplate)
-            return
-        }      
+
+        if(this.emptyBody)          { var tableHtml = this.constructor.htmlTemplates.emptyBodyPlaceholder     }      
+        else if(this.emptyTable)    { var tableHtml = this.constructor.htmlTemplates.emptyTablePlaceholder    }
+        else                        { var tableHtml = this.buildTableHtml(bodyLoading, headLoading)           }
+
         this.tableWrapperElement.insertAdjacentHTML('afterbegin', tableHtml)  
-        if(this.emptyBody) {
-            const emptyTemplate = this.constructor.htmlTemplates.emptyBodyPlaceholder
-            this.tableWrapperElement.insertAdjacentHTML('beforeend', emptyTemplate)  
-        }      
     }
     buildTableHtml(bodyLoading, headLoading) {
-        var theadHtml = this.buildHeadHtml(headLoading)
-        var tbodyHtml = this.buildBodyHtml(bodyLoading, headLoading)
-        var tableTemplate = this.constructor.htmlTemplates['table']
-        var tableHtml = this.evaluateTemplate(tableTemplate, {"thead": theadHtml, "tbody": tbodyHtml})
+        // reset wrapper inline styles
+        this.tableWrapperElement.setAttribute('style', '')
+
+        const theadHtml = this.buildHeadHtml(headLoading)
+        const tbodyHtml = this.buildBodyHtml(bodyLoading, headLoading)
+        const tableTemplate = this.constructor.htmlTemplates['table']
+
+        let extras = {}
+        // making the height and width of the table consistent in all states 
+        if (bodyLoading && this.tbodyHeight) {
+            extras["bodyStyle"] = `height: ${this.tbodyHeight}px;`
+        }
+        if (headLoading && this.WrapperWidth) {
+            this.tableWrapperElement.setAttribute('style', `width: ${this.WrapperWidth}px;`)
+        }
+        const tableHtml = this.evaluateTemplate(tableTemplate, {"thead": theadHtml, "tbody": tbodyHtml, ...extras})
         return tableHtml
     }
     buildHeadHtml(headLoading){
         if (headLoading){
-            return this.constructor.htmlTemplates.headRowProp
+            const columnsCount = this.allColumnsKeys ? this.allColumnsKeys.length : 3
+            const headColumnPropTemplate = this.constructor.htmlTemplates.headColumnProp
+            const headColumnsHtml = [...Array(columnsCount)].map(()=> headColumnPropTemplate).join('')
+            return this.evaluateTemplate(this.constructor.htmlTemplates.headRowProp, {"columns": headColumnsHtml})
         }
         else {
             const headColumnTemplate = this.constructor.htmlTemplates.headColumn
@@ -151,13 +191,18 @@ export class APITable extends Table{
     }
     buildBodyHtml(bodyLoading, headLoading){
         if (bodyLoading){
-            if (headLoading){
-                var columnsCount = 3
-                var rowsCount = 5
-            } else {
-                var rowsCount = this.dataInput.length
-                var columnsCount = this.allColumnsKeys.length
-            }
+            // if (headLoading){
+            //     var columnsCount = 3
+            //     var rowsCount = 5
+            // } else {
+            //     var rowsCount = this.dataInput.length
+            //     var columnsCount = this.allColumnsKeys.length
+            // }
+            const rowsCount = this.dataInput ? this.dataInput.length : 5
+            const columnsCount = this.allColumnsKeys ? this.allColumnsKeys.length : 3
+
+            console.log(rowsCount, columnsCount)
+
             const tbodyArray = [...Array(rowsCount)].map(() => {
                 const propRowTemplate = this.constructor.htmlTemplates.bodyRowProp
                 const propCellTemplate = this.constructor.htmlTemplates.bodyCellProp
