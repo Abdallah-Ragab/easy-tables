@@ -1,4 +1,5 @@
 // TODO: add cell type html
+// TODO: add support for non data headers 1.can be added to this.optionsInput.headers 2.gets added to this.dataColumnsKeys 3. limited to non data cel types 4. at render getting value is skipped
 
 import { Table } from './Table';
 export class APITable extends Table{
@@ -11,10 +12,6 @@ export class APITable extends Table{
         this.tableWrapper = wrapper
         this.dataInput = data
         this.optionsInput = options
-        // this.uniqueIdentifierIndex = uniqueIdentifierIndex
-        // this.ignoredColumns = ignoredColumns
-        // this.enableSort = enableSort
-        // this.enableSelect = enableSelect
 
         this.initiate()
     }
@@ -25,13 +22,13 @@ export class APITable extends Table{
             this.tableWrapperElement = this.tableWrapper
         }
 
-        this.headColumnsKeys = this.dataInput.length > 0 ? Object.keys(this.dataInput[0]) : []
+        this.dataColumnsKeys = this.dataInput.length > 0 ? Object.keys(this.dataInput[0]) : []
+        this.nonDataColumnsKeys = Object.keys(this.optionsInput.headers).filter(key => !(this.dataColumnsKeys.includes(key)))
+        this.allColumnsKeys = this.dataColumnsKeys.concat(this.nonDataColumnsKeys)
+
         this.enableSelect = this.optionsInput.select || true
         this.enableSort = this.optionsInput.sort || true
         this.uniqueIdentifierKey = this.optionsInput.uniqueID
-        // DO: Replace ignoredColumns with the new syntax 
-        // this.ignoredColumns = this.optionsInput.headers.filter(header => header.hasOwnProperty("render") && (!header.render))
-        this.ignoredColumns = []
 
         this.emptyHead = (this.optionsInput.headers.length === 0) || (this.optionsInput.headers === undefined)
         this.emptyBody = (this.dataInput.length === 0) || (this.dataInput === undefined)
@@ -63,25 +60,15 @@ export class APITable extends Table{
         })
 
         // Button cells events
-        let buttonColumns = this.headColumnsKeys.map(col_key => {
+        let buttonColumns = this.allColumnsKeys.map(col_key => {
             const col = this.optionsInput.headers[col_key] || {}
             if (col.type == "button") return {[col_key]: col["callback"]}
         }).filter(callback => callback != undefined)
 
         this.tableDataObject.body.rows.forEach(row => {
             buttonColumns.forEach(col => {
-                // TEST: col is [key: callback] get col index from key
-
-                // Solution 1
-                // const headColElement = this.tableDataObject.head.columns.filter(column => column.element.getAttribute("key") === Object.keys(col)[0])
-                // const colIndex = this.tableDataObject.head.element.children.indexOf(headColElement)
-                // row.element.children[colIndex].querySelector('[table-button]').addEventListener('click', Object.values(col)[0])
-              
-                // row.cells[colIndex].element.querySelector('[table-button]').addEventListener('click', Object.values(col)[0])
-                
-                // Solution 2
-                const buttonCellElements = row.element.children.filter(el => el.getAttribute("key") === Object.keys(col)[0])
-                buttonCellElements.forEach(button => { button.querySelector('[table-button]').addEventListener('click', Object.values(col)[0]) })
+                const buttonCellElements = row.cells.filter(cell => cell.element.getAttribute("key") === Object.keys(col)[0])
+                buttonCellElements.forEach(button => { button.element.querySelector('[table-button]').addEventListener('click', Object.values(col)[0]) })
 
             })
         })
@@ -121,18 +108,26 @@ export class APITable extends Table{
         }
         else {
             const headColumnTemplate = this.constructor.htmlTemplates.headColumn
-            const headColumns = this.headColumnsKeys
+            const headColumns = this.allColumnsKeys
     
             const headColumnsHtmlArray = headColumns.map(col_key => {
                 const col = this.optionsInput.headers[col_key] || {}
                 const colText = col.text || col_key
                 let extras = {}
 
-                if(col.hasOwnProperty("render") && !(col.render)){return}         
-                if(col.type === 'button' || col.type == 'image'){
-                    col['sort'] = false
+                if(!col.hasOwnProperty("data") && (col.type == 'button' || col.type == 'image')){
+                    col.data = false
                 }
-                if ((this.enableSort && !col.hasOwnProperty('sort')) || (this.enableSort && col['sort'])) {
+                if(col.hasOwnProperty("data") && !col.data){
+                    extras['attributes'] = this.constructor.attributes.notData
+                    if (!col.hasOwnProperty("sort")) {
+                        col.sort = false
+                    }
+                }
+
+                if(col.hasOwnProperty("render") && !(col.render)){return}         
+
+                if (((this.enableSort && !col.hasOwnProperty('sort')) || (this.enableSort && col['sort']))) {
                     extras["sort"] = this.evaluateTemplate(this.constructor.htmlTemplates.headSort) 
                 }
                 if (col['filter']) {
@@ -161,7 +156,7 @@ export class APITable extends Table{
                 var rowsCount = 5
             } else {
                 var rowsCount = this.dataInput.length
-                var columnsCount = this.headColumnsKeys.length
+                var columnsCount = this.allColumnsKeys.length
             }
             const tbodyArray = [...Array(rowsCount)].map(() => {
                 const propRowTemplate = this.constructor.htmlTemplates.bodyRowProp
@@ -178,14 +173,17 @@ export class APITable extends Table{
         else {
             const bodyRows = this.dataInput
             var tBodyHtml = bodyRows.map(row => {
-                const rowCells = this.headColumnsKeys
+                const rowCells = this.allColumnsKeys
                 const rowCellsHtmlArray = rowCells.map(cell_key => {
+
                     const cell = this.optionsInput.headers[cell_key] || {}
-                    const cellValue = row[cell_key]
+                    const cellValue = row[cell_key] || cell.value || ""
                     const cellType = cell.type || 'text'
                     const cellExtras = {}
                     const cellTemplate = this.constructor.htmlTemplates.bodyCell[cellType]
-                    if(cell.hasOwnProperty("render") && !(cell.render)){return}         
+
+                    if(cell.hasOwnProperty("render") && !(cell.render)){return}     
+
                     if (cell.colorCode) {
                         const conditionsDictionary = {'equal': '==='}
                         cell.colorCode.some((cond) => {
@@ -194,11 +192,22 @@ export class APITable extends Table{
                                 return true
                             }
                         }) 
-                    }
-                    if(cell.type == 'button'){
+                    } else if (cell.color) {
                         cellExtras['color'] = cell.color
-                        cellExtras['text'] = cell.text
                     }
+
+                    // if(!cell.hasOwnProperty("data") && (cell.type == 'button' || cell.type == 'image')){
+                    //     cell.data = false
+                    // }
+
+                    if(cell.type == 'button' && !(cellExtras['text'])){
+                        cellExtras['text'] = cell.text || cell_key
+                    }
+
+                    // if(cell.hasOwnProperty("data") && !cell.data){
+                    //     cellExtras['attributes'] = this.constructor.attributes.notData
+                    // }
+
                     const cellHtml = this.evaluateTemplate(cellTemplate, {"key": cell_key, "text": cellValue, ...cellExtras})
                     return cellHtml
                 })

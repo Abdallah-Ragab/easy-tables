@@ -24,17 +24,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _Table__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Table */ "./src/modules/Table.js");
 // TODO: add cell type html
+// TODO: add support for non data headers 1.can be added to this.optionsInput.headers 2.gets added to this.dataColumnsKeys 3. limited to non data cel types 4. at render getting value is skipped
 
 class APITable extends _Table__WEBPACK_IMPORTED_MODULE_0__.Table {
   constructor(wrapper, data, options) {
     super();
     this.tableWrapper = wrapper;
     this.dataInput = data;
-    this.optionsInput = options; // this.uniqueIdentifierIndex = uniqueIdentifierIndex
-    // this.ignoredColumns = ignoredColumns
-    // this.enableSort = enableSort
-    // this.enableSelect = enableSelect
-
+    this.optionsInput = options;
     this.initiate();
   }
 
@@ -45,13 +42,12 @@ class APITable extends _Table__WEBPACK_IMPORTED_MODULE_0__.Table {
       this.tableWrapperElement = this.tableWrapper;
     }
 
-    this.headColumnsKeys = this.dataInput.length > 0 ? Object.keys(this.dataInput[0]) : [];
+    this.dataColumnsKeys = this.dataInput.length > 0 ? Object.keys(this.dataInput[0]) : [];
+    this.nonDataColumnsKeys = Object.keys(this.optionsInput.headers).filter(key => !this.dataColumnsKeys.includes(key));
+    this.allColumnsKeys = this.dataColumnsKeys.concat(this.nonDataColumnsKeys);
     this.enableSelect = this.optionsInput.select || true;
     this.enableSort = this.optionsInput.sort || true;
-    this.uniqueIdentifierKey = this.optionsInput.uniqueID; // DO: Replace ignoredColumns with the new syntax 
-    // this.ignoredColumns = this.optionsInput.headers.filter(header => header.hasOwnProperty("render") && (!header.render))
-
-    this.ignoredColumns = [];
+    this.uniqueIdentifierKey = this.optionsInput.uniqueID;
     this.emptyHead = this.optionsInput.headers.length === 0 || this.optionsInput.headers === undefined;
     this.emptyBody = this.dataInput.length === 0 || this.dataInput === undefined;
     this.emptyTable = this.emptyBody && this.emptyHead;
@@ -84,7 +80,7 @@ class APITable extends _Table__WEBPACK_IMPORTED_MODULE_0__.Table {
       }
     }); // Button cells events
 
-    let buttonColumns = this.headColumnsKeys.map(col_key => {
+    let buttonColumns = this.allColumnsKeys.map(col_key => {
       const col = this.optionsInput.headers[col_key] || {};
       if (col.type == "button") return {
         [col_key]: col["callback"]
@@ -92,16 +88,9 @@ class APITable extends _Table__WEBPACK_IMPORTED_MODULE_0__.Table {
     }).filter(callback => callback != undefined);
     this.tableDataObject.body.rows.forEach(row => {
       buttonColumns.forEach(col => {
-        // TEST: col is [key: callback] get col index from key
-        // Solution 1
-        // const headColElement = this.tableDataObject.head.columns.filter(column => column.element.getAttribute("key") === Object.keys(col)[0])
-        // const colIndex = this.tableDataObject.head.element.children.indexOf(headColElement)
-        // row.element.children[colIndex].querySelector('[table-button]').addEventListener('click', Object.values(col)[0])
-        // row.cells[colIndex].element.querySelector('[table-button]').addEventListener('click', Object.values(col)[0])
-        // Solution 2
-        const buttonCellElements = row.element.children.filter(el => el.getAttribute("key") === Object.keys(col)[0]);
+        const buttonCellElements = row.cells.filter(cell => cell.element.getAttribute("key") === Object.keys(col)[0]);
         buttonCellElements.forEach(button => {
-          button.querySelector('[table-button]').addEventListener('click', Object.values(col)[0]);
+          button.element.querySelector('[table-button]').addEventListener('click', Object.values(col)[0]);
         });
       });
     });
@@ -148,18 +137,26 @@ class APITable extends _Table__WEBPACK_IMPORTED_MODULE_0__.Table {
       return this.constructor.htmlTemplates.headRowProp;
     } else {
       const headColumnTemplate = this.constructor.htmlTemplates.headColumn;
-      const headColumns = this.headColumnsKeys;
+      const headColumns = this.allColumnsKeys;
       const headColumnsHtmlArray = headColumns.map(col_key => {
         const col = this.optionsInput.headers[col_key] || {};
         const colText = col.text || col_key;
         let extras = {};
 
-        if (col.hasOwnProperty("render") && !col.render) {
-          return;
+        if (!col.hasOwnProperty("data") && (col.type == 'button' || col.type == 'image')) {
+          col.data = false;
         }
 
-        if (col.type === 'button' || col.type == 'image') {
-          col['sort'] = false;
+        if (col.hasOwnProperty("data") && !col.data) {
+          extras['attributes'] = this.constructor.attributes.notData;
+
+          if (!col.hasOwnProperty("sort")) {
+            col.sort = false;
+          }
+        }
+
+        if (col.hasOwnProperty("render") && !col.render) {
+          return;
         }
 
         if (this.enableSort && !col.hasOwnProperty('sort') || this.enableSort && col['sort']) {
@@ -198,7 +195,7 @@ class APITable extends _Table__WEBPACK_IMPORTED_MODULE_0__.Table {
         var rowsCount = 5;
       } else {
         var rowsCount = this.dataInput.length;
-        var columnsCount = this.headColumnsKeys.length;
+        var columnsCount = this.allColumnsKeys.length;
       }
 
       const tbodyArray = [...Array(rowsCount)].map(() => {
@@ -221,10 +218,10 @@ class APITable extends _Table__WEBPACK_IMPORTED_MODULE_0__.Table {
     } else {
       const bodyRows = this.dataInput;
       var tBodyHtml = bodyRows.map(row => {
-        const rowCells = this.headColumnsKeys;
+        const rowCells = this.allColumnsKeys;
         const rowCellsHtmlArray = rowCells.map(cell_key => {
           const cell = this.optionsInput.headers[cell_key] || {};
-          const cellValue = row[cell_key];
+          const cellValue = row[cell_key] || cell.value || "";
           const cellType = cell.type || 'text';
           const cellExtras = {};
           const cellTemplate = this.constructor.htmlTemplates.bodyCell[cellType];
@@ -243,12 +240,19 @@ class APITable extends _Table__WEBPACK_IMPORTED_MODULE_0__.Table {
                 return true;
               }
             });
-          }
-
-          if (cell.type == 'button') {
+          } else if (cell.color) {
             cellExtras['color'] = cell.color;
-            cellExtras['text'] = cell.text;
-          }
+          } // if(!cell.hasOwnProperty("data") && (cell.type == 'button' || cell.type == 'image')){
+          //     cell.data = false
+          // }
+
+
+          if (cell.type == 'button' && !cellExtras['text']) {
+            cellExtras['text'] = cell.text || cell_key;
+          } // if(cell.hasOwnProperty("data") && !cell.data){
+          //     cellExtras['attributes'] = this.constructor.attributes.notData
+          // }
+
 
           const cellHtml = this.evaluateTemplate(cellTemplate, {
             "key": cell_key,
@@ -696,6 +700,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "Table": () => (/* binding */ Table)
 /* harmony export */ });
 /* harmony import */ var _templates_Table__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../templates/Table */ "./src/templates/Table.js");
+// TODO: change non-data attribute to not-data
 
 class Table {
   static attributes = {
@@ -776,7 +781,7 @@ class Table {
   }
 
   constructHeadColumnObject(columnElement, columnID) {
-    var isNotDataCol = columnElement.hasAttribute(this.constructor.attributes.notData) || columnID in this.ignoredColumns;
+    var isNotDataCol = columnElement.hasAttribute(this.constructor.attributes.notData) || this.ignoredColumns && columnID in this.ignoredColumns;
     return {
       ID: columnID,
       element: columnElement,
@@ -1028,7 +1033,7 @@ const tableTemplates = {
         </div>
         `,
   "headColumn": `
-        <th key="\${data['key']}" class="\${data['isNotData']} text-start px-4 py-2">
+        <th key="\${data['key']}" \${data['attributes']} class="text-start px-4 py-2">
             <div class="flex justify-between items-center space-x-2">
                 <div header-value>\${data['text']}</div>
                 <div class="flex items-center space-x-1">
@@ -1043,19 +1048,19 @@ const tableTemplates = {
         `,
   "bodyCell": {
     "text": `
-            <td key="\${data['key']}" class="px-4 py-2">\${data['text']}</td>
+            <td key="\${data['key']}" \${data['attributes']} class="px-4 py-2">\${data['text']}</td>
             `,
     "bold": `
-            <td key="\${data['key']}" class="px-4 py-2 text-gray-700 font-bold">\${data['text']}</td>
+            <td key="\${data['key']}" \${data['attributes']} class="px-4 py-2 text-gray-700 font-bold">\${data['text']}</td>
             `,
     "image": `
-            <td key="\${data['key']}" non-data class="px-4 py-2 text-gray-700 font-bold"><img table-image class="w-12 h-12 border rounded-full" src="\${data['text']}"></td>
+            <td key="\${data['key']}" \${data['attributes']} class="px-4 py-2 text-gray-700 font-bold"><img table-image class="w-12 h-12 border rounded-full" src="\${data['text']}"></td>
             `,
     "label": `
-            <td key="\${data['key']}" non-data class="px-4 py-2"><div table-label class="bg-\${data['color']}-100 text-\${data['color']}-700 rounded shadow w-fit text-center font-semibold px-3 py-1">\${data['text']}</div></td>
+            <td key="\${data['key']}" \${data['attributes']} class="px-4 py-2"><div table-label class="bg-\${data['color']}-100 text-\${data['color']}-700 rounded shadow w-fit text-center font-semibold px-3 py-1">\${data['text']}</div></td>
             `,
     "button": `
-            <td key="\${data['key']}" non-data class="px-4 py-2"><span table-button class="text-\${data['color']}-800 font-bold hover:text-\${data['color']}-700 cursor-pointer capitalize">\${data['text']}</span></td>
+            <td key="\${data['key']}" \${data['attributes']} class="px-4 py-2"><span table-button class="text-\${data['color']}-800 font-bold hover:text-\${data['color']}-700 cursor-pointer capitalize">\${data['text']}</span></td>
             `
   },
   "rowSelect": `

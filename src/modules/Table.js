@@ -1,3 +1,5 @@
+// TODO: change non-data attribute to not-data
+
 import { tableTemplates } from "../templates/Table"
 export class Table {
     static attributes = {
@@ -77,7 +79,7 @@ export class Table {
     }
     constructHeadColumnObject(columnElement, columnID){
 
-        var isNotDataCol = columnElement.hasAttribute(this.constructor.attributes.notData) || (columnID in this.ignoredColumns)
+        var isNotDataCol = columnElement.hasAttribute(this.constructor.attributes.notData) || (this.ignoredColumns) && (columnID in this.ignoredColumns)
         return {
             ID: columnID,
             element: columnElement,

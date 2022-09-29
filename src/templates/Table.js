@@ -32,7 +32,7 @@ export const tableTemplates =  {
         </div>
         `,
     "headColumn" : `
-        <th key="\${data['key']}" class="\${data['isNotData']} text-start px-4 py-2">
+        <th key="\${data['key']}" \${data['attributes']} class="text-start px-4 py-2">
             <div class="flex justify-between items-center space-x-2">
                 <div header-value>\${data['text']}</div>
                 <div class="flex items-center space-x-1">
@@ -47,19 +47,19 @@ export const tableTemplates =  {
         `,
     "bodyCell" : {
         "text" : `
-            <td key="\${data['key']}" class="px-4 py-2">\${data['text']}</td>
+            <td key="\${data['key']}" \${data['attributes']} class="px-4 py-2">\${data['text']}</td>
             `,
         "bold" : `
-            <td key="\${data['key']}" class="px-4 py-2 text-gray-700 font-bold">\${data['text']}</td>
+            <td key="\${data['key']}" \${data['attributes']} class="px-4 py-2 text-gray-700 font-bold">\${data['text']}</td>
             `,
         "image" : `
-            <td key="\${data['key']}" non-data class="px-4 py-2 text-gray-700 font-bold"><img table-image class="w-12 h-12 border rounded-full" src="\${data['text']}"></td>
+            <td key="\${data['key']}" \${data['attributes']} class="px-4 py-2 text-gray-700 font-bold"><img table-image class="w-12 h-12 border rounded-full" src="\${data['text']}"></td>
             `,
         "label" : `
-            <td key="\${data['key']}" non-data class="px-4 py-2"><div table-label class="bg-\${data['color']}-100 text-\${data['color']}-700 rounded shadow w-fit text-center font-semibold px-3 py-1">\${data['text']}</div></td>
+            <td key="\${data['key']}" \${data['attributes']} class="px-4 py-2"><div table-label class="bg-\${data['color']}-100 text-\${data['color']}-700 rounded shadow w-fit text-center font-semibold px-3 py-1">\${data['text']}</div></td>
             `,
         "button" : `
-            <td key="\${data['key']}" non-data class="px-4 py-2"><span table-button class="text-\${data['color']}-800 font-bold hover:text-\${data['color']}-700 cursor-pointer capitalize">\${data['text']}</span></td>
+            <td key="\${data['key']}" \${data['attributes']} class="px-4 py-2"><span table-button class="text-\${data['color']}-800 font-bold hover:text-\${data['color']}-700 cursor-pointer capitalize">\${data['text']}</span></td>
             `,
     },
     "rowSelect" : `
