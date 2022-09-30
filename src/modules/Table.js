@@ -232,7 +232,7 @@ export class Table {
         const getUniqueIDByKey = (row, idx, key) => {
             const cellOfUniqueIDFromTable = row.cells.find(cell => cell.element.getAttribute('key') === key)
             const uniqueIDFromTable = cellOfUniqueIDFromTable ? cellOfUniqueIDFromTable.value : false
-            const uniqueIDFromDataInput = this.dataInput[idx][key]
+            const uniqueIDFromDataInput = this.rowsInput[idx][key]
             const uniqueID = uniqueIDFromTable || uniqueIDFromDataInput
             return uniqueID
 

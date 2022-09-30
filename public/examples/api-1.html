@@ -8,327 +8,58 @@
 </head>
 <body>
     <h2>API Table</h2>
-    <div id="table-container-json">
+    <div id="table-container-api"></div>
+    <div class="flex">
+        <div class="rounded px-4 py-1 mx-1 my-2 bg-rose-100 text-rose-700 cursor-pointer" onclick="handleClickUpdateEmptyTable(this)">Get Empty Table</div>
+        <div class="rounded px-4 py-1 mx-1 my-2 bg-rose-100 text-rose-700 cursor-pointer" onclick="handleClickUpdateEmptyBody(this)">Get Empty Body</div>
+        <div class="rounded px-4 py-1 mx-1 my-2 bg-rose-100 text-rose-700 cursor-pointer" onclick="handleClickUpdateBoth(this)">Update Table</div>
+        <div class="rounded px-4 py-1 mx-1 my-2 bg-rose-100 text-rose-700 cursor-pointer" onclick="handleClickUpdateData(this)">Update Data</div>
     </div>
-    <div class="rounded px-4 py-1 bg-lime-700 text-gray-100 cursor-pointer" onclick=handleClick()>Update Table</div>
+    <div class="flex">
+        <div class="rounded px-4 py-1 mx-1 my-2 bg-rose-100 text-rose-700 cursor-pointer" data-page="1" onclick="handleClickGoToPage(this)">1</div>
+        <div class="rounded px-4 py-1 mx-1 my-2 bg-rose-100 text-rose-700 cursor-pointer" data-page="2" onclick="handleClickGoToPage(this)">2</div>
+        <div class="rounded px-4 py-1 mx-1 my-2 bg-rose-100 text-rose-700 cursor-pointer" data-page="3" onclick="handleClickGoToPage(this)">3</div>
+        <div class="rounded px-4 py-1 mx-1 my-2 bg-rose-100 text-rose-700 cursor-pointer" data-page="4" onclick="handleClickGoToPage(this)">4</div>
+        <div class="rounded px-4 py-1 mx-1 my-2 bg-rose-100 text-rose-700 cursor-pointer" data-page="5" onclick="handleClickGoToPage(this)">5</div>
+    </div>
 </body>
 </html>
 <script src="../../dist/development.bundle.js"></script>
 <script>
-    const Table = new easytables.APITable(
-        wrapper = "#table-container-json",
-        data = [
-            {
-                "id": 1,
-                "name": "Edmond Schaden",
-                "image": "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/665.jpg",
-                "gender": "female",
-                "email": "Erika_Gibson@hotmail.com",
-                "phone": "+1 169-424-495",
-                "job": "International Accountability Representative",
-                "department": "Industrial",
-                "Company": "drive killer metrics",
-                "state": "offline"
-            },
-            {
-                "id": 2,
-                "name": "Steven Glover",
-                "image": "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/1064.jpg",
-                "gender": "female",
-                "email": "Abagail.Nolan82@hotmail.com",
-                "phone": "+1 818-158-915",
-                "job": "Chief Intranet Strategist",
-                "department": "Outdoors",
-                "Company": "synergize sexy portals",
-                "state": "offline"
-            },
-            {
-                "id": 3,
-                "name": "Frances Turcotte",
-                "image": "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/413.jpg",
-                "gender": "male",
-                "email": "Lesley_Stracke42@gmail.com",
-                "phone": "+1 853-964-857",
-                "job": "International Paradigm Executive",
-                "department": "Jewelery",
-                "Company": "monetize strategic eyeballs",
-                "state": "offline"
-            },
-            {
-                "id": 4,
-                "name": "Gabriel Lynch",
-                "image": "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/802.jpg",
-                "gender": "female",
-                "email": "Claudie55@hotmail.com",
-                "phone": "+1 638-760-160",
-                "job": "Corporate Creative Technician",
-                "department": "Health",
-                "Company": "reinvent robust vortals",
-                "state": "offline"
-            },
-            {
-                "id": 5,
-                "name": "Angelina Goyette MD",
-                "image": "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/864.jpg",
-                "gender": "male",
-                "email": "Aliya85@hotmail.com",
-                "phone": "+1 360-377-713",
-                "job": "Principal Research Representative",
-                "department": "Clothing",
-                "Company": "leverage B2C networks",
-                "state": "online"
-            },
-            {
-                "id": 6,
-                "name": "Edna Littel",
-                "image": "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/1151.jpg",
-                "gender": "male",
-                "email": "Crawford_Johnston23@yahoo.com",
-                "phone": "+1 759-074-355",
-                "job": "Forward Applications Manager",
-                "department": "Games",
-                "Company": "innovate intuitive interfaces",
-                "state": "offline"
-            },
-            {
-                "id": 7,
-                "name": "Kerry Bernier DDS",
-                "image": "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/110.jpg",
-                "gender": "female",
-                "email": "Durward.Jerde@gmail.com",
-                "phone": "+1 044-773-998",
-                "job": "Chief Program Technician",
-                "department": "Movies",
-                "Company": "aggregate rich schemas",
-                "state": "offline"
-            },
-            {
-                "id": 8,
-                "name": "Fernando Powlowski",
-                "image": "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/606.jpg",
-                "gender": "female",
-                "email": "Dan_Stiedemann@yahoo.com",
-                "phone": "+1 107-238-706",
-                "job": "Dynamic Functionality Designer",
-                "department": "Tools",
-                "Company": "generate global systems",
-                "state": "offline"
-            },
-            {
-                "id": 9,
-                "name": "Henrietta Willms",
-                "image": "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/775.jpg",
-                "gender": "male",
-                "email": "Toby.Shanahan@yahoo.com",
-                "phone": "+1 126-107-409",
-                "job": "Internal Tactics Engineer",
-                "department": "Shoes",
-                "Company": "deliver customized functionalities",
-                "state": "offline"
-            },
-            {
-                "id": 10,
-                "name": "Edna Steuber",
-                "image": "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/871.jpg",
-                "gender": "female",
-                "email": "Geovanny_Glover@gmail.com",
-                "phone": "+1 008-347-257",
-                "job": "Product Division Analyst",
-                "department": "Clothing",
-                "Company": "expedite world-class experiences",
-                "state": "online"
-            }
-        ],
-        options = {
-        "uniqueID": "id",
-        "headers": {
-            "id": {
-                "render": false
-            },
-            "name": {
-                "text": "Full Name",
-                "type": "bold",
-                filter: ()=>{console.log("Filtering ...")}
-            },
-            "image": {
-                "text": "Avatar",
-                "type": "image",
-                "sort": false
-            },
-            "department": {
-                "type": "bold",
-            },
-            "gender": {
-                "type": "label",
-                "colorCode": [
-                    {
-                        "condition": "equal",
-                        "value": "female",
-                        "color": "pink"
-                    },
-                    {
-                        "condition": "equal",
-                        "value": "male",
-                        "color": "blue"
-                    }
-                ]
-            },
-            "state": {
-                "type": "label",
-                "colorCode": [
-                    {
-                        "condition": "equal",
-                        "value": "online",
-                        "color": "green"
-                    },
-                    {
-                        "condition": "equal",
-                        "value": "offline",
-                        "color": "red"
-                    }
-                ]
-            },
-            "edit": {
-                "type": "button",
-                "color": "emerald",
-                "value": "Edit me",
-                callback: ()=>{console.log("edited successfully")}
-            },
-            "man": {
-                "type": "bold",
-                "text": "message",
-                "value": "hello world",
-                "color": "red",
-                "data": false,
-            }
-        }
-    }
+
+    const TableAPI = new easytables.APITable(
+        wrapper = "#table-container-api",
+        rows = {url: "http://127.0.0.1:1002/", onsuccess: (res)=>res.json().then((data)=>data.rows)},
+        options = {url: "http://127.0.0.1:1002/", onsuccess: (res)=>res.json().then((data)=>data.options)}
     )
-    const handleClick = () => {
-        Table.update(
-            data = [
-                    {
-                        "id": 11,
-                        "name": "Maurice Crona DDS",
-                        "image": "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/477.jpg",
-                        "gender": "female",
-                        "email": "Vivian.Marquardt2@hotmail.com",
-                        "phone": "+1 380-116-093",
-                        "job": "Future Implementation Producer",
-                        "department": "Shoes",
-                        "Company": "engage robust partnerships",
-                        "state": "offline"
-                    },
-                    {
-                        "id": 12,
-                        "name": "Dr. Floyd Larkin",
-                        "image": "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/1076.jpg",
-                        "gender": "male",
-                        "email": "Rae_Gislason@gmail.com",
-                        "phone": "+1 929-362-509",
-                        "job": "Regional Paradigm Director",
-                        "department": "Games",
-                        "Company": "e-enable web-enabled methodologies",
-                        "state": "online"
-                    },
-                    {
-                        "id": 13,
-                        "name": "Celia Hudson",
-                        "image": "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/283.jpg",
-                        "gender": "male",
-                        "email": "Tyler_VonRueden@yahoo.com",
-                        "phone": "+1 741-002-324",
-                        "job": "Central Security Strategist",
-                        "department": "Jewelery",
-                        "Company": "seize dot-com blockchains",
-                        "state": "online"
-                    },
-                    {
-                        "id": 14,
-                        "name": "Russell Rippin",
-                        "image": "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/1209.jpg",
-                        "gender": "female",
-                        "email": "Tomas_Flatley59@gmail.com",
-                        "phone": "+1 602-926-774",
-                        "job": "Legacy Identity Architect",
-                        "department": "Clothing",
-                        "Company": "harness e-business content",
-                        "state": "online"
-                    },
-                    {
-                        "id": 15,
-                        "name": "Mr. Diana Ratke",
-                        "image": "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/1168.jpg",
-                        "gender": "male",
-                        "email": "Hope57@yahoo.com",
-                        "phone": "+1 689-577-023",
-                        "job": "Direct Research Supervisor",
-                        "department": "Outdoors",
-                        "Company": "optimize enterprise e-commerce",
-                        "state": "online"
-                    },
-                    {
-                        "id": 16,
-                        "name": "Ms. Leslie Huels",
-                        "image": "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/22.jpg",
-                        "gender": "male",
-                        "email": "Ryley.Douglas44@yahoo.com",
-                        "phone": "+1 438-908-287",
-                        "job": "Central Quality Executive",
-                        "department": "Books",
-                        "Company": "transition enterprise web-readiness",
-                        "state": "online"
-                    },
-                    {
-                        "id": 17,
-                        "name": "Alfonso Schmidt",
-                        "image": "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/610.jpg",
-                        "gender": "male",
-                        "email": "Alva.Farrell@gmail.com",
-                        "phone": "+1 314-168-926",
-                        "job": "District Implementation Planner",
-                        "department": "Baby",
-                        "Company": "enable plug-and-play networks",
-                        "state": "offline"
-                    },
-                    {
-                        "id": 18,
-                        "name": "Mr. Jessie Conroy",
-                        "image": "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/670.jpg",
-                        "gender": "male",
-                        "email": "Dessie.Mann3@gmail.com",
-                        "phone": "+1 720-710-963",
-                        "job": "Global Accountability Executive",
-                        "department": "Grocery",
-                        "Company": "incentivize plug-and-play schemas",
-                        "state": "online"
-                    },
-                    {
-                        "id": 19,
-                        "name": "Victoria Swaniawski",
-                        "image": "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/1175.jpg",
-                        "gender": "male",
-                        "email": "Amara.Wisozk@yahoo.com",
-                        "phone": "+1 346-354-592",
-                        "job": "District Factors Specialist",
-                        "department": "Computers",
-                        "Company": "mesh robust architectures",
-                        "state": "online"
-                    },
-                    {
-                        "id": 20,
-                        "name": "Beulah Russel PhD",
-                        "image": "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/672.jpg",
-                        "gender": "male",
-                        "email": "Maryse63@yahoo.com",
-                        "phone": "+1 105-261-311",
-                        "job": "Product Research Officer",
-                        "department": "Industrial",
-                        "Company": "redefine transparent applications",
-                        "state": "online"
-                    }   
-            ])
-        }
+    const handleClickGoToPage = (e) => {
+        const page = e.getAttribute("data-page")
+        TableAPI.update(
+            rows = {url: `http://127.0.0.1:1002/?page=${page}`, onsuccess: (res)=>res.json().then((data)=>data.rows)},
+        )
+    }
+    const handleClickUpdateBoth = () => {
+        TableAPI.update(
+            rows = {url: "http://127.0.0.1:1002/?page=2", onsuccess: (res)=>res.json().then((data)=>data.rows)},
+            options = {url: "http://127.0.0.1:1002/?page=2", onsuccess: (res)=>res.json().then((data)=>data.options)}
+        )
+    }
+    const handleClickUpdateData = () => {
+        TableAPI.update(
+            rows = {url: "http://127.0.0.1:1002/?page=2", onsuccess: (res)=>res.json().then((data)=>data.rows)}
+        )
+    }
+    const handleClickUpdateEmptyTable = () => {
+        TableAPI.update(
+            rows = {url: "http://127.0.0.1:1002/?empty_array"},
+            options = {url: "http://127.0.0.1:1002/?empty_object"}
+        )
+    }
+    const handleClickUpdateEmptyBody = () => {
+        TableAPI.update(
+            rows = {url: "http://127.0.0.1:1002/?empty_array"},
+        )
+    }
 </script>
 <style>
     body {
@@ -339,6 +70,7 @@
     }
     #table-container-json {
         width: fit-content;
-        min-width: 50%;
+        min-width: 400px;
+        max-height: 400px;
     }
 </style>
