@@ -223,7 +223,7 @@ export class AbstractTable {
 
         const uniqueIDKeySet = this.hasOwnProperty("optionsInput") && this.optionsInput.hasOwnProperty("uniqueID")
         const uniqueIDColumnIndexSetByAttribute = headColumns.findIndex(column => column.element.hasAttribute(this.constructor.attributes.columnUniqueID)) !== -1
-        const uniqueIDColumnIndexSetByInitialization = this.hasOwnProperty("uniqueIdentifierIndex")
+        const uniqueIDColumnIndexSetByInitialization = Boolean(this.uniqueIdentifierIndex)
 
 
         const getUniqueIDByIndex = (row, index) => {

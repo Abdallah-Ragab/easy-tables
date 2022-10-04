@@ -256,7 +256,7 @@ class AbstractTable {
     const headColumns = this.tableDataObject.head.columns;
     const uniqueIDKeySet = this.hasOwnProperty("optionsInput") && this.optionsInput.hasOwnProperty("uniqueID");
     const uniqueIDColumnIndexSetByAttribute = headColumns.findIndex(column => column.element.hasAttribute(this.constructor.attributes.columnUniqueID)) !== -1;
-    const uniqueIDColumnIndexSetByInitialization = this.hasOwnProperty("uniqueIdentifierIndex");
+    const uniqueIDColumnIndexSetByInitialization = Boolean(this.uniqueIdentifierIndex);
 
     const getUniqueIDByIndex = (row, index) => {
       return row.cells.find(cell => cell.ID === index).value;
@@ -635,7 +635,7 @@ class Table extends _AbstractTable__WEBPACK_IMPORTED_MODULE_0__.AbstractTable {
         const colText = col.text || col_key;
         let extras = {};
 
-        if (!col.hasOwnProperty("data") && (col.type == 'button' || col.type == 'image')) {
+        if (!col.hasOwnProperty("data") && (col.type == 'html' || col.type == 'button' || col.type == 'image')) {
           col.data = false;
         }
 
@@ -644,6 +644,10 @@ class Table extends _AbstractTable__WEBPACK_IMPORTED_MODULE_0__.AbstractTable {
 
           if (!col.hasOwnProperty("sort")) {
             col.sort = false;
+          }
+
+          if (!col.hasOwnProperty("filter")) {
+            col.filter = false;
           }
         }
 
@@ -743,7 +747,7 @@ class Table extends _AbstractTable__WEBPACK_IMPORTED_MODULE_0__.AbstractTable {
           }
 
           if (cell.type == 'button' && !cellExtras['text']) {
-            cellExtras['text'] = cell.text || cell_key;
+            cellExtras['text'] = cell.value || cell.text || cell_key;
           }
 
           if (cell.centered === true) {
