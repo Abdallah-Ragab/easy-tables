@@ -1,6 +1,6 @@
 {
-  "name": "easy-tables-dev",
-  "version": "0.1.0",
+  "name": "easy-tables",
+  "version": "0.2.0",
   "description": "A simple library to make html tables easy.",
   "main": "./dist/production.bundle.js",
   "scripts": {
