@@ -4,15 +4,16 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>example table js 1</title>
+    <script defer src="../../dist/development.bundle.js"></script>
+    <title>Existing Table Initialized By Attributes - 2</title>
 </head>
 <body>
     <h2>HTML Table</h2>
-    <div id="table-container">
+    <div table-container sort select>
         <table>
             <thead>
                 <tr>
-                    <th>Company</th>
+                    <th>this<span data-container>Company</span></th>
                     <th>Contact</th>
                     <th>Country</th>
                     <th>Company</th>
@@ -25,7 +26,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
+                <tr row-id="1">
                     <td>Alfreds Futterkiste</td>
                     <td>Maria Anders</td>
                     <td>Germany</td>
@@ -35,9 +36,8 @@
                     <td>Alfreds Futterkiste</td>
                     <td>Maria Anders</td>
                     <td>Germany</td>
-                    
                 </tr>
-                <tr>
+                <tr row-id="2">
                     <td>Centro comercial Moctezuma</td>
                     <td>Francisco Chang</td>
                     <td>Mexico</td>
@@ -49,7 +49,7 @@
                     <td>Mexico</td>
                     
                 </tr>
-                <tr>
+                <tr row-id="3">
                     <td>Ernst Handel</td>
                     <td>Roland Mendel</td>
                     <td>Austria</td>
@@ -61,7 +61,7 @@
                     <td>Austria</td>
                     
                 </tr>
-                <tr>
+                <tr >
                     <td>Island Trading</td>
                     <td>Helen Bennett</td>
                     <td>UK</td>
@@ -72,7 +72,7 @@
                     <td>Helen Bennett</td>
                     <td>UK</td>
                 </tr>
-                <tr>
+                <tr row-id="5">
                     <td>Laughing Bacchus Winecellars</td>
                     <td>Yoshi Tannamuri</td>
                     <td>Canada</td>
@@ -83,7 +83,7 @@
                     <td>Yoshi Tannamuri</td>
                     <td>Canada</td>
                 </tr>
-                <tr>
+                <tr row-id="6">
                     <td>Magazzini Alimentari Riuniti</td>
                     <td>Giovanni Rovelli</td>
                     <td>Italy</td>
@@ -98,18 +98,6 @@
         </table>
     </div>
 </body>
-<script src="../../dist/development.bundle.js"></script>
-<script>
-    definedTable = new easytables.HTMLTable(
-        wrapper = "#table-container",
-        uniqueIdentifierIndex = 2, 
-        ignoredColumns = undefined,
-        customHeadSelector = undefined, 
-        customBodySelector = undefined,
-        enableSort = true,
-        enableSelect= true,
-    )
-</script>
 <style>
     body {
         display: flex;

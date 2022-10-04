@@ -1,275 +1,431 @@
-// TODO: change non-data attribute to not-data
-
-import { tableTemplates } from "../templates/Table"
-export class Table {
-    static attributes = {
-        tableContainer : "table-container",
-        enableSelect : "select",
-        enableSort : "sort",
-        customDataContainer: "data-container",
-        notData: "non-data",
-        rowID: "row-id",
-        uniqueIDIndex: "unique-identifier-index",
-        columnUniqueID: "unique-identifier",
+import { AbstractTable } from './AbstractTable';
+export class Table extends AbstractTable{
+    constructor (
+        wrapper ,
+        rows,
+        options,
+        ) {
+        super()
+        this.tableWrapper = wrapper
+        this.rowsInput = rows
+        this.optionsInput = options
+        this.initiate()
     }
-    static htmlTemplates = tableTemplates
+    initiate(){
+        this.findTableWrapper()
+        this.setTableWrapperClasses()
+
+        const rowsInput = this.rowsInput
+        const optionsInput = this.optionsInput
+
+        const rowsInputType = (typeof(rowsInput) === "object" && rowsInput.hasOwnProperty("url")) ? "url" : "obj" 
+        const optionsInputType = (typeof(optionsInput) === "object" && optionsInput.hasOwnProperty("url")) ? "url" : "obj"
+
+        if (rowsInputType === "url"){var rowsInputObject = undefined; var rowsInputURL = rowsInput}
+        else if (rowsInputType === "obj"){var rowsInputObject = rowsInput; var rowsInputURL = undefined }
+
+        if (optionsInputType === "url"){var optionsInputObject = undefined; var optionsInputURL = optionsInput}
+        else if (optionsInputType === "obj"){var optionsInputObject = optionsInput; var optionsInputURL = undefined }
+
+        this.constructTable(rowsInputObject, optionsInputObject, rowsInputURL, optionsInputURL)
+    }
+    initiateJSON(){
+        this.findTableWrapper()
+        this.setTableWrapperClasses()
+        this.constructTableFromObjects(this.dataInputJSON, this.optionsInputJSON)
+    }
+    initiateURL(){
+        this.findTableWrapper()
+        this.setTableWrapperClasses()
+        this.constructTable(this.dataInputURL, this.optionsInputURL)
+    }
+
+    update(rows, options){
+        
+        const rowsInput = rows
+        const optionsInput = options
+
+        const rowsInputType = (typeof(rowsInput) === "object" && rowsInput.hasOwnProperty("url")) ? "url" : "obj" 
+        const optionsInputType = (typeof(optionsInput) === "object" && optionsInput.hasOwnProperty("url")) ? "url" : "obj"
+
+        if (rowsInputType === "url"){var rowsInputObject = undefined; var rowsInputURL = rowsInput}
+        else if (rowsInputType === "obj"){var rowsInputObject = rowsInput; var rowsInputURL = undefined }
+
+        if (optionsInputType === "url"){var optionsInputObject = undefined; var optionsInputURL = optionsInput}
+        else if (optionsInputType === "obj"){var optionsInputObject = optionsInput; var optionsInputURL = undefined }
+
+        this.constructTable(rowsInputObject, optionsInputObject, rowsInputURL, optionsInputURL)
+    }
+    findTableWrapper(){
+        if(typeof(this.tableWrapper) === "string"){
+            this.tableWrapperElement = document.querySelector(this.tableWrapper)
+        } else {
+            this.tableWrapperElement = this.tableWrapper
+        }
+    }
+    readInput(){
+        const rowsInput = this.rowsInput || []
+        const optionsInput = this.optionsInput || {}
+        const headersOptionsInput = optionsInput.headers || {}
+
+        this.emptyHead = (Object.keys(headersOptionsInput).length === 0)
+        this.emptyBody = (rowsInput.length === 0)
+        this.emptyTable = (this.emptyBody && this.emptyHead)
+
+        if (!this.emptyBody){
+            this.dataColumnsKeys = rowsInput.length > 0 ? Object.keys(rowsInput[0]) : []
+        }
+        if (!this.emptyHead){
+            this.nonDataColumnsKeys = Object.keys(headersOptionsInput).filter(key => !(this.dataColumnsKeys.includes(key)))
+        }
+        this.allColumnsKeys = this.dataColumnsKeys.concat(this.nonDataColumnsKeys)
+
+        this.enableSelect = optionsInput.select || true
+        this.enableSort = optionsInput.sort || true
+        this.uniqueIdentifierKey = optionsInput.uniqueID
+
+    }
     initiateEvents(){
-        // Sorting buttons events
-        if (this.enableSort){
-            this.tableElement.querySelectorAll('[data-sort-direction]').forEach((el => {
-                var direction = el.dataset.sortDirection
-                el.addEventListener('click', e => {
-                    this.tableElement.querySelectorAll('[data-sort-direction][active]').forEach(element => {element.removeAttribute('active')})
-                    el.setAttribute('active', '')
-                    var element = e.target.closest('th')
-                    var elementIdx = Array.from(element.parentNode.children).indexOf(element)
-                    this.sortTable(elementIdx, direction)
-                })
-            }))
-        }
-        // Selecting checkboxes events
-        if (this.enableSelect){
-            this.bodyCheckboxes = this.tableDataObject.body.rows.map(row => 
-                row.element.querySelector('th:first-child input[type="checkbox"], td:first-child input[type="checkbox"]')
-            )
-            this.bodyCheckboxes.forEach(checkbox => {
-                checkbox.addEventListener('change', e => {
-                    let target = e.target
-                    this.selectRows(target, false)
-                })
+        super.initiateEvents()
+
+        const options = this.optionsInput || {}
+        const headersOptions = options.headers || {}
+        const columnsKeys = this.allColumnsKeys || {}
+
+        // Filtering button events
+        this.tableElement.querySelectorAll('[data-type="filter"]').forEach(filter => {
+            let column = filter.closest('th')
+            const columnKey = column.getAttribute("key")
+            const columnOptions = headersOptions[columnKey] || {}
+            const columnFilter = columnOptions.filter || false
+            if(Boolean(columnFilter)){
+                filter.addEventListener('click', columnFilter)
+            }            
+        })
+
+        // Button cells events
+        let buttonColumns = columnsKeys.map(col_key => {
+            const col = headersOptions[col_key] || {}
+            if (col.type == "button") return {[col_key]: col["callback"]}
+        }).filter(callback => callback != undefined)
+
+        this.tableDataObject.body.rows.forEach(row => {
+            buttonColumns.forEach(col => {
+                const buttonCellElements = row.cells.filter(cell => cell.element.getAttribute("key") === Object.keys(col)[0])
+                buttonCellElements.forEach(button => { button.element.querySelector('[table-button]').addEventListener('click', Object.values(col)[0]) })
+
             })
-            this.headCheckbox = this.tableDataObject.head.element.querySelector('th:first-child input[type="checkbox"], td:first-child input[type="checkbox"]')
-            this.headCheckbox.addEventListener('change', e => {
-                let target = e.target
-                this.selectRows(target, true)
-            })
-        }
+        })
+    }
+    setTableWrapperClasses(){
+        this.tableWrapperElement.classList.add('overflow-auto', 'border', 'border-gray-150')
+        this.tableWrapperElement.classList.add('max-w-full')
     }
     readPrimaryHtmlElements(){
-        this.tableWrapperElement.tableInstance = this
-        this.tableElement = this.tableWrapperElement.querySelector('table')
-        this.headElement = this.tableElement.tHead.rows[0]
-        this.headColumnsElements = Array.from(this.tableElement.tHead.rows[0].children)
-        this.bodyElement = this.tableElement.tBodies[0]
-        this.bodyRowsElements = Array.from(this.tableElement.tBodies[0].rows)
+        super.readPrimaryHtmlElements()
+        this.tbodyHeight = this.bodyElement ? this.bodyElement.clientHeight+"px" : null
+        this.WrapperWidth = this.tableWrapperElement ? this.tableWrapperElement.clientWidth+"px" : "100%"
     }
-
-    extractDataFromHtml(){
-        const headElement = this.headElement
-        const headColumnsElements = this.headColumnsElements
-        const headColumnsObjects = headColumnsElements.map((columnElement, columnID) => this.constructHeadColumnObject(columnElement, columnID))
-        const headDataObject = {
-            element: headElement,
-            columns: headColumnsObjects
-        }
-        this.headDataObject = headDataObject
-
-        const bodyRowsElements = this.bodyRowsElements
-        const bodyRowsObjects = bodyRowsElements.map((rowElement, rowID) => this.constructBodyRowObject(rowElement, rowID))
-        const bodyDataObject = {
-            rows: bodyRowsObjects
-        }
-        this.bodyDataObject = bodyDataObject
-
-        const tableDataObject = {
-            head: headDataObject,
-            body: bodyDataObject
-        }
-        return tableDataObject
-    }
-    constructHeadColumnObject(columnElement, columnID){
-
-        var isNotDataCol = columnElement.hasAttribute(this.constructor.attributes.notData) || (this.ignoredColumns) && (columnID in this.ignoredColumns)
-        return {
-            ID: columnID,
-            element: columnElement,
-            hasData: isNotDataCol ? false : true,
-            value: isNotDataCol ? null : this.extractColumnData(columnElement, columnID)
-        }
-    }
-    extractColumnData(columnElement, columnID){
-        if (this.htmlInitialized) {
-            let customDataContainer = columnElement.querySelector(`[${this.constructor.attributes.customDataContainer}]`)
-            var dataContainerElement = (customDataContainer == null) ? columnElement : customDataContainer
-
-        } else if (this.customHeadSelector && this.customHeadSelector.hasOwnProperty(columnID)){
-            var dataContainerElement = columnElement.querySelector(this.customHeadSelector[columnID]) 
-        } else {
-            var dataContainerElement = columnElement
-        }
-        return dataContainerElement.textContent
-    }
-    constructBodyRowObject(rowElement, rowID){
-        const rowCellsElements = Array.from(rowElement.children).filter(el => {
-            const tagName = el.tagName
-            return (tagName === "TH" || tagName === "TD")
-        })
-        const RowCellsObjects = rowCellsElements.map((cell, idx) => {
-            const columnHead = this.headDataObject.columns.find(col => col.ID === idx)
-            const isDataCell = columnHead.hasData
-
-            return {
-                ID: idx,
-                element: cell,
-                hasData: isDataCell,
-                value: isDataCell ? this.extractCellData(cell, idx) : null
-            }
-        })
-
-        return {
-            ID: rowID,
-            selected: false,
-            element: rowElement,
-            cells: RowCellsObjects
-        }
-    }
-    extractCellData(cellElement, cellID){
-        if (this.htmlInitialized) {
-            let customDataContainer = cellElement.querySelector(`[${this.constructor.attributes.customDataContainer}]`)
-            var dataContainerElement = (customDataContainer == null) ? cellElement : dataContainerElement
-        } else if (this.customBodySelector && this.customBodySelector.hasOwnProperty(cellID)){
-            var dataContainerElement = cellElement.querySelector(this.customHeadSelector[cellID]) 
-        } else {
-            var dataContainerElement = cellElement
-        }
-        return dataContainerElement.textContent
-    }
-
-    // Sorting functionality
-    sortTable(sortByID, sortDirection){
-        this.sortData(sortByID, sortDirection)
-        this.reorderRows()
-    }
-    sortData(sortByID, sortDirection){
-        let sortedRows = Array.from(this.tableDataObject.body.rows).sort((a, b) => {
-            var aValue = a.cells.find(cell => cell.ID === sortByID).value 
-            var bValue = b.cells.find(cell => cell.ID === sortByID).value
-
-            aValue = isNaN(aValue) ? aValue.toLowerCase() : parseFloat(aValue)
-            bValue = isNaN(bValue) ? bValue.toLowerCase() : parseFloat(bValue)
-            
-            if(sortDirection == 'asc'){
-                if ( aValue < bValue){
-                    return -1;
-                    }
-                else if ( aValue > bValue){
-                    return 1;
-                    }
-                else return 0;
-            }
-            else{
-                if ( aValue > bValue){
-                    return -1;
-                    }
-                else if ( aValue < bValue){
-                    return 1;
-                    }
-                else return 0;
-            }
-        })
-        sortedRows = sortedRows.map((row, idx) => {row.ID = idx; return row})
-        this.tableDataObject.body.rows = sortedRows
-    }
-    reorderRows(){
-        const rows = this.tableDataObject.body.rows.map(row => row.element) 
-        this.bodyElement.replaceChildren(...rows)
-    }
+    // Building & Rendering a html table from json
+    renderTable(bodyLoading, headLoading){
+        this.tableWrapperElement.replaceChildren();
         
-    // Selecting functionality
-    selectRows(target, inHead){
-        const checked = target.checked
-        const parentRow = target.closest('tr')
-        const rowID = this.tableDataObject.body.rows.map(row => row.element).indexOf(parentRow)
+        if(this.emptyTable){ 
+            var tableHtml = this.constructor.htmlTemplates.emptyTablePlaceholder  
+            this.tableWrapperElement.insertAdjacentHTML('afterbegin', tableHtml)
+            return
+        }
+        else {
+            var tableHtml = this.buildTableHtml(bodyLoading, headLoading)
+            this.tableWrapperElement.insertAdjacentHTML('afterbegin', tableHtml)  
+    
+            if(this.emptyBody){
+                var emptyBodyPlaceholder = this.constructor.htmlTemplates.emptyBodyPlaceholder ;
+                this.tableWrapperElement.insertAdjacentHTML('beforeend', emptyBodyPlaceholder)  
+            }      
+        }
+        
+    }
+    buildTableHtml(bodyLoading, headLoading) {
+        this.tableWrapperElement.setAttribute('style', '')
 
-
-        if (!inHead){
-            if(checked){
-                this.updateSelectedRows('add', rowID)
-            }
-            else{
-                this.updateSelectedRows('remove', rowID)
-            }
+        const theadHtml = this.buildHeadHtml(headLoading)
+        
+        if (this.emptyBody){
+            var tbodyHtml = ""
         } else {
-            if(checked){
-                this.updateSelectedRows('all')
+            var tbodyHtml = this.buildBodyHtml(bodyLoading, headLoading)
+        }
+            
+        const tableTemplate = this.constructor.htmlTemplates['table']
+
+        let extras = {}
+        if (bodyLoading && this.tbodyHeight) {
+            extras["bodyStyle"] = `height: ${this.tbodyHeight};`
+        }
+        if ((headLoading||bodyLoading) || this.emptyBody) {
+            this.WrapperWidth = this.WrapperWidth || "100%" 
+            this.tableWrapperElement.setAttribute('style', `width: ${this.WrapperWidth};`)
+        }
+        const tableHtml = this.evaluateTemplate(tableTemplate, {"thead": theadHtml, "tbody": tbodyHtml, ...extras})
+        return tableHtml
+    }
+    buildHeadHtml(headLoading){
+        const columnsKeys = this.allColumnsKeys || []
+        const options = this.optionsInput || {}
+        const headersOptions = options.headers || {}
+        if (headLoading){
+            const columnsCount = (columnsKeys && columnsKeys.length > 0) ? columnsKeys.length : 5
+            const headColumnPropTemplate = this.constructor.htmlTemplates.headColumnProp
+            const headColumnsHtml = [...Array(columnsCount)].map(()=> headColumnPropTemplate).join('')
+            return this.evaluateTemplate(this.constructor.htmlTemplates.headRowProp, {"columns": headColumnsHtml})
+        }
+        else {
+            const headColumnTemplate = this.constructor.htmlTemplates.headColumn
+            const headColumns = columnsKeys
+    
+            const headColumnsHtmlArray = headColumns.map(col_key => {
+                const col = headersOptions[col_key] || {}
+                const colText = col.text || col_key
+                let extras = {}
+
+                if(!col.hasOwnProperty("data") && (col.type == 'button' || col.type == 'image')){
+                    col.data = false
+                }
+                if(col.hasOwnProperty("data") && !col.data){
+                    extras['attributes'] = this.constructor.attributes.notData
+                    if (!col.hasOwnProperty("sort")) {
+                        col.sort = false
+                    }
+                }
+
+                if(col.hasOwnProperty("render") && !(col.render)){return}         
+
+                if (((this.enableSort && !col.hasOwnProperty('sort')) || (this.enableSort && col['sort']))) {
+                    extras["sort"] = this.evaluateTemplate(this.constructor.htmlTemplates.headSort) 
+                }
+                if (col['filter']) {
+                    extras["filter"] = this.evaluateTemplate(this.constructor.htmlTemplates.headFilter) 
+                }
+
+                return this.evaluateTemplate(headColumnTemplate, {"key": col_key, "text": colText , ...extras})
+            })
+    
+            if(this.enableSelect) {
+                let headSelectTemplate = this.constructor.htmlTemplates.headSelect
+                headColumnsHtmlArray.unshift(this.evaluateTemplate(headSelectTemplate))
+            }
+    
+            const headRowHtml = headColumnsHtmlArray.join('')
+            const theadTemplate = this.constructor.htmlTemplates.headRow
+            const theadHtml = this.evaluateTemplate(theadTemplate, {"row": headRowHtml})
+    
+            return theadHtml
+        }
+    }
+    buildBodyHtml(bodyLoading, headLoading){
+        const rowsData = this.rowsInput || []
+        const columnsKeys = this.allColumnsKeys || []
+        const options = this.optionsInput || {}
+        const headersOptions = options.headers || {}
+
+        if (bodyLoading){
+            const rowsCount = (rowsData && rowsData.length > 0) ? rowsData.length : 12
+            const columnsCount = (columnsKeys && columnsKeys.length > 0) ? columnsKeys.length : 5
+
+            const tbodyArray = [...Array(rowsCount)].map(() => {
+                const propRowTemplate = this.constructor.htmlTemplates.bodyRowProp
+                const propCellTemplate = this.constructor.htmlTemplates.bodyCellProp
+                const propCellsHtmlArray = [...Array(columnsCount)].map(()=>{
+                    return propCellTemplate
+                })
+                if(this.enableSelect && !headLoading) { 
+                    propCellsHtmlArray.unshift(this.evaluateTemplate(this.constructor.htmlTemplates['rowSelect'])) 
+                    propCellsHtmlArray.pop()
+                }
+                const propCellsHtml = propCellsHtmlArray.join("")
+                return this.evaluateTemplate(propRowTemplate, {"row": propCellsHtml})
+            })
+            var tBodyHtml = tbodyArray.join("")
+        }
+        else {
+            const bodyRows = rowsData
+            var tBodyHtml = bodyRows.map(row => {
+                const rowCells = columnsKeys
+                const rowCellsHtmlArray = rowCells.map(cell_key => {
+
+                    const cell = headersOptions[cell_key] || {}
+                    let cellValue = row[cell_key] || cell.value || ""
+                    const cellType = cell.type || 'text'
+                    const cellExtras = {}
+                    const cellTemplate = this.constructor.htmlTemplates.bodyCell[cellType] || this.constructor.htmlTemplates.bodyCell['text']
+
+                    if(cell.hasOwnProperty("render") && !(cell.render)){return}     
+                    if(cell.type == 'html'){
+                        const template = cell.template || ""
+                        const templateParams = row[cell_key] || {}
+                        cellValue = this.evaluateTemplate(template, templateParams)
+                    }
+                    if (cell.colorCode) {
+                        const conditionsDictionary = {'equal': '==='}
+                        cell.colorCode.some((cond) => {
+                            if(eval("'" + cellValue.toLowerCase() + "'" + conditionsDictionary[cond.condition] + "'" + cond.value.toLowerCase() + "'")){
+                                cellExtras['color'] = cond.color
+                                return true
+                            }
+                        }) 
+                    } else if (cell.color) {
+                        cellExtras['color'] = cell.color
+                    }
+
+                    if(cell.type == 'button' && !(cellExtras['text'])){
+                        cellExtras['text'] = cell.text || cell_key
+                    }
+
+                    if(cell.centered === true) {
+                        cellExtras["classes"] = cellExtras["classes"] ? cellExtras["classes"] += " flex justify-center " : " flex justify-center " 
+                    }
+                    const cellHtml = this.evaluateTemplate(cellTemplate, {"key": cell_key, "text": cellValue, ...cellExtras})
+                    return cellHtml
+                })
+                if(this.enableSelect) {
+                    rowCellsHtmlArray.unshift(this.evaluateTemplate(this.constructor.htmlTemplates['rowSelect']))
+                }
+                const rowCellsHtml = rowCellsHtmlArray.join('')
+                const rowTemplate = this.constructor.htmlTemplates.bodyRow
+                const rowHtml = this.evaluateTemplate(rowTemplate, {"row": rowCellsHtml})
+                return rowHtml
+            }).join('')
+        }
+        return tBodyHtml
+    }
+    evaluateTemplate(template, args = {}){
+        var variables = template.match(/(?<=\$\{data\[['"])[\w]*(?=['"]\]\})/gi)
+        if(!variables) return template
+        var data = {}
+        variables.forEach(variable => {
+            if (args.hasOwnProperty(variable)) {data[variable] = args[variable]} else {data[variable] = ''}
+        })
+        var evaluated = eval("`" + template + "`")
+        return evaluated
+    }
+
+    // updating the table content by requesting url
+    constructTable(rowsObject = null, optionsObject = null, rowsURL = null, optionsURL = null){ 
+
+        const hasRowsObject = Boolean(rowsObject)
+        const hasOptionsObject = Boolean(optionsObject)
+        
+        const hasRowsURL = Boolean(rowsURL) && rowsURL.hasOwnProperty("url")
+        const hasOptionsURL = Boolean(optionsURL) && optionsURL.hasOwnProperty("url")
+
+
+        if (!hasRowsObject && !hasOptionsObject && hasRowsURL && hasOptionsURL) {
+            this.loadingTable()
+            this.makeRequests(rowsURL, optionsURL).then((result) => {
+                this.constructTableFromObjects(result.rows, result.options)
+            })
+        } 
+        else if (!hasRowsObject && hasRowsURL) {
+            if(hasOptionsObject){
+                this.loadingBody()
+                this.makeRequests(rowsURL).then((result) => {
+                    this.constructTableFromObjects(result.rows, optionsObject)
+                })
+            } else {                
+                this.loadingBody()
+                this.makeRequests(rowsURL).then((result) => {
+                    this.constructTableFromObjects(result.rows, undefined)
+                })
+            }
+        } 
+        else if (!hasOptionsObject && hasOptionsURL) {
+            if(hasRowsObject){
+                this.loadingBody()
+                this.makeRequests(undefined, optionsURL).then((result) => {
+                    this.constructTableFromObjects(rowsObject, result.options)
+                })
+            } else {                
+                this.loadingBody()
+                this.makeRequests(undefined, optionsURL).then((result) => {
+                    this.constructTableFromObjects(undefined, result.options)
+                })
+            }
+        } 
+        else if (hasRowsObject, hasOptionsObject) {
+            this.constructTableFromObjects(rowsObject, optionsObject)
+        }
+        else if (hasRowsObject) {
+            this.constructTableFromObjects(rowsObject, undefined)
+        }
+        else if (hasOptionsObject) {
+            this.constructTableFromObjects(undefined, optionsObject)
+        }
+    }
+    async makeRequests(rows = null, options = null){
+
+        if (rows){
+            var rowsResult = await this.request(rows.url, rows.onsuccess, rows.onerror)
+        }
+        if (options){
+           var optionsResult = await this.request(options.url, options.onsuccess, options.onerror)
+        }
+        return {rows: rowsResult, options: optionsResult}
+    }
+    async request(url, successCallback=null, failureCallback=null){
+        const response = await fetch(url)
+        if (response.status !== 200) {
+            if (failureCallback){
+                const callbackResult = failureCallback(response)
+                if (callbackResult.then){
+                    return await callbackResult
+                } else {
+                    return callbackResult
+                }
             } else {
-                this.updateSelectedRows('none')
+                console.error("request failed : ", response.status, response.statusText)
+                return
             }
         }
-        // console.log(this.getSelectedRows())
-    }
-    updateSelectedRows(operation, rowID=null){
-        switch(operation){
-            case "all":
-                this.tableDataObject.body.rows.forEach(row => {row.selected = true})
-                this.bodyCheckboxes.forEach(checkbox => checkbox.checked = true)
-                break
-            case "none":
-                this.tableDataObject.body.rows.forEach(row => {row.selected = false})
-                this.bodyCheckboxes.forEach(checkbox => checkbox.checked = false)
-                break
-            case "add":
-                this.tableDataObject.body.rows.find(row => row.ID === rowID).selected = true
-                break
-            case "remove":
-                this.tableDataObject.body.rows.find(row => row.ID === rowID).selected = false
-                break
-        }
-        this.headCheckbox.checked = this.tableDataObject.body.rows.every(row => row.selected) 
-    }
-    getUniqueIdentifiers(){
-        const bodyRows = this.tableDataObject.body.rows
-        const headColumns = this.tableDataObject.head.columns
-
-        const uniqueIDKeySet = this.hasOwnProperty("optionsInput") && this.optionsInput.hasOwnProperty("uniqueID")
-        const uniqueIDColumnIndexSetByAttribute = headColumns.findIndex(column => column.element.hasAttribute(this.constructor.attributes.columnUniqueID)) !== -1
-        const uniqueIDColumnIndexSetByInitialization = this.hasOwnProperty("uniqueIdentifierIndex")
-
-
-        const getUniqueIDByIndex = (row, index) => {
-            return row.cells.find(cell => cell.ID === index).value   
-        }
-        const getUniqueIDByKey = (row, idx, key) => {
-            const cellOfUniqueIDFromTable = row.cells.find(cell => cell.element.getAttribute('key') === key)
-            const uniqueIDFromTable = cellOfUniqueIDFromTable ? cellOfUniqueIDFromTable.value : false
-            const uniqueIDFromDataInput = this.rowsInput[idx][key]
-            const uniqueID = uniqueIDFromTable || uniqueIDFromDataInput
-            return uniqueID
-
-        }
-        const getUniqueIDByAttribute = (row) => {
-            return row.element.getAttribute(this.constructor.attributes.rowID)
-        }
-        const setUniqueID = (idx, uniqueID) => {
-            this.tableDataObject.body.rows[idx].uniqueID = uniqueID
-        }
-
-        if (uniqueIDKeySet) {
-            const uniqueIDKey = this.optionsInput.uniqueID
-            bodyRows.forEach((row, idx) => {
-                const uniqueID = getUniqueIDByKey(row, idx, uniqueIDKey)
-                setUniqueID(idx, uniqueID)
-            })
-        } else if (uniqueIDColumnIndexSetByAttribute) {
-            const uniqueIDColumnIndex = headColumns.findIndex(column => column.element.hasAttribute(this.constructor.attributes.columnUniqueID))
-            bodyRows.forEach((row, idx) => {
-                const uniqueID = getUniqueIDByIndex(row, uniqueIDColumnIndex)
-                setUniqueID(idx, uniqueID)
-            })
-        } else if (uniqueIDColumnIndexSetByInitialization) {
-            const uniqueIDColumnIndex = (this.enableSelect) ? parseInt(this.uniqueIdentifierIndex) + 1 : parseInt(this.uniqueIdentifierIndex)
-            bodyRows.forEach((row, idx) => {
-                const uniqueID = getUniqueIDByIndex(row, uniqueIDColumnIndex)
-                setUniqueID(idx, uniqueID)
-            })
+        if (successCallback){
+            const callbackResult = successCallback(response)
+            if (callbackResult.then){
+                return await callbackResult
+            } else {
+                return callbackResult
+            }
         } else {
-            bodyRows.forEach((row, idx) => {
-                const uniqueID = getUniqueIDByAttribute(row)
-                setUniqueID(idx, uniqueID)
-            })
+            return await response.json()
         }
     }
-    getSelectedRows(){
-        return this.tableDataObject.body.rows.filter(row => row.selected).map(row => row.uniqueID)
+    constructTableFromObjects(rows = null, options = null){
+        if (rows){this.rowsInput = rows}
+        if (options){this.optionsInput = options}
+        if (rows || options) {
+            this.readInput()
+            this.renderTable()
+            if (!this.emptyTable && !this.emptyBody){
+                this.readPrimaryHtmlElements()
+                this.tableDataObject = this.extractDataFromHtml()
+                if(this.enableSelect){
+                    this.getUniqueIdentifiers()
+                }
+                this.initiateEvents()
+            }
+        }
     }
-}
+
+    // Loading states
+    loadingBody(){
+        this.emptyHead = null
+        this.emptyBody = null
+        this.emptyTable = null
+        this.renderTable(true)
+    }
+    loadingTable(){
+        this.emptyHead = null
+        this.emptyBody = null
+        this.emptyTable = null
+        this.renderTable(true, true)
+    }
+} 

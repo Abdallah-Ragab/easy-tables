@@ -47,19 +47,19 @@ export const tableTemplates =  {
         `,
     "bodyCell" : {
         "text" : `
-            <td key="\${data['key']}" \${data['attributes']} class="px-4 py-2">\${data['text']}</td>
+            <td key="\${data['key']}" \${data['attributes']} class="px-4 py-2 \${data['classes']}">\${data['text']}</td>
             `,
         "bold" : `
-            <td key="\${data['key']}" \${data['attributes']} class="px-4 py-2 text-gray-700 font-bold">\${data['text']}</td>
+            <td key="\${data['key']}" \${data['attributes']} class="px-4 py-2 \${data['classes']} text-gray-700 font-bold">\${data['text']}</td>
             `,
         "image" : `
-            <td key="\${data['key']}" \${data['attributes']} class="px-4 py-2 text-gray-700 font-bold"><img table-image class="w-12 h-12 border rounded-full" src="\${data['text']}"></td>
+            <td key="\${data['key']}" \${data['attributes']} class="px-4 py-2 \${data['classes']} text-gray-700 font-bold"><img table-image class="w-12 h-12 border rounded-full" src="\${data['text']}"></td>
             `,
         "label" : `
-            <td key="\${data['key']}" \${data['attributes']} class="px-4 py-2"><div table-label class="bg-\${data['color']}-100 text-\${data['color']}-700 rounded shadow w-fit text-center font-semibold px-3 py-1">\${data['text']}</div></td>
+            <td key="\${data['key']}" \${data['attributes']} class="px-4 py-2 \${data['classes']}"><div table-label class="bg-\${data['color']}-100 text-\${data['color']}-700 rounded shadow w-fit text-center font-semibold px-3 py-1">\${data['text']}</div></td>
             `,
         "button" : `
-            <td key="\${data['key']}" \${data['attributes']} class="px-4 py-2"><span table-button class="text-\${data['color']}-800 font-bold hover:text-\${data['color']}-700 cursor-pointer capitalize">\${data['text']}</span></td>
+            <td key="\${data['key']}" \${data['attributes']} class="px-4 py-2 \${data['classes']}"><span table-button class="text-\${data['color']}-800 font-bold hover:text-\${data['color']}-700 cursor-pointer capitalize">\${data['text']}</span></td>
             `,
     },
     "rowSelect" : `

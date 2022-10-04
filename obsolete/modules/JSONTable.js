@@ -1,6 +1,6 @@
-import { Table } from './Table';
+import { AbstractTable } from './AbstractTable';
 
-export class JSONTable extends Table{
+export class JSONTable extends AbstractTable{
     constructor (
         wrapper = null,
         data = null,

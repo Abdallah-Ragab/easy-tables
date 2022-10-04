@@ -1,6 +1,6 @@
-import { Table } from './Table';
+import { AbstractTable } from './AbstractTable';
 
-export class HTMLTable extends Table{
+export class HTMLTable extends AbstractTable{
     constructor (
         wrapper = null,
         uniqueIdentifierIndex = null,
