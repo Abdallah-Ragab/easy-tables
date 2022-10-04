@@ -1,11 +1,12 @@
 {
   "name": "easy-tables",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A simple library to make html tables easy.",
   "main": "./dist/production.bundle.js",
   "scripts": {
-    "serve": "webpack-dev-server --config webpack.development.js",
+    "web-serve": "webpack-dev-server --config webpack.development.js",
     "watch": "webpack --config webpack.development.js --watch",
+    "serve": "live-server --port=1001 --watch=dist --open=/dist/development.bundle.js",
     "build": "webpack --config webpack.production.js"
   },
   "keywords": [],
@@ -17,6 +18,7 @@
     "autoprefixer": "^10.4.8",
     "babel-loader": "^8.2.5",
     "css-loader": "^6.7.1",
+    "live-server": "^1.2.2",
     "postcss": "^8.4.16",
     "postcss-loader": "^7.0.1",
     "style-loader": "^3.3.1",

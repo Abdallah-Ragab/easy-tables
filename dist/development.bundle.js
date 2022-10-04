@@ -12,18 +12,20 @@ return /******/ (() => { // webpackBootstrap
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "./src/modules/Table.js":
-/*!******************************!*\
-  !*** ./src/modules/Table.js ***!
-  \******************************/
+/***/ "./src/modules/AbstractTable.js":
+/*!**************************************!*\
+  !*** ./src/modules/AbstractTable.js ***!
+  \**************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "HtmlTable": () => (/* binding */ HtmlTable),
-/* harmony export */   "JsonTable": () => (/* binding */ JsonTable)
+/* harmony export */   "AbstractTable": () => (/* binding */ AbstractTable)
 /* harmony export */ });
-class Table {
+/* harmony import */ var _templates_Table__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../templates/Table */ "./src/templates/Table.js");
+// TODO: change non-data attribute to not-data
+
+class AbstractTable {
   static attributes = {
     tableContainer: "table-container",
     enableSelect: "select",
@@ -34,59 +36,7 @@ class Table {
     uniqueIDIndex: "unique-identifier-index",
     columnUniqueID: "unique-identifier"
   };
-  static htmlTemplates = {
-    "table": `
-            <table class='min-w-full rounded border-gray-700 bg-gray-50'>
-                <thead>\${data['thead']}</thead>
-                <tbody class='odd:bg-white even:bg-slate'>\${data['tbody']}</tbody>
-            </table>
-            `,
-    "headRow": `
-        <tr class="bg-gray-200 whitespace-nowrap text-gray-700 font-semibold capitalize sticky -top-1 z-10">\${data['row']}</tr>
-        `,
-    "headSelect": `<th non-data class=" sticky -left-px shadow bg-gray-200 shadow-xl text-start px-4 py-1 z-10"><input type="checkbox"></th>`,
-    "transparentSelect": `<th non-data><input type="checkbox"></th>`,
-    "headSort": `
-        <div class="flex flex-col space-y-0.5">
-            <svg data-sort-direction="asc"  xmlns="http://www.w3.org/2000/svg" viewBox="-143.066 -107.05 286.1 167.1">
-                <path d="M 119 60 H -119 c -21.4 0 -32.1 -25.9 -17 -41 L -17 -100 c 9.4 -9.4 24.6 -9.4 33.9 0 l 119 119 c 15.2 15.1 4.5 41 -16.9 41 z" fill="#000000"/>
-            </svg>
-            <svg data-sort-direction="desc" xmlns="http://www.w3.org/2000/svg" viewBox="-143.066 -107.05 286.1 167.1" style="transform: rotate(180deg);">
-                <path d="M 119 60 H -119 c -21.4 0 -32.1 -25.9 -17 -41 L -17 -100 c 9.4 -9.4 24.6 -9.4 33.9 0 l 119 119 c 15.2 15.1 4.5 41 -16.9 41 z" fill="#000000"/>
-            </svg>
-        </div>`,
-    "headFilter": `
-        <div data-type="filter">
-            <svg xmlns="http://www.w3.org/2000/svg" x="0" y="0" viewBox="0 0 459 459" style="enable-background:new 0 0 512 512" xml:space="preserve">
-                <path d="M178.5,382.5h102v-51h-102V382.5z M0,76.5v51h459v-51H0z M76.5,255h306v-51h-306V255z" fill="#000000" data-original="#000000"></path>
-            </svg>
-         </div>`,
-    "headColumn": `
-        <th class="\${data['isNotData']} text-start px-4 py-2">
-            <div class="flex justify-between items-center space-x-2">
-                <div>\${data['text']}</div>
-                    <div class="flex items-center space-x-1">
-                        \${data['filter']}
-                        \${data['sort']}
-                    </div>
-                </div>    
-            </th>
-            `,
-    "bodyRow": `<tr class="border-b border-gray-150 whitespace-nowrap text-gray-500 text-sm">\${data['row']}</tr>`,
-    "bodyCell": {
-      "text": `
-                    <td class="px-4 py-2">\${data['text']}</td>`,
-      "bold": `
-                    <td class="px-4 py-2 text-gray-700 font-bold">\${data['text']}</td>`,
-      "image": `
-                    <td non-data class="px-4 py-2 text-gray-700 font-bold"><img table-image class="w-12 h-12 border rounded-full" src="\${data['text']}"></td>`,
-      "label": `
-                    <td non-data class="px-4 py-2"><div table-label class="bg-\${data['color']}-100 text-\${data['color']}-700 rounded shadow w-fit text-center font-semibold px-3 py-1">\${data['text']}</div></td>`,
-      "button": `
-                <td non-data class="px-4 py-2"><span table-button class="text-\${data['color']}-800 font-bold hover:text-\${data['color']}-700 cursor-pointer capitalize">\${data['text']}</span></td>`
-    },
-    "rowSelect": `<td non-data class="sticky -left-px bg-white px-4 py-2"><input type="checkbox"></td>`
-  };
+  static htmlTemplates = _templates_Table__WEBPACK_IMPORTED_MODULE_0__.tableTemplates;
 
   initiateEvents() {
     // Sorting buttons events
@@ -154,12 +104,12 @@ class Table {
   }
 
   constructHeadColumnObject(columnElement, columnID) {
-    var isNotDataCol = columnElement.hasAttribute(this.constructor.attributes.notData) || columnID in this.ignoredColumns;
+    var isNotDataCol = columnElement.hasAttribute(this.constructor.attributes.notData) || this.ignoredColumns && columnID in this.ignoredColumns;
     return {
       ID: columnID,
       element: columnElement,
       hasData: isNotDataCol ? false : true,
-      Value: isNotDataCol ? null : this.extractColumnData(columnElement, columnID)
+      value: isNotDataCol ? null : this.extractColumnData(columnElement, columnID)
     };
   }
 
@@ -188,7 +138,7 @@ class Table {
         ID: idx,
         element: cell,
         hasData: isDataCell,
-        Value: isDataCell ? this.extractCellData(cell, idx) : null
+        value: isDataCell ? this.extractCellData(cell, idx) : null
       };
     });
     return {
@@ -220,8 +170,8 @@ class Table {
 
   sortData(sortByID, sortDirection) {
     let sortedRows = Array.from(this.tableDataObject.body.rows).sort((a, b) => {
-      var aValue = a.cells.find(cell => cell.ID === sortByID).Value;
-      var bValue = b.cells.find(cell => cell.ID === sortByID).Value;
+      var aValue = a.cells.find(cell => cell.ID === sortByID).value;
+      var bValue = b.cells.find(cell => cell.ID === sortByID).value;
       aValue = isNaN(aValue) ? aValue.toLowerCase() : parseFloat(aValue);
       bValue = isNaN(bValue) ? bValue.toLowerCase() : parseFloat(bValue);
 
@@ -269,7 +219,8 @@ class Table {
       } else {
         this.updateSelectedRows('none');
       }
-    }
+    } // console.log(this.getSelectedRows())
+
   }
 
   updateSelectedRows(operation, rowID = null) {
@@ -301,58 +252,54 @@ class Table {
   }
 
   getUniqueIdentifiers() {
-    const uniqueIDIndexAttribute = this.constructor.attributes.uniqueIDIndex;
-    const uniqueIDColumnAttribute = this.constructor.attributes.columnUniqueID;
-    const rowIDAttribute = this.constructor.attributes.rowID;
+    const bodyRows = this.tableDataObject.body.rows;
+    const headColumns = this.tableDataObject.head.columns;
+    const uniqueIDKeySet = this.hasOwnProperty("optionsInput") && this.optionsInput.hasOwnProperty("uniqueID");
+    const uniqueIDColumnIndexSetByAttribute = headColumns.findIndex(column => column.element.hasAttribute(this.constructor.attributes.columnUniqueID)) !== -1;
+    const uniqueIDColumnIndexSetByInitialization = Boolean(this.uniqueIdentifierIndex);
 
-    if (this.htmlInitialized) {
-      var hasUniqueIDByIndex = this.tableWrapperElement.hasAttribute(uniqueIDIndexAttribute);
-      var uniqueIDIndex = hasUniqueIDByIndex ? this.tableWrapperElement.getAttribute(uniqueIDIndexAttribute) : null;
-      var UniqueIDColumn = this.headElement.querySelector(`[${uniqueIDColumnAttribute}]`);
-      var hasUniqueIDColumn = UniqueIDColumn !== null;
-    } else {
-      var hasUniqueIDByIndex = this.uniqueIdentifierIndex !== null;
-      var uniqueIDIndex = this.uniqueIdentifierIndex;
+    const getUniqueIDByIndex = (row, index) => {
+      return row.cells.find(cell => cell.ID === index).value;
+    };
 
-      if (!hasUniqueIDByIndex) {
-        console.error(`Missing parameter 'uniqueIdentifierIndex' at '${this.constructor.name}' initialization: the parameter is essential to differentiate the rows by a unique value.`);
-      }
-    }
+    const getUniqueIDByKey = (row, idx, key) => {
+      const cellOfUniqueIDFromTable = row.cells.find(cell => cell.element.getAttribute('key') === key);
+      const uniqueIDFromTable = cellOfUniqueIDFromTable ? cellOfUniqueIDFromTable.value : false;
+      const uniqueIDFromDataInput = this.rowsInput[idx][key];
+      const uniqueID = uniqueIDFromTable || uniqueIDFromDataInput;
+      return uniqueID;
+    };
 
-    uniqueIDIndex = this.enableSelect ? parseInt(uniqueIDIndex) + 1 : parseInt(uniqueIDIndex);
+    const getUniqueIDByAttribute = row => {
+      return row.element.getAttribute(this.constructor.attributes.rowID);
+    };
 
-    if (hasUniqueIDByIndex) {
-      if (Number.isInteger(uniqueIDIndex)) {
-        this.tableDataObject.body.rows = Array.from(this.tableDataObject.body.rows).map(row => {
-          row.uniqueID = row.cells.find(cell => cell.ID === uniqueIDIndex).Value;
-          return row;
-        });
-        return;
-      } else {
-        console.error(`invalid attribute value: the value of '${uniqueIDIndexAttribute}' must be a number. at the table container.`);
-      }
-    }
+    const setUniqueID = (idx, uniqueID) => {
+      this.tableDataObject.body.rows[idx].uniqueID = uniqueID;
+    };
 
-    if (!this.htmlInitialized) {
-      return;
-    }
-
-    if (hasUniqueIDColumn) {
-      const uniqueIDColumnIndex = Array.from(this.headElement.children).indexOf(UniqueIDColumn);
-      this.tableDataObject.body.rows = Array.from(this.tableDataObject.body.rows).map(row => {
-        row.uniqueID = row.cells.find(cell => cell.ID === uniqueIDColumnIndex).Value;
-        return row;
+    if (uniqueIDKeySet) {
+      const uniqueIDKey = this.optionsInput.uniqueID;
+      bodyRows.forEach((row, idx) => {
+        const uniqueID = getUniqueIDByKey(row, idx, uniqueIDKey);
+        setUniqueID(idx, uniqueID);
+      });
+    } else if (uniqueIDColumnIndexSetByAttribute) {
+      const uniqueIDColumnIndex = headColumns.findIndex(column => column.element.hasAttribute(this.constructor.attributes.columnUniqueID));
+      bodyRows.forEach((row, idx) => {
+        const uniqueID = getUniqueIDByIndex(row, uniqueIDColumnIndex);
+        setUniqueID(idx, uniqueID);
+      });
+    } else if (uniqueIDColumnIndexSetByInitialization) {
+      const uniqueIDColumnIndex = this.enableSelect ? parseInt(this.uniqueIdentifierIndex) + 1 : parseInt(this.uniqueIdentifierIndex);
+      bodyRows.forEach((row, idx) => {
+        const uniqueID = getUniqueIDByIndex(row, uniqueIDColumnIndex);
+        setUniqueID(idx, uniqueID);
       });
     } else {
-      this.tableDataObject.body.rows = Array.from(this.tableDataObject.body.rows).map(row => {
-        if (row.element.hasAttribute(rowIDAttribute)) {
-          row.uniqueID = row.element.getAttribute(rowIDAttribute);
-        } else {
-          console.error(`Missing attribute '${rowIDAttribute}': body row with index ${row.ID} is missing a unique id`);
-          row.uniqueID = null;
-        }
-
-        return row;
+      bodyRows.forEach((row, idx) => {
+        const uniqueID = getUniqueIDByAttribute(row);
+        setUniqueID(idx, uniqueID);
       });
     }
   }
@@ -363,7 +310,21 @@ class Table {
 
 }
 
-class HtmlTable extends Table {
+/***/ }),
+
+/***/ "./src/modules/HTMLTable.js":
+/*!**********************************!*\
+  !*** ./src/modules/HTMLTable.js ***!
+  \**********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "HTMLTable": () => (/* binding */ HTMLTable)
+/* harmony export */ });
+/* harmony import */ var _AbstractTable__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./AbstractTable */ "./src/modules/AbstractTable.js");
+
+class HTMLTable extends _AbstractTable__WEBPACK_IMPORTED_MODULE_0__.AbstractTable {
   constructor(wrapper = null, uniqueIdentifierIndex = null, ignoredColumns = [], customHeadSelector = null, customBodySelector = null, enableSort = true, enableSelect = true) {
     super();
     this.tableWrapper = wrapper;
@@ -374,7 +335,6 @@ class HtmlTable extends Table {
     this.enableSort = enableSort;
     this.enableSelect = enableSelect;
     this.initiate();
-    this.initiateEvents();
   }
 
   initiate() {
@@ -402,6 +362,8 @@ class HtmlTable extends Table {
     if (this.enableSelect) {
       this.getUniqueIdentifiers();
     }
+
+    this.initiateEvents();
   }
 
   readInlineProperties() {
@@ -442,61 +404,153 @@ class HtmlTable extends Table {
   }
 
 }
-class JsonTable extends Table {
-  constructor(wrapper = null, data = null, uniqueIdentifierIndex = null, ignoredColumns = [], enableSort = true, enableSelect = true) {
+
+/***/ }),
+
+/***/ "./src/modules/Table.js":
+/*!******************************!*\
+  !*** ./src/modules/Table.js ***!
+  \******************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "Table": () => (/* binding */ Table)
+/* harmony export */ });
+/* harmony import */ var _AbstractTable__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./AbstractTable */ "./src/modules/AbstractTable.js");
+
+class Table extends _AbstractTable__WEBPACK_IMPORTED_MODULE_0__.AbstractTable {
+  constructor(wrapper, rows, options) {
     super();
     this.tableWrapper = wrapper;
-    this.dataInput = data;
-    this.uniqueIdentifierIndex = uniqueIdentifierIndex;
-    this.ignoredColumns = ignoredColumns;
-    this.enableSort = enableSort;
-    this.enableSelect = enableSelect;
+    this.rowsInput = rows;
+    this.optionsInput = options;
     this.initiate();
-    this.initiateEvents();
   }
 
   initiate() {
+    this.findTableWrapper();
+    this.setTableWrapperClasses();
+    const rowsInput = this.rowsInput;
+    const optionsInput = this.optionsInput;
+    const rowsInputType = typeof rowsInput === "object" && rowsInput.hasOwnProperty("url") ? "url" : "obj";
+    const optionsInputType = typeof optionsInput === "object" && optionsInput.hasOwnProperty("url") ? "url" : "obj";
+
+    if (rowsInputType === "url") {
+      var rowsInputObject = undefined;
+      var rowsInputURL = rowsInput;
+    } else if (rowsInputType === "obj") {
+      var rowsInputObject = rowsInput;
+      var rowsInputURL = undefined;
+    }
+
+    if (optionsInputType === "url") {
+      var optionsInputObject = undefined;
+      var optionsInputURL = optionsInput;
+    } else if (optionsInputType === "obj") {
+      var optionsInputObject = optionsInput;
+      var optionsInputURL = undefined;
+    }
+
+    this.constructTable(rowsInputObject, optionsInputObject, rowsInputURL, optionsInputURL);
+  }
+
+  initiateJSON() {
+    this.findTableWrapper();
+    this.setTableWrapperClasses();
+    this.constructTableFromObjects(this.dataInputJSON, this.optionsInputJSON);
+  }
+
+  initiateURL() {
+    this.findTableWrapper();
+    this.setTableWrapperClasses();
+    this.constructTable(this.dataInputURL, this.optionsInputURL);
+  }
+
+  update(rows, options) {
+    const rowsInput = rows;
+    const optionsInput = options;
+    const rowsInputType = typeof rowsInput === "object" && rowsInput.hasOwnProperty("url") ? "url" : "obj";
+    const optionsInputType = typeof optionsInput === "object" && optionsInput.hasOwnProperty("url") ? "url" : "obj";
+
+    if (rowsInputType === "url") {
+      var rowsInputObject = undefined;
+      var rowsInputURL = rowsInput;
+    } else if (rowsInputType === "obj") {
+      var rowsInputObject = rowsInput;
+      var rowsInputURL = undefined;
+    }
+
+    if (optionsInputType === "url") {
+      var optionsInputObject = undefined;
+      var optionsInputURL = optionsInput;
+    } else if (optionsInputType === "obj") {
+      var optionsInputObject = optionsInput;
+      var optionsInputURL = undefined;
+    }
+
+    this.constructTable(rowsInputObject, optionsInputObject, rowsInputURL, optionsInputURL);
+  }
+
+  findTableWrapper() {
     if (typeof this.tableWrapper === "string") {
       this.tableWrapperElement = document.querySelector(this.tableWrapper);
     } else {
       this.tableWrapperElement = this.tableWrapper;
     }
+  }
 
-    this.renderTable();
-    this.readPrimaryHtmlElements();
-    this.setTableWrapperClasses();
-    this.tableDataObject = this.extractDataFromHtml();
+  readInput() {
+    const rowsInput = this.rowsInput || [];
+    const optionsInput = this.optionsInput || {};
+    const headersOptionsInput = optionsInput.headers || {};
+    this.emptyHead = Object.keys(headersOptionsInput).length === 0;
+    this.emptyBody = rowsInput.length === 0;
+    this.emptyTable = this.emptyBody && this.emptyHead;
 
-    if (this.enableSelect) {
-      this.getUniqueIdentifiers();
+    if (!this.emptyBody) {
+      this.dataColumnsKeys = rowsInput.length > 0 ? Object.keys(rowsInput[0]) : [];
     }
+
+    if (!this.emptyHead) {
+      this.nonDataColumnsKeys = Object.keys(headersOptionsInput).filter(key => !this.dataColumnsKeys.includes(key));
+    }
+
+    this.allColumnsKeys = this.dataColumnsKeys.concat(this.nonDataColumnsKeys);
+    this.enableSelect = optionsInput.select || true;
+    this.enableSort = optionsInput.sort || true;
+    this.uniqueIdentifierKey = optionsInput.uniqueID;
   }
 
   initiateEvents() {
-    super.initiateEvents(); // Filtering button events
+    super.initiateEvents();
+    const options = this.optionsInput || {};
+    const headersOptions = options.headers || {};
+    const columnsKeys = this.allColumnsKeys || {}; // Filtering button events
 
-    this.tableElement.querySelectorAll('#filter').forEach(filter => {
+    this.tableElement.querySelectorAll('[data-type="filter"]').forEach(filter => {
       let column = filter.closest('th');
-      let columnID = Array.from(column.parentNode.children).indexOf(column);
-      columnID = this.enableSelect ? columnID - 1 : columnID;
-      let columnFilter = this.dataInput.columns[columnID].hasOwnProperty('filter') ? this.dataInput.columns[columnID].filter : false;
+      const columnKey = column.getAttribute("key");
+      const columnOptions = headersOptions[columnKey] || {};
+      const columnFilter = columnOptions.filter || false;
 
       if (Boolean(columnFilter)) {
         filter.addEventListener('click', columnFilter);
       }
     }); // Button cells events
 
-    if (!this.dataInput) return;
-    let buttonColumns = this.dataInput.columns.map((col, idx) => {
+    let buttonColumns = columnsKeys.map(col_key => {
+      const col = headersOptions[col_key] || {};
       if (col.type == "button") return {
-        [idx]: col["callback"]
+        [col_key]: col["callback"]
       };
     }).filter(callback => callback != undefined);
     this.tableDataObject.body.rows.forEach(row => {
       buttonColumns.forEach(col => {
-        let colIndex = this.enableSelect ? parseInt(Object.keys(col)[0]) + 1 : parseInt(Object.keys(col)[0]);
-        row.element.children[colIndex].querySelector('[table-button]').addEventListener('click', Object.values(col)[0]);
-        row.cells[colIndex].element.querySelector('[table-button]').addEventListener('click', Object.values(col)[0]);
+        const buttonCellElements = row.cells.filter(cell => cell.element.getAttribute("key") === Object.keys(col)[0]);
+        buttonCellElements.forEach(button => {
+          button.element.querySelector('[table-button]').addEventListener('click', Object.values(col)[0]);
+        });
       });
     });
   }
@@ -504,134 +558,224 @@ class JsonTable extends Table {
   setTableWrapperClasses() {
     this.tableWrapperElement.classList.add('overflow-auto', 'border', 'border-gray-150');
     this.tableWrapperElement.classList.add('max-w-full');
-  } // Creating data object from json created html table 
+  }
 
-
-  extractDataFromJson() {
-    let tableData = {
-      "keys": {},
-      "rows": []
-    };
-    let data = this.dataInput;
-    let columns = data.columns;
-    columns.forEach((col, idx) => tableData.keys[idx] = col.text);
-    let rowsElements = Array.from(this.tableElement.tBodies[0].rows);
-    let rowsData = this.dataInput.rows.map((row, idx) => {
-      let rowObj = {
-        "element": rowsElements[idx],
-        "data": {}
-      };
-      Object.entries(tableData.keys).forEach(key => {
-        rowObj.data[key[0]] = row[key[1]];
-      });
-      return rowObj;
-    });
-    tableData.rows = rowsData;
-    return tableData;
+  readPrimaryHtmlElements() {
+    super.readPrimaryHtmlElements();
+    this.tbodyHeight = this.bodyElement ? this.bodyElement.clientHeight + "px" : null;
+    this.WrapperWidth = this.tableWrapperElement ? this.tableWrapperElement.clientWidth + "px" : "100%";
   } // Building & Rendering a html table from json
 
 
-  renderTable() {
-    var tableHtml = this.buildTableHtml();
-    this.tableWrapperElement.insertAdjacentHTML('afterbegin', tableHtml);
+  renderTable(bodyLoading, headLoading) {
+    this.tableWrapperElement.replaceChildren();
+
+    if (this.emptyTable) {
+      var tableHtml = this.constructor.htmlTemplates.emptyTablePlaceholder;
+      this.tableWrapperElement.insertAdjacentHTML('afterbegin', tableHtml);
+      return;
+    } else {
+      var tableHtml = this.buildTableHtml(bodyLoading, headLoading);
+      this.tableWrapperElement.insertAdjacentHTML('afterbegin', tableHtml);
+
+      if (this.emptyBody) {
+        var emptyBodyPlaceholder = this.constructor.htmlTemplates.emptyBodyPlaceholder;
+        this.tableWrapperElement.insertAdjacentHTML('beforeend', emptyBodyPlaceholder);
+      }
+    }
   }
 
-  buildTableHtml() {
-    var theadHtml = this.buildHeadHtml();
-    var tbodyHtml = this.buildBodyHtml();
-    var tableTemplate = Table.htmlTemplates['table'];
-    var tableHtml = this.evaluateTemplate(tableTemplate, {
+  buildTableHtml(bodyLoading, headLoading) {
+    this.tableWrapperElement.setAttribute('style', '');
+    const theadHtml = this.buildHeadHtml(headLoading);
+
+    if (this.emptyBody) {
+      var tbodyHtml = "";
+    } else {
+      var tbodyHtml = this.buildBodyHtml(bodyLoading, headLoading);
+    }
+
+    const tableTemplate = this.constructor.htmlTemplates['table'];
+    let extras = {};
+
+    if (bodyLoading && this.tbodyHeight) {
+      extras["bodyStyle"] = `height: ${this.tbodyHeight};`;
+    }
+
+    if (headLoading || bodyLoading || this.emptyBody) {
+      this.WrapperWidth = this.WrapperWidth || "100%";
+      this.tableWrapperElement.setAttribute('style', `width: ${this.WrapperWidth};`);
+    }
+
+    const tableHtml = this.evaluateTemplate(tableTemplate, {
       "thead": theadHtml,
-      "tbody": tbodyHtml
+      "tbody": tbodyHtml,
+      ...extras
     });
     return tableHtml;
   }
 
-  buildHeadHtml() {
-    let headColumnTemplate = Table.htmlTemplates['headColumn'];
-    let headColumns = this.dataInput.columns;
-    let headColumnsHtml = headColumns.map(col => {
-      let extras = {};
+  buildHeadHtml(headLoading) {
+    const columnsKeys = this.allColumnsKeys || [];
+    const options = this.optionsInput || {};
+    const headersOptions = options.headers || {};
 
-      if (col.type == 'button') {
-        return this.evaluateTemplate(headColumnTemplate);
-      }
-
-      if (this.enableSort && !col.hasOwnProperty('sort') || this.enableSort && col['sort']) {
-        extras["sort"] = this.evaluateTemplate(Table.htmlTemplates['headSort']);
-      }
-
-      if (this.filter && col['filter']) {
-        extras["filter"] = this.evaluateTemplate(Table.htmlTemplates['headFilter']);
-      }
-
-      return this.evaluateTemplate(headColumnTemplate, {
-        "text": col.text,
-        ...extras
+    if (headLoading) {
+      const columnsCount = columnsKeys && columnsKeys.length > 0 ? columnsKeys.length : 5;
+      const headColumnPropTemplate = this.constructor.htmlTemplates.headColumnProp;
+      const headColumnsHtml = [...Array(columnsCount)].map(() => headColumnPropTemplate).join('');
+      return this.evaluateTemplate(this.constructor.htmlTemplates.headRowProp, {
+        "columns": headColumnsHtml
       });
-    });
+    } else {
+      const headColumnTemplate = this.constructor.htmlTemplates.headColumn;
+      const headColumns = columnsKeys;
+      const headColumnsHtmlArray = headColumns.map(col_key => {
+        const col = headersOptions[col_key] || {};
+        const colText = col.text || col_key;
+        let extras = {};
 
-    if (this.enableSelect) {
-      let headSelectTemplate = Table.htmlTemplates['headSelect'];
-      headColumnsHtml.unshift(this.evaluateTemplate(headSelectTemplate));
-    }
-
-    let headRowHtml = headColumnsHtml.join(' ');
-    let theadTemplate = Table.htmlTemplates['headRow'];
-    let theadHtml = this.evaluateTemplate(theadTemplate, {
-      "row": headRowHtml
-    });
-    return theadHtml;
-  }
-
-  buildBodyHtml() {
-    const bodyRows = this.dataInput.rows;
-    const tbodyHtml = bodyRows.map(row => {
-      const rowCells = this.dataInput.columns;
-      const cellsHtml = rowCells.map(cell => {
-        let cellValue = row[cell.text];
-        const cellType = cell.hasOwnProperty('type') ? cell.type : 'text';
-        const cellExtras = {};
-        const cellTemplate = Table.htmlTemplates.bodyCell[cellType];
-
-        if (cell.colorCode) {
-          cellValue = cellValue.toLowerCase();
-          const conditionsDictionary = {
-            'equal': '==='
-          };
-          cell.colorCode.some(cond => {
-            if (eval("'" + cellValue + "'" + conditionsDictionary[cond.condition] + "'" + cond.value.toLowerCase() + "'")) {
-              cellExtras['color'] = cond.color;
-              return true;
-            }
-          });
+        if (!col.hasOwnProperty("data") && (col.type == 'html' || col.type == 'button' || col.type == 'image')) {
+          col.data = false;
         }
 
-        if (cell.type == 'button') {
-          cellExtras['color'] = cell.color;
-          cellExtras['text'] = cell.text;
+        if (col.hasOwnProperty("data") && !col.data) {
+          extras['attributes'] = this.constructor.attributes.notData;
+
+          if (!col.hasOwnProperty("sort")) {
+            col.sort = false;
+          }
+
+          if (!col.hasOwnProperty("filter")) {
+            col.filter = false;
+          }
         }
 
-        const cellHtml = this.evaluateTemplate(cellTemplate, {
-          "text": cellValue,
-          ...cellExtras
+        if (col.hasOwnProperty("render") && !col.render) {
+          return;
+        }
+
+        if (this.enableSort && !col.hasOwnProperty('sort') || this.enableSort && col['sort']) {
+          extras["sort"] = this.evaluateTemplate(this.constructor.htmlTemplates.headSort);
+        }
+
+        if (col['filter']) {
+          extras["filter"] = this.evaluateTemplate(this.constructor.htmlTemplates.headFilter);
+        }
+
+        return this.evaluateTemplate(headColumnTemplate, {
+          "key": col_key,
+          "text": colText,
+          ...extras
         });
-        return cellHtml;
       });
 
       if (this.enableSelect) {
-        let bodySelectTemplate = Table.htmlTemplates['rowSelect'];
-        cellsHtml.unshift(this.evaluateTemplate(bodySelectTemplate));
+        let headSelectTemplate = this.constructor.htmlTemplates.headSelect;
+        headColumnsHtmlArray.unshift(this.evaluateTemplate(headSelectTemplate));
       }
 
-      var rowCellsHtml = cellsHtml.join('');
-      var rowTemplate = Table.htmlTemplates.bodyRow;
-      var rowHtml = this.evaluateTemplate(rowTemplate, {
-        "row": rowCellsHtml
+      const headRowHtml = headColumnsHtmlArray.join('');
+      const theadTemplate = this.constructor.htmlTemplates.headRow;
+      const theadHtml = this.evaluateTemplate(theadTemplate, {
+        "row": headRowHtml
       });
-      return rowHtml;
-    }).join('');
-    return tbodyHtml;
+      return theadHtml;
+    }
+  }
+
+  buildBodyHtml(bodyLoading, headLoading) {
+    const rowsData = this.rowsInput || [];
+    const columnsKeys = this.allColumnsKeys || [];
+    const options = this.optionsInput || {};
+    const headersOptions = options.headers || {};
+
+    if (bodyLoading) {
+      const rowsCount = rowsData && rowsData.length > 0 ? rowsData.length : 12;
+      const columnsCount = columnsKeys && columnsKeys.length > 0 ? columnsKeys.length : 5;
+      const tbodyArray = [...Array(rowsCount)].map(() => {
+        const propRowTemplate = this.constructor.htmlTemplates.bodyRowProp;
+        const propCellTemplate = this.constructor.htmlTemplates.bodyCellProp;
+        const propCellsHtmlArray = [...Array(columnsCount)].map(() => {
+          return propCellTemplate;
+        });
+
+        if (this.enableSelect && !headLoading) {
+          propCellsHtmlArray.unshift(this.evaluateTemplate(this.constructor.htmlTemplates['rowSelect']));
+          propCellsHtmlArray.pop();
+        }
+
+        const propCellsHtml = propCellsHtmlArray.join("");
+        return this.evaluateTemplate(propRowTemplate, {
+          "row": propCellsHtml
+        });
+      });
+      var tBodyHtml = tbodyArray.join("");
+    } else {
+      const bodyRows = rowsData;
+      var tBodyHtml = bodyRows.map(row => {
+        const rowCells = columnsKeys;
+        const rowCellsHtmlArray = rowCells.map(cell_key => {
+          const cell = headersOptions[cell_key] || {};
+          let cellValue = row[cell_key] || cell.value || "";
+          const cellType = cell.type || 'text';
+          const cellExtras = {};
+          const cellTemplate = this.constructor.htmlTemplates.bodyCell[cellType] || this.constructor.htmlTemplates.bodyCell['text'];
+
+          if (cell.hasOwnProperty("render") && !cell.render) {
+            return;
+          }
+
+          if (cell.type == 'html') {
+            const template = cell.template || "";
+            const templateParams = row[cell_key] || {};
+            cellValue = this.evaluateTemplate(template, templateParams);
+          }
+
+          if (cell.colorCode) {
+            const conditionsDictionary = {
+              'equal': '==='
+            };
+            cell.colorCode.some(cond => {
+              if (eval("'" + cellValue.toLowerCase() + "'" + conditionsDictionary[cond.condition] + "'" + cond.value.toLowerCase() + "'")) {
+                cellExtras['color'] = cond.color;
+                return true;
+              }
+            });
+          } else if (cell.color) {
+            cellExtras['color'] = cell.color;
+          }
+
+          if (cell.type == 'button' && !cellExtras['text']) {
+            cellExtras['text'] = cell.value || cell.text || cell_key;
+          }
+
+          if (cell.centered === true) {
+            cellExtras["classes"] = cellExtras["classes"] ? cellExtras["classes"] += " flex justify-center " : " flex justify-center ";
+          }
+
+          const cellHtml = this.evaluateTemplate(cellTemplate, {
+            "key": cell_key,
+            "text": cellValue,
+            ...cellExtras
+          });
+          return cellHtml;
+        });
+
+        if (this.enableSelect) {
+          rowCellsHtmlArray.unshift(this.evaluateTemplate(this.constructor.htmlTemplates['rowSelect']));
+        }
+
+        const rowCellsHtml = rowCellsHtmlArray.join('');
+        const rowTemplate = this.constructor.htmlTemplates.bodyRow;
+        const rowHtml = this.evaluateTemplate(rowTemplate, {
+          "row": rowCellsHtml
+        });
+        return rowHtml;
+      }).join('');
+    }
+
+    return tBodyHtml;
   }
 
   evaluateTemplate(template, args = {}) {
@@ -647,9 +791,246 @@ class JsonTable extends Table {
     });
     var evaluated = eval("`" + template + "`");
     return evaluated;
+  } // updating the table content by requesting url
+
+
+  constructTable(rowsObject = null, optionsObject = null, rowsURL = null, optionsURL = null) {
+    const hasRowsObject = Boolean(rowsObject);
+    const hasOptionsObject = Boolean(optionsObject);
+    const hasRowsURL = Boolean(rowsURL) && rowsURL.hasOwnProperty("url");
+    const hasOptionsURL = Boolean(optionsURL) && optionsURL.hasOwnProperty("url");
+
+    if (!hasRowsObject && !hasOptionsObject && hasRowsURL && hasOptionsURL) {
+      this.loadingTable();
+      this.makeRequests(rowsURL, optionsURL).then(result => {
+        this.constructTableFromObjects(result.rows, result.options);
+      });
+    } else if (!hasRowsObject && hasRowsURL) {
+      if (hasOptionsObject) {
+        this.loadingBody();
+        this.makeRequests(rowsURL).then(result => {
+          this.constructTableFromObjects(result.rows, optionsObject);
+        });
+      } else {
+        this.loadingBody();
+        this.makeRequests(rowsURL).then(result => {
+          this.constructTableFromObjects(result.rows, undefined);
+        });
+      }
+    } else if (!hasOptionsObject && hasOptionsURL) {
+      if (hasRowsObject) {
+        this.loadingBody();
+        this.makeRequests(undefined, optionsURL).then(result => {
+          this.constructTableFromObjects(rowsObject, result.options);
+        });
+      } else {
+        this.loadingBody();
+        this.makeRequests(undefined, optionsURL).then(result => {
+          this.constructTableFromObjects(undefined, result.options);
+        });
+      }
+    } else if (hasRowsObject, hasOptionsObject) {
+      this.constructTableFromObjects(rowsObject, optionsObject);
+    } else if (hasRowsObject) {
+      this.constructTableFromObjects(rowsObject, undefined);
+    } else if (hasOptionsObject) {
+      this.constructTableFromObjects(undefined, optionsObject);
+    }
+  }
+
+  async makeRequests(rows = null, options = null) {
+    if (rows) {
+      var rowsResult = await this.request(rows.url, rows.onsuccess, rows.onerror);
+    }
+
+    if (options) {
+      var optionsResult = await this.request(options.url, options.onsuccess, options.onerror);
+    }
+
+    return {
+      rows: rowsResult,
+      options: optionsResult
+    };
+  }
+
+  async request(url, successCallback = null, failureCallback = null) {
+    const response = await fetch(url);
+
+    if (response.status !== 200) {
+      if (failureCallback) {
+        const callbackResult = failureCallback(response);
+
+        if (callbackResult.then) {
+          return await callbackResult;
+        } else {
+          return callbackResult;
+        }
+      } else {
+        console.error("request failed : ", response.status, response.statusText);
+        return;
+      }
+    }
+
+    if (successCallback) {
+      const callbackResult = successCallback(response);
+
+      if (callbackResult.then) {
+        return await callbackResult;
+      } else {
+        return callbackResult;
+      }
+    } else {
+      return await response.json();
+    }
+  }
+
+  constructTableFromObjects(rows = null, options = null) {
+    if (rows) {
+      this.rowsInput = rows;
+    }
+
+    if (options) {
+      this.optionsInput = options;
+    }
+
+    if (rows || options) {
+      this.readInput();
+      this.renderTable();
+
+      if (!this.emptyTable && !this.emptyBody) {
+        this.readPrimaryHtmlElements();
+        this.tableDataObject = this.extractDataFromHtml();
+
+        if (this.enableSelect) {
+          this.getUniqueIdentifiers();
+        }
+
+        this.initiateEvents();
+      }
+    }
+  } // Loading states
+
+
+  loadingBody() {
+    this.emptyHead = null;
+    this.emptyBody = null;
+    this.emptyTable = null;
+    this.renderTable(true);
+  }
+
+  loadingTable() {
+    this.emptyHead = null;
+    this.emptyBody = null;
+    this.emptyTable = null;
+    this.renderTable(true, true);
   }
 
 }
+
+/***/ }),
+
+/***/ "./src/templates/Table.js":
+/*!********************************!*\
+  !*** ./src/templates/Table.js ***!
+  \********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "tableTemplates": () => (/* binding */ tableTemplates)
+/* harmony export */ });
+const tableTemplates = {
+  "table": `
+        <table class='min-w-full rounded border-gray-700 bg-gray-50'>
+            <thead style="\${data['headStyle']}">\${data['thead']}</thead>
+            <tbody style="\${data['bodyStyle']}">\${data['tbody']}</tbody>
+        </table>
+        `,
+  "headRow": `
+        <tr class="bg-gray-200 whitespace-nowrap text-gray-700 font-semibold capitalize sticky -top-1 z-10">\${data['row']}</tr>
+        `,
+  "headSelect": `
+        <th non-data class=" sticky -left-px shadow bg-gray-200 shadow-xl text-start px-4 py-1 z-10 w-0"><input type="checkbox"></th>
+        `,
+  "transparentSelect": `
+        <th non-data><input type="checkbox"></th>
+        `,
+  "headSort": `
+        <div class="flex flex-col space-y-0.5">
+            <svg data-sort-direction="asc"  xmlns="http://www.w3.org/2000/svg" viewBox="-143.066 -107.05 286.1 167.1">
+                <path d="M 119 60 H -119 c -21.4 0 -32.1 -25.9 -17 -41 L -17 -100 c 9.4 -9.4 24.6 -9.4 33.9 0 l 119 119 c 15.2 15.1 4.5 41 -16.9 41 z" fill="#000000"/>
+            </svg>
+            <svg data-sort-direction="desc" xmlns="http://www.w3.org/2000/svg" viewBox="-143.066 -107.05 286.1 167.1" style="transform: rotate(180deg);">
+                <path d="M 119 60 H -119 c -21.4 0 -32.1 -25.9 -17 -41 L -17 -100 c 9.4 -9.4 24.6 -9.4 33.9 0 l 119 119 c 15.2 15.1 4.5 41 -16.9 41 z" fill="#000000"/>
+            </svg>
+        </div>
+        `,
+  "headFilter": `
+        <div data-type="filter">
+            <svg xmlns="http://www.w3.org/2000/svg" x="0" y="0" viewBox="0 0 459 459" style="enable-background:new 0 0 512 512" xml:space="preserve">
+                <path d="M178.5,382.5h102v-51h-102V382.5z M0,76.5v51h459v-51H0z M76.5,255h306v-51h-306V255z" fill="#000000" data-original="#000000"></path>
+            </svg>
+        </div>
+        `,
+  "headColumn": `
+        <th key="\${data['key']}" \${data['attributes']} class="text-start px-4 py-2">
+            <div class="flex justify-between items-center space-x-2">
+                <div header-value>\${data['text']}</div>
+                <div class="flex items-center space-x-1">
+                    \${data['filter']}
+                    \${data['sort']}
+                </div>
+            </div>    
+        </th>
+        `,
+  "bodyRow": `
+        <tr class="border-b border-gray-150 whitespace-nowrap text-gray-500 text-sm">\${data['row']}</tr>
+        `,
+  "bodyCell": {
+    "text": `
+            <td key="\${data['key']}" \${data['attributes']} class="px-4 py-2 \${data['classes']}">\${data['text']}</td>
+            `,
+    "bold": `
+            <td key="\${data['key']}" \${data['attributes']} class="px-4 py-2 \${data['classes']} text-gray-700 font-bold">\${data['text']}</td>
+            `,
+    "image": `
+            <td key="\${data['key']}" \${data['attributes']} class="px-4 py-2 \${data['classes']} text-gray-700 font-bold"><img table-image class="w-12 h-12 border rounded-full" src="\${data['text']}"></td>
+            `,
+    "label": `
+            <td key="\${data['key']}" \${data['attributes']} class="px-4 py-2 \${data['classes']}"><div table-label class="bg-\${data['color']}-100 text-\${data['color']}-700 rounded shadow w-fit text-center font-semibold px-3 py-1">\${data['text']}</div></td>
+            `,
+    "button": `
+            <td key="\${data['key']}" \${data['attributes']} class="px-4 py-2 \${data['classes']}"><span table-button class="text-\${data['color']}-800 font-bold hover:text-\${data['color']}-700 cursor-pointer capitalize">\${data['text']}</span></td>
+            `
+  },
+  "rowSelect": `
+        <td non-data class="sticky -left-px bg-white px-4 py-2 w-0"><input type="checkbox"></td>
+    `,
+  "emptyBodyPlaceholder": `
+        <div class="flex justify-center items-center w-100 sticky left-0 h-16 text-lg text-gray-600 font-bold capitalize">No data found</div>  
+    `,
+  "emptyTablePlaceholder": `
+        <div class="w-full h-10 bg-gray-200"></div>
+        <div class="w-full flex flex-col justify-center items-center p-6">
+            <svg class="fill-gray-700" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Capa_1" x="0px" y="0px" width="150.817px" height="150.817px" viewBox="0 0 150.817 150.817" style="enable-background:new 0 0 150.817 150.817;" xml:space="preserve">
+                <path d="M58.263,64.946c3.58-8.537,9.834-16.039,18.456-21.02c6.644-3.842,14.225-5.876,21.902-5.876   c6.376,0,12.568,1.461,18.207,4.031V21.677C116.829,9.706,92.563,0,62.641,0C32.71,0,8.448,9.706,8.448,21.677v21.681   C8.436,54.75,30.372,64.061,58.263,64.946z M62.629,5.416c29.77,0,48.768,9.633,48.768,16.255c0,6.634-18.998,16.258-48.768,16.258   c-29.776,0-48.774-9.624-48.774-16.258C13.855,15.049,32.853,5.416,62.629,5.416z M8.429,75.883V54.202   c0,10.973,20.396,20.015,46.841,21.449c-1.053,7.21-0.311,14.699,2.375,21.799C30.055,96.445,8.436,87.184,8.429,75.883z    M95.425,125.631c-9.109,2.771-20.457,4.445-32.796,4.445c-29.931,0-54.193-9.706-54.193-21.684V86.709   c0,11.983,24.256,21.684,54.193,21.684c0.341,0,0.673-0.018,1.014-0.018C71.214,118.373,82.827,124.656,95.425,125.631z    M131.296,63.11c-10.388-17.987-33.466-24.174-51.46-13.785c-17.987,10.388-24.173,33.463-13.792,51.45   c10.388,17.993,33.478,24.174,51.465,13.798C135.51,104.191,141.684,81.102,131.296,63.11z M71.449,97.657   C62.778,82.66,67.945,63.394,82.955,54.72c15.01-8.662,34.275-3.504,42.946,11.509c8.672,15.013,3.502,34.279-11.508,42.943   C99.377,117.85,80.117,112.686,71.449,97.657z M139.456,133.852l-16.203,9.353l-12.477-21.598l16.209-9.359L139.456,133.852z    M137.708,149.562c-4.488,2.582-10.199,1.06-12.794-3.429l16.216-9.353C143.718,141.268,142.184,146.979,137.708,149.562z"/>
+            </svg>
+            <span class="text-gray-600 font-semibold text-4xl uppercase mt-3">No Data Found</span>
+        </div>  
+    `,
+  "headRowProp": `
+        <tr class="bg-gray-200 whitespace-nowrap text-gray-700 font-semibold capitalize sticky -top-1 z-10 animate-pulse">\${data['columns']}</tr>
+    `,
+  "headColumnProp": `
+        <th class="h-10"></th>
+    `,
+  "bodyRowProp": `
+        <tr class="border-b border-gray-150 whitespace-nowrap text-gray-500 text-sm animate-pulse">\${data['row']}</tr>
+    `,
+  "bodyCellProp": `
+        <td class="px-4"><div class="my-2.5 mx-1 bg-gray-200 h-5 rounded">&nbsp;</div></td>
+    `
+};
 
 /***/ }),
 
@@ -672,7 +1053,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "/*\n! tailwindcss v3.1.8 | MIT License | https://tailwindcss.com\n*//*\n1. Prevent padding and border from affecting element width. (https://github.com/mozdevs/cssremedy/issues/4)\n2. Allow adding a border to an element by just adding a border-width. (https://github.com/tailwindcss/tailwindcss/pull/116)\n*/\n\n*,\n::before,\n::after {\n  box-sizing: border-box; /* 1 */\n  border-width: 0; /* 2 */\n  border-style: solid; /* 2 */\n  border-color: #e5e7eb; /* 2 */\n}\n\n::before,\n::after {\n  --tw-content: '';\n}\n\n/*\n1. Use a consistent sensible line-height in all browsers.\n2. Prevent adjustments of font size after orientation changes in iOS.\n3. Use a more readable tab size.\n4. Use the user's configured `sans` font-family by default.\n*/\n\nhtml {\n  line-height: 1.5; /* 1 */\n  -webkit-text-size-adjust: 100%; /* 2 */\n  -moz-tab-size: 4; /* 3 */\n  -o-tab-size: 4;\n     tab-size: 4; /* 3 */\n  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, \"Noto Sans\", sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"; /* 4 */\n}\n\n/*\n1. Remove the margin in all browsers.\n2. Inherit line-height from `html` so users can set them as a class directly on the `html` element.\n*/\n\nbody {\n  margin: 0; /* 1 */\n  line-height: inherit; /* 2 */\n}\n\n/*\n1. Add the correct height in Firefox.\n2. Correct the inheritance of border color in Firefox. (https://bugzilla.mozilla.org/show_bug.cgi?id=190655)\n3. Ensure horizontal rules are visible by default.\n*/\n\nhr {\n  height: 0; /* 1 */\n  color: inherit; /* 2 */\n  border-top-width: 1px; /* 3 */\n}\n\n/*\nAdd the correct text decoration in Chrome, Edge, and Safari.\n*/\n\nabbr:where([title]) {\n  -webkit-text-decoration: underline dotted;\n          text-decoration: underline dotted;\n}\n\n/*\nRemove the default font size and weight for headings.\n*/\n\nh1,\nh2,\nh3,\nh4,\nh5,\nh6 {\n  font-size: inherit;\n  font-weight: inherit;\n}\n\n/*\nReset links to optimize for opt-in styling instead of opt-out.\n*/\n\na {\n  color: inherit;\n  text-decoration: inherit;\n}\n\n/*\nAdd the correct font weight in Edge and Safari.\n*/\n\nb,\nstrong {\n  font-weight: bolder;\n}\n\n/*\n1. Use the user's configured `mono` font family by default.\n2. Correct the odd `em` font sizing in all browsers.\n*/\n\ncode,\nkbd,\nsamp,\npre {\n  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace; /* 1 */\n  font-size: 1em; /* 2 */\n}\n\n/*\nAdd the correct font size in all browsers.\n*/\n\nsmall {\n  font-size: 80%;\n}\n\n/*\nPrevent `sub` and `sup` elements from affecting the line height in all browsers.\n*/\n\nsub,\nsup {\n  font-size: 75%;\n  line-height: 0;\n  position: relative;\n  vertical-align: baseline;\n}\n\nsub {\n  bottom: -0.25em;\n}\n\nsup {\n  top: -0.5em;\n}\n\n/*\n1. Remove text indentation from table contents in Chrome and Safari. (https://bugs.chromium.org/p/chromium/issues/detail?id=999088, https://bugs.webkit.org/show_bug.cgi?id=201297)\n2. Correct table border color inheritance in all Chrome and Safari. (https://bugs.chromium.org/p/chromium/issues/detail?id=935729, https://bugs.webkit.org/show_bug.cgi?id=195016)\n3. Remove gaps between table borders by default.\n*/\n\ntable {\n  text-indent: 0; /* 1 */\n  border-color: inherit; /* 2 */\n  border-collapse: collapse; /* 3 */\n}\n\n/*\n1. Change the font styles in all browsers.\n2. Remove the margin in Firefox and Safari.\n3. Remove default padding in all browsers.\n*/\n\nbutton,\ninput,\noptgroup,\nselect,\ntextarea {\n  font-family: inherit; /* 1 */\n  font-size: 100%; /* 1 */\n  font-weight: inherit; /* 1 */\n  line-height: inherit; /* 1 */\n  color: inherit; /* 1 */\n  margin: 0; /* 2 */\n  padding: 0; /* 3 */\n}\n\n/*\nRemove the inheritance of text transform in Edge and Firefox.\n*/\n\nbutton,\nselect {\n  text-transform: none;\n}\n\n/*\n1. Correct the inability to style clickable types in iOS and Safari.\n2. Remove default button styles.\n*/\n\nbutton,\n[type='button'],\n[type='reset'],\n[type='submit'] {\n  -webkit-appearance: button; /* 1 */\n  background-color: transparent; /* 2 */\n  background-image: none; /* 2 */\n}\n\n/*\nUse the modern Firefox focus style for all focusable elements.\n*/\n\n:-moz-focusring {\n  outline: auto;\n}\n\n/*\nRemove the additional `:invalid` styles in Firefox. (https://github.com/mozilla/gecko-dev/blob/2f9eacd9d3d995c937b4251a5557d95d494c9be1/layout/style/res/forms.css#L728-L737)\n*/\n\n:-moz-ui-invalid {\n  box-shadow: none;\n}\n\n/*\nAdd the correct vertical alignment in Chrome and Firefox.\n*/\n\nprogress {\n  vertical-align: baseline;\n}\n\n/*\nCorrect the cursor style of increment and decrement buttons in Safari.\n*/\n\n::-webkit-inner-spin-button,\n::-webkit-outer-spin-button {\n  height: auto;\n}\n\n/*\n1. Correct the odd appearance in Chrome and Safari.\n2. Correct the outline style in Safari.\n*/\n\n[type='search'] {\n  -webkit-appearance: textfield; /* 1 */\n  outline-offset: -2px; /* 2 */\n}\n\n/*\nRemove the inner padding in Chrome and Safari on macOS.\n*/\n\n::-webkit-search-decoration {\n  -webkit-appearance: none;\n}\n\n/*\n1. Correct the inability to style clickable types in iOS and Safari.\n2. Change font properties to `inherit` in Safari.\n*/\n\n::-webkit-file-upload-button {\n  -webkit-appearance: button; /* 1 */\n  font: inherit; /* 2 */\n}\n\n/*\nAdd the correct display in Chrome and Safari.\n*/\n\nsummary {\n  display: list-item;\n}\n\n/*\nRemoves the default spacing and border for appropriate elements.\n*/\n\nblockquote,\ndl,\ndd,\nh1,\nh2,\nh3,\nh4,\nh5,\nh6,\nhr,\nfigure,\np,\npre {\n  margin: 0;\n}\n\nfieldset {\n  margin: 0;\n  padding: 0;\n}\n\nlegend {\n  padding: 0;\n}\n\nol,\nul,\nmenu {\n  list-style: none;\n  margin: 0;\n  padding: 0;\n}\n\n/*\nPrevent resizing textareas horizontally by default.\n*/\n\ntextarea {\n  resize: vertical;\n}\n\n/*\n1. Reset the default placeholder opacity in Firefox. (https://github.com/tailwindlabs/tailwindcss/issues/3300)\n2. Set the default placeholder color to the user's configured gray 400 color.\n*/\n\ninput::-moz-placeholder, textarea::-moz-placeholder {\n  opacity: 1; /* 1 */\n  color: #9ca3af; /* 2 */\n}\n\ninput::placeholder,\ntextarea::placeholder {\n  opacity: 1; /* 1 */\n  color: #9ca3af; /* 2 */\n}\n\n/*\nSet the default cursor for buttons.\n*/\n\nbutton,\n[role=\"button\"] {\n  cursor: pointer;\n}\n\n/*\nMake sure disabled buttons don't get the pointer cursor.\n*/\n:disabled {\n  cursor: default;\n}\n\n/*\n1. Make replaced elements `display: block` by default. (https://github.com/mozdevs/cssremedy/issues/14)\n2. Add `vertical-align: middle` to align replaced elements more sensibly by default. (https://github.com/jensimmons/cssremedy/issues/14#issuecomment-634934210)\n   This can trigger a poorly considered lint error in some tools but is included by design.\n*/\n\nimg,\nsvg,\nvideo,\ncanvas,\naudio,\niframe,\nembed,\nobject {\n  display: block; /* 1 */\n  vertical-align: middle; /* 2 */\n}\n\n/*\nConstrain images and videos to the parent width and preserve their intrinsic aspect ratio. (https://github.com/mozdevs/cssremedy/issues/14)\n*/\n\nimg,\nvideo {\n  max-width: 100%;\n  height: auto;\n}\n\n*, ::before, ::after {\n  --tw-border-spacing-x: 0;\n  --tw-border-spacing-y: 0;\n  --tw-translate-x: 0;\n  --tw-translate-y: 0;\n  --tw-rotate: 0;\n  --tw-skew-x: 0;\n  --tw-skew-y: 0;\n  --tw-scale-x: 1;\n  --tw-scale-y: 1;\n  --tw-pan-x:  ;\n  --tw-pan-y:  ;\n  --tw-pinch-zoom:  ;\n  --tw-scroll-snap-strictness: proximity;\n  --tw-ordinal:  ;\n  --tw-slashed-zero:  ;\n  --tw-numeric-figure:  ;\n  --tw-numeric-spacing:  ;\n  --tw-numeric-fraction:  ;\n  --tw-ring-inset:  ;\n  --tw-ring-offset-width: 0px;\n  --tw-ring-offset-color: #fff;\n  --tw-ring-color: rgb(59 130 246 / 0.5);\n  --tw-ring-offset-shadow: 0 0 #0000;\n  --tw-ring-shadow: 0 0 #0000;\n  --tw-shadow: 0 0 #0000;\n  --tw-shadow-colored: 0 0 #0000;\n  --tw-blur:  ;\n  --tw-brightness:  ;\n  --tw-contrast:  ;\n  --tw-grayscale:  ;\n  --tw-hue-rotate:  ;\n  --tw-invert:  ;\n  --tw-saturate:  ;\n  --tw-sepia:  ;\n  --tw-drop-shadow:  ;\n  --tw-backdrop-blur:  ;\n  --tw-backdrop-brightness:  ;\n  --tw-backdrop-contrast:  ;\n  --tw-backdrop-grayscale:  ;\n  --tw-backdrop-hue-rotate:  ;\n  --tw-backdrop-invert:  ;\n  --tw-backdrop-opacity:  ;\n  --tw-backdrop-saturate:  ;\n  --tw-backdrop-sepia:  ;\n}\n\n::-webkit-backdrop {\n  --tw-border-spacing-x: 0;\n  --tw-border-spacing-y: 0;\n  --tw-translate-x: 0;\n  --tw-translate-y: 0;\n  --tw-rotate: 0;\n  --tw-skew-x: 0;\n  --tw-skew-y: 0;\n  --tw-scale-x: 1;\n  --tw-scale-y: 1;\n  --tw-pan-x:  ;\n  --tw-pan-y:  ;\n  --tw-pinch-zoom:  ;\n  --tw-scroll-snap-strictness: proximity;\n  --tw-ordinal:  ;\n  --tw-slashed-zero:  ;\n  --tw-numeric-figure:  ;\n  --tw-numeric-spacing:  ;\n  --tw-numeric-fraction:  ;\n  --tw-ring-inset:  ;\n  --tw-ring-offset-width: 0px;\n  --tw-ring-offset-color: #fff;\n  --tw-ring-color: rgb(59 130 246 / 0.5);\n  --tw-ring-offset-shadow: 0 0 #0000;\n  --tw-ring-shadow: 0 0 #0000;\n  --tw-shadow: 0 0 #0000;\n  --tw-shadow-colored: 0 0 #0000;\n  --tw-blur:  ;\n  --tw-brightness:  ;\n  --tw-contrast:  ;\n  --tw-grayscale:  ;\n  --tw-hue-rotate:  ;\n  --tw-invert:  ;\n  --tw-saturate:  ;\n  --tw-sepia:  ;\n  --tw-drop-shadow:  ;\n  --tw-backdrop-blur:  ;\n  --tw-backdrop-brightness:  ;\n  --tw-backdrop-contrast:  ;\n  --tw-backdrop-grayscale:  ;\n  --tw-backdrop-hue-rotate:  ;\n  --tw-backdrop-invert:  ;\n  --tw-backdrop-opacity:  ;\n  --tw-backdrop-saturate:  ;\n  --tw-backdrop-sepia:  ;\n}\n\n::backdrop {\n  --tw-border-spacing-x: 0;\n  --tw-border-spacing-y: 0;\n  --tw-translate-x: 0;\n  --tw-translate-y: 0;\n  --tw-rotate: 0;\n  --tw-skew-x: 0;\n  --tw-skew-y: 0;\n  --tw-scale-x: 1;\n  --tw-scale-y: 1;\n  --tw-pan-x:  ;\n  --tw-pan-y:  ;\n  --tw-pinch-zoom:  ;\n  --tw-scroll-snap-strictness: proximity;\n  --tw-ordinal:  ;\n  --tw-slashed-zero:  ;\n  --tw-numeric-figure:  ;\n  --tw-numeric-spacing:  ;\n  --tw-numeric-fraction:  ;\n  --tw-ring-inset:  ;\n  --tw-ring-offset-width: 0px;\n  --tw-ring-offset-color: #fff;\n  --tw-ring-color: rgb(59 130 246 / 0.5);\n  --tw-ring-offset-shadow: 0 0 #0000;\n  --tw-ring-shadow: 0 0 #0000;\n  --tw-shadow: 0 0 #0000;\n  --tw-shadow-colored: 0 0 #0000;\n  --tw-blur:  ;\n  --tw-brightness:  ;\n  --tw-contrast:  ;\n  --tw-grayscale:  ;\n  --tw-hue-rotate:  ;\n  --tw-invert:  ;\n  --tw-saturate:  ;\n  --tw-sepia:  ;\n  --tw-drop-shadow:  ;\n  --tw-backdrop-blur:  ;\n  --tw-backdrop-brightness:  ;\n  --tw-backdrop-contrast:  ;\n  --tw-backdrop-grayscale:  ;\n  --tw-backdrop-hue-rotate:  ;\n  --tw-backdrop-invert:  ;\n  --tw-backdrop-opacity:  ;\n  --tw-backdrop-saturate:  ;\n  --tw-backdrop-sepia:  ;\n}\r\n.container {\n  width: 100%;\n}\r\n@media (min-width: 640px) {\n\n  .container {\n    max-width: 640px;\n  }\n}\r\n@media (min-width: 768px) {\n\n  .container {\n    max-width: 768px;\n  }\n}\r\n@media (min-width: 1024px) {\n\n  .container {\n    max-width: 1024px;\n  }\n}\r\n@media (min-width: 1280px) {\n\n  .container {\n    max-width: 1280px;\n  }\n}\r\n@media (min-width: 1536px) {\n\n  .container {\n    max-width: 1536px;\n  }\n}\r\n.static {\n  position: static;\n}\r\n.sticky {\n  position: -webkit-sticky;\n  position: sticky;\n}\r\n.-top-1 {\n  top: -0.25rem;\n}\r\n.-left-px {\n  left: -1px;\n}\r\n.z-10 {\n  z-index: 10;\n}\r\n.flex {\n  display: flex;\n}\r\n.table {\n  display: table;\n}\r\n.h-12 {\n  height: 3rem;\n}\r\n.w-12 {\n  width: 3rem;\n}\r\n.w-fit {\n  width: -webkit-fit-content;\n  width: -moz-fit-content;\n  width: fit-content;\n}\r\n.min-w-full {\n  min-width: 100%;\n}\r\n.max-w-full {\n  max-width: 100%;\n}\r\n.transform {\n  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));\n}\r\n.cursor-pointer {\n  cursor: pointer;\n}\r\n.flex-col {\n  flex-direction: column;\n}\r\n.items-center {\n  align-items: center;\n}\r\n.justify-between {\n  justify-content: space-between;\n}\r\n.space-y-0\\.5 > :not([hidden]) ~ :not([hidden]) {\n  --tw-space-y-reverse: 0;\n  margin-top: calc(0.125rem * calc(1 - var(--tw-space-y-reverse)));\n  margin-bottom: calc(0.125rem * var(--tw-space-y-reverse));\n}\r\n.space-y-0 > :not([hidden]) ~ :not([hidden]) {\n  --tw-space-y-reverse: 0;\n  margin-top: calc(0px * calc(1 - var(--tw-space-y-reverse)));\n  margin-bottom: calc(0px * var(--tw-space-y-reverse));\n}\r\n.space-x-2 > :not([hidden]) ~ :not([hidden]) {\n  --tw-space-x-reverse: 0;\n  margin-right: calc(0.5rem * var(--tw-space-x-reverse));\n  margin-left: calc(0.5rem * calc(1 - var(--tw-space-x-reverse)));\n}\r\n.space-x-1 > :not([hidden]) ~ :not([hidden]) {\n  --tw-space-x-reverse: 0;\n  margin-right: calc(0.25rem * var(--tw-space-x-reverse));\n  margin-left: calc(0.25rem * calc(1 - var(--tw-space-x-reverse)));\n}\r\n.overflow-auto {\n  overflow: auto;\n}\r\n.whitespace-nowrap {\n  white-space: nowrap;\n}\r\n.rounded {\n  border-radius: 0.25rem;\n}\r\n.rounded-full {\n  border-radius: 9999px;\n}\r\n.border {\n  border-width: 1px;\n}\r\n.border-b {\n  border-bottom-width: 1px;\n}\r\n.border-gray-700 {\n  --tw-border-opacity: 1;\n  border-color: rgb(55 65 81 / var(--tw-border-opacity));\n}\r\n.bg-slate-100 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(241 245 249 / var(--tw-bg-opacity));\n}\r\n.bg-gray-100 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(243 244 246 / var(--tw-bg-opacity));\n}\r\n.bg-zinc-100 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(244 244 245 / var(--tw-bg-opacity));\n}\r\n.bg-neutral-100 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(245 245 245 / var(--tw-bg-opacity));\n}\r\n.bg-stone-100 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(245 245 244 / var(--tw-bg-opacity));\n}\r\n.bg-red-100 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(254 226 226 / var(--tw-bg-opacity));\n}\r\n.bg-orange-100 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(255 237 213 / var(--tw-bg-opacity));\n}\r\n.bg-amber-100 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(254 243 199 / var(--tw-bg-opacity));\n}\r\n.bg-yellow-100 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(254 249 195 / var(--tw-bg-opacity));\n}\r\n.bg-lime-100 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(236 252 203 / var(--tw-bg-opacity));\n}\r\n.bg-green-100 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(220 252 231 / var(--tw-bg-opacity));\n}\r\n.bg-emerald-100 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(209 250 229 / var(--tw-bg-opacity));\n}\r\n.bg-teal-100 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(204 251 241 / var(--tw-bg-opacity));\n}\r\n.bg-cyan-100 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(207 250 254 / var(--tw-bg-opacity));\n}\r\n.bg-sky-100 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(224 242 254 / var(--tw-bg-opacity));\n}\r\n.bg-blue-100 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(219 234 254 / var(--tw-bg-opacity));\n}\r\n.bg-indigo-100 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(224 231 255 / var(--tw-bg-opacity));\n}\r\n.bg-violet-100 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(237 233 254 / var(--tw-bg-opacity));\n}\r\n.bg-purple-100 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(243 232 255 / var(--tw-bg-opacity));\n}\r\n.bg-fuchsia-100 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(250 232 255 / var(--tw-bg-opacity));\n}\r\n.bg-pink-100 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(252 231 243 / var(--tw-bg-opacity));\n}\r\n.bg-rose-100 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(255 228 230 / var(--tw-bg-opacity));\n}\r\n.bg-gray-50 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(249 250 251 / var(--tw-bg-opacity));\n}\r\n.bg-gray-200 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(229 231 235 / var(--tw-bg-opacity));\n}\r\n.bg-white {\n  --tw-bg-opacity: 1;\n  background-color: rgb(255 255 255 / var(--tw-bg-opacity));\n}\r\n.px-4 {\n  padding-left: 1rem;\n  padding-right: 1rem;\n}\r\n.py-1 {\n  padding-top: 0.25rem;\n  padding-bottom: 0.25rem;\n}\r\n.py-2 {\n  padding-top: 0.5rem;\n  padding-bottom: 0.5rem;\n}\r\n.px-3 {\n  padding-left: 0.75rem;\n  padding-right: 0.75rem;\n}\r\n.text-center {\n  text-align: center;\n}\r\n.text-start {\n  text-align: start;\n}\r\n.text-sm {\n  font-size: 0.875rem;\n  line-height: 1.25rem;\n}\r\n.font-semibold {\n  font-weight: 600;\n}\r\n.font-bold {\n  font-weight: 700;\n}\r\n.capitalize {\n  text-transform: capitalize;\n}\r\n.text-slate-800 {\n  --tw-text-opacity: 1;\n  color: rgb(30 41 59 / var(--tw-text-opacity));\n}\r\n.text-slate-700 {\n  --tw-text-opacity: 1;\n  color: rgb(51 65 85 / var(--tw-text-opacity));\n}\r\n.text-gray-800 {\n  --tw-text-opacity: 1;\n  color: rgb(31 41 55 / var(--tw-text-opacity));\n}\r\n.text-gray-700 {\n  --tw-text-opacity: 1;\n  color: rgb(55 65 81 / var(--tw-text-opacity));\n}\r\n.text-zinc-800 {\n  --tw-text-opacity: 1;\n  color: rgb(39 39 42 / var(--tw-text-opacity));\n}\r\n.text-zinc-700 {\n  --tw-text-opacity: 1;\n  color: rgb(63 63 70 / var(--tw-text-opacity));\n}\r\n.text-neutral-800 {\n  --tw-text-opacity: 1;\n  color: rgb(38 38 38 / var(--tw-text-opacity));\n}\r\n.text-neutral-700 {\n  --tw-text-opacity: 1;\n  color: rgb(64 64 64 / var(--tw-text-opacity));\n}\r\n.text-stone-800 {\n  --tw-text-opacity: 1;\n  color: rgb(41 37 36 / var(--tw-text-opacity));\n}\r\n.text-stone-700 {\n  --tw-text-opacity: 1;\n  color: rgb(68 64 60 / var(--tw-text-opacity));\n}\r\n.text-red-800 {\n  --tw-text-opacity: 1;\n  color: rgb(153 27 27 / var(--tw-text-opacity));\n}\r\n.text-red-700 {\n  --tw-text-opacity: 1;\n  color: rgb(185 28 28 / var(--tw-text-opacity));\n}\r\n.text-orange-800 {\n  --tw-text-opacity: 1;\n  color: rgb(154 52 18 / var(--tw-text-opacity));\n}\r\n.text-orange-700 {\n  --tw-text-opacity: 1;\n  color: rgb(194 65 12 / var(--tw-text-opacity));\n}\r\n.text-amber-800 {\n  --tw-text-opacity: 1;\n  color: rgb(146 64 14 / var(--tw-text-opacity));\n}\r\n.text-amber-700 {\n  --tw-text-opacity: 1;\n  color: rgb(180 83 9 / var(--tw-text-opacity));\n}\r\n.text-yellow-800 {\n  --tw-text-opacity: 1;\n  color: rgb(133 77 14 / var(--tw-text-opacity));\n}\r\n.text-yellow-700 {\n  --tw-text-opacity: 1;\n  color: rgb(161 98 7 / var(--tw-text-opacity));\n}\r\n.text-lime-800 {\n  --tw-text-opacity: 1;\n  color: rgb(63 98 18 / var(--tw-text-opacity));\n}\r\n.text-lime-700 {\n  --tw-text-opacity: 1;\n  color: rgb(77 124 15 / var(--tw-text-opacity));\n}\r\n.text-green-800 {\n  --tw-text-opacity: 1;\n  color: rgb(22 101 52 / var(--tw-text-opacity));\n}\r\n.text-green-700 {\n  --tw-text-opacity: 1;\n  color: rgb(21 128 61 / var(--tw-text-opacity));\n}\r\n.text-emerald-800 {\n  --tw-text-opacity: 1;\n  color: rgb(6 95 70 / var(--tw-text-opacity));\n}\r\n.text-emerald-700 {\n  --tw-text-opacity: 1;\n  color: rgb(4 120 87 / var(--tw-text-opacity));\n}\r\n.text-teal-800 {\n  --tw-text-opacity: 1;\n  color: rgb(17 94 89 / var(--tw-text-opacity));\n}\r\n.text-teal-700 {\n  --tw-text-opacity: 1;\n  color: rgb(15 118 110 / var(--tw-text-opacity));\n}\r\n.text-cyan-800 {\n  --tw-text-opacity: 1;\n  color: rgb(21 94 117 / var(--tw-text-opacity));\n}\r\n.text-cyan-700 {\n  --tw-text-opacity: 1;\n  color: rgb(14 116 144 / var(--tw-text-opacity));\n}\r\n.text-sky-800 {\n  --tw-text-opacity: 1;\n  color: rgb(7 89 133 / var(--tw-text-opacity));\n}\r\n.text-sky-700 {\n  --tw-text-opacity: 1;\n  color: rgb(3 105 161 / var(--tw-text-opacity));\n}\r\n.text-blue-800 {\n  --tw-text-opacity: 1;\n  color: rgb(30 64 175 / var(--tw-text-opacity));\n}\r\n.text-blue-700 {\n  --tw-text-opacity: 1;\n  color: rgb(29 78 216 / var(--tw-text-opacity));\n}\r\n.text-indigo-800 {\n  --tw-text-opacity: 1;\n  color: rgb(55 48 163 / var(--tw-text-opacity));\n}\r\n.text-indigo-700 {\n  --tw-text-opacity: 1;\n  color: rgb(67 56 202 / var(--tw-text-opacity));\n}\r\n.text-violet-800 {\n  --tw-text-opacity: 1;\n  color: rgb(91 33 182 / var(--tw-text-opacity));\n}\r\n.text-violet-700 {\n  --tw-text-opacity: 1;\n  color: rgb(109 40 217 / var(--tw-text-opacity));\n}\r\n.text-purple-800 {\n  --tw-text-opacity: 1;\n  color: rgb(107 33 168 / var(--tw-text-opacity));\n}\r\n.text-purple-700 {\n  --tw-text-opacity: 1;\n  color: rgb(126 34 206 / var(--tw-text-opacity));\n}\r\n.text-fuchsia-800 {\n  --tw-text-opacity: 1;\n  color: rgb(134 25 143 / var(--tw-text-opacity));\n}\r\n.text-fuchsia-700 {\n  --tw-text-opacity: 1;\n  color: rgb(162 28 175 / var(--tw-text-opacity));\n}\r\n.text-pink-800 {\n  --tw-text-opacity: 1;\n  color: rgb(157 23 77 / var(--tw-text-opacity));\n}\r\n.text-pink-700 {\n  --tw-text-opacity: 1;\n  color: rgb(190 24 93 / var(--tw-text-opacity));\n}\r\n.text-rose-800 {\n  --tw-text-opacity: 1;\n  color: rgb(159 18 57 / var(--tw-text-opacity));\n}\r\n.text-rose-700 {\n  --tw-text-opacity: 1;\n  color: rgb(190 18 60 / var(--tw-text-opacity));\n}\r\n.text-gray-500 {\n  --tw-text-opacity: 1;\n  color: rgb(107 114 128 / var(--tw-text-opacity));\n}\r\n.shadow {\n  --tw-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);\n  --tw-shadow-colored: 0 1px 3px 0 var(--tw-shadow-color), 0 1px 2px -1px var(--tw-shadow-color);\n  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);\n}\r\n.shadow-xl {\n  --tw-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);\n  --tw-shadow-colored: 0 20px 25px -5px var(--tw-shadow-color), 0 8px 10px -6px var(--tw-shadow-color);\n  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);\n}\r\n.filter {\n  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);\n}\r\n\r\n\r\n[data-sort-direction]{\r\n    width: 9px;\r\n    cursor: pointer;\r\n}\r\n[data-sort-direction] path {\r\n    fill:darkgray\r\n}\r\n[data-sort-direction][active] path {\r\n    fill:rgb(90, 90, 90)\r\n}\r\n[data-sort-direction=\"desc\"] {\r\n    transform: rotate(180deg);\r\n}\r\n[data-type=\"filter\"] {\r\n  width: 18px;\r\n  cursor: pointer;\r\n}\r\n[data-type=\"filter\"] path {\r\n  fill:rgb(90, 90, 90)\r\n}\r\n\r\n* {\r\n    box-sizing: border-box;\r\n}\r\n\r\n::-webkit-scrollbar {\r\n  width: 4px ;\r\n  height: 4px;\r\n}\r\n\r\n::-webkit-scrollbar-track {\r\n  background: #ececec;\r\n  border-radius: 20px;\r\n}\r\n\r\n::-webkit-scrollbar-thumb {\r\n  background:darkgray;\r\n  border-radius: 20px;\r\n}\r\n\r\n::-webkit-scrollbar-thumb:hover {\r\n  background: gray;\r\n}\r\n\r\n.odd\\:bg-white:nth-child(odd) {\n  --tw-bg-opacity: 1;\n  background-color: rgb(255 255 255 / var(--tw-bg-opacity));\n}", "",{"version":3,"sources":["webpack://./src/styles/main.css","<no source>"],"names":[],"mappings":"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AAAnB;EAAA,kBAAmB;EAAnB;AAAmB;AAAnB;EAAA,kBAAmB;EAAnB;AAAmB;AAAnB;EAAA,kBAAmB;EAAnB;AAAmB;AAAnB;EAAA,kBAAmB;EAAnB;AAAmB;AAAnB;EAAA,kBAAmB;EAAnB;AAAmB;AAAnB;EAAA,kBAAmB;EAAnB;AAAmB;AAAnB;EAAA,kBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,mBAAmB;EAAnB;AAAmB;AAAnB;EAAA,qBAAmB;EAAnB;AAAmB;AAAnB;EAAA;AAAmB;AAAnB;EAAA;AAAmB;AAAnB;EAAA,mBAAmB;EAAnB;AAAmB;AAAnB;EAAA;AAAmB;AAAnB;EAAA;AAAmB;AAAnB;EAAA;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,0EAAmB;EAAnB,8FAAmB;EAAnB;AAAmB;AAAnB;EAAA,gFAAmB;EAAnB,oGAAmB;EAAnB;AAAmB;AAAnB;EAAA;AAAmB;;;AAGnB;IACI,UAAU;IACV,eAAe;AACnB;AACA;IACI;AACJ;AACA;IACI;AACJ;AACA;IACI,yBAAyB;AAC7B;AACA;EACE,WAAW;EACX,eAAe;AACjB;AACA;EACE;AACF;;AAEA;IACI,sBAAsB;AAC1B;;AAEA;EACE,WAAW;EACX,WAAW;AACb;;AAEA;EACE,mBAAmB;EACnB,mBAAmB;AACrB;;AAEA;EACE,mBAAmB;EACnB,mBAAmB;AACrB;;AAEA;EACE,gBAAgB;AAClB;;AA/CA;EAAA,mBCAA;EDAA;CCAA","sourcesContent":["@tailwind base;\r\n@tailwind components;\r\n@tailwind utilities;\r\n\r\n\r\n[data-sort-direction]{\r\n    width: 9px;\r\n    cursor: pointer;\r\n}\r\n[data-sort-direction] path {\r\n    fill:darkgray\r\n}\r\n[data-sort-direction][active] path {\r\n    fill:rgb(90, 90, 90)\r\n}\r\n[data-sort-direction=\"desc\"] {\r\n    transform: rotate(180deg);\r\n}\r\n[data-type=\"filter\"] {\r\n  width: 18px;\r\n  cursor: pointer;\r\n}\r\n[data-type=\"filter\"] path {\r\n  fill:rgb(90, 90, 90)\r\n}\r\n\r\n* {\r\n    box-sizing: border-box;\r\n}\r\n\r\n::-webkit-scrollbar {\r\n  width: 4px ;\r\n  height: 4px;\r\n}\r\n\r\n::-webkit-scrollbar-track {\r\n  background: #ececec;\r\n  border-radius: 20px;\r\n}\r\n\r\n::-webkit-scrollbar-thumb {\r\n  background:darkgray;\r\n  border-radius: 20px;\r\n}\r\n\r\n::-webkit-scrollbar-thumb:hover {\r\n  background: gray;\r\n}",null],"sourceRoot":""}]);
+___CSS_LOADER_EXPORT___.push([module.id, "/*\n! tailwindcss v3.1.8 | MIT License | https://tailwindcss.com\n*//*\n1. Prevent padding and border from affecting element width. (https://github.com/mozdevs/cssremedy/issues/4)\n2. Allow adding a border to an element by just adding a border-width. (https://github.com/tailwindcss/tailwindcss/pull/116)\n*/\n\n*,\n::before,\n::after {\n  box-sizing: border-box; /* 1 */\n  border-width: 0; /* 2 */\n  border-style: solid; /* 2 */\n  border-color: #e5e7eb; /* 2 */\n}\n\n::before,\n::after {\n  --tw-content: '';\n}\n\n/*\n1. Use a consistent sensible line-height in all browsers.\n2. Prevent adjustments of font size after orientation changes in iOS.\n3. Use a more readable tab size.\n4. Use the user's configured `sans` font-family by default.\n*/\n\nhtml {\n  line-height: 1.5; /* 1 */\n  -webkit-text-size-adjust: 100%; /* 2 */\n  -moz-tab-size: 4; /* 3 */\n  -o-tab-size: 4;\n     tab-size: 4; /* 3 */\n  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, \"Noto Sans\", sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"; /* 4 */\n}\n\n/*\n1. Remove the margin in all browsers.\n2. Inherit line-height from `html` so users can set them as a class directly on the `html` element.\n*/\n\nbody {\n  margin: 0; /* 1 */\n  line-height: inherit; /* 2 */\n}\n\n/*\n1. Add the correct height in Firefox.\n2. Correct the inheritance of border color in Firefox. (https://bugzilla.mozilla.org/show_bug.cgi?id=190655)\n3. Ensure horizontal rules are visible by default.\n*/\n\nhr {\n  height: 0; /* 1 */\n  color: inherit; /* 2 */\n  border-top-width: 1px; /* 3 */\n}\n\n/*\nAdd the correct text decoration in Chrome, Edge, and Safari.\n*/\n\nabbr:where([title]) {\n  -webkit-text-decoration: underline dotted;\n          text-decoration: underline dotted;\n}\n\n/*\nRemove the default font size and weight for headings.\n*/\n\nh1,\nh2,\nh3,\nh4,\nh5,\nh6 {\n  font-size: inherit;\n  font-weight: inherit;\n}\n\n/*\nReset links to optimize for opt-in styling instead of opt-out.\n*/\n\na {\n  color: inherit;\n  text-decoration: inherit;\n}\n\n/*\nAdd the correct font weight in Edge and Safari.\n*/\n\nb,\nstrong {\n  font-weight: bolder;\n}\n\n/*\n1. Use the user's configured `mono` font family by default.\n2. Correct the odd `em` font sizing in all browsers.\n*/\n\ncode,\nkbd,\nsamp,\npre {\n  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace; /* 1 */\n  font-size: 1em; /* 2 */\n}\n\n/*\nAdd the correct font size in all browsers.\n*/\n\nsmall {\n  font-size: 80%;\n}\n\n/*\nPrevent `sub` and `sup` elements from affecting the line height in all browsers.\n*/\n\nsub,\nsup {\n  font-size: 75%;\n  line-height: 0;\n  position: relative;\n  vertical-align: baseline;\n}\n\nsub {\n  bottom: -0.25em;\n}\n\nsup {\n  top: -0.5em;\n}\n\n/*\n1. Remove text indentation from table contents in Chrome and Safari. (https://bugs.chromium.org/p/chromium/issues/detail?id=999088, https://bugs.webkit.org/show_bug.cgi?id=201297)\n2. Correct table border color inheritance in all Chrome and Safari. (https://bugs.chromium.org/p/chromium/issues/detail?id=935729, https://bugs.webkit.org/show_bug.cgi?id=195016)\n3. Remove gaps between table borders by default.\n*/\n\ntable {\n  text-indent: 0; /* 1 */\n  border-color: inherit; /* 2 */\n  border-collapse: collapse; /* 3 */\n}\n\n/*\n1. Change the font styles in all browsers.\n2. Remove the margin in Firefox and Safari.\n3. Remove default padding in all browsers.\n*/\n\nbutton,\ninput,\noptgroup,\nselect,\ntextarea {\n  font-family: inherit; /* 1 */\n  font-size: 100%; /* 1 */\n  font-weight: inherit; /* 1 */\n  line-height: inherit; /* 1 */\n  color: inherit; /* 1 */\n  margin: 0; /* 2 */\n  padding: 0; /* 3 */\n}\n\n/*\nRemove the inheritance of text transform in Edge and Firefox.\n*/\n\nbutton,\nselect {\n  text-transform: none;\n}\n\n/*\n1. Correct the inability to style clickable types in iOS and Safari.\n2. Remove default button styles.\n*/\n\nbutton,\n[type='button'],\n[type='reset'],\n[type='submit'] {\n  -webkit-appearance: button; /* 1 */\n  background-color: transparent; /* 2 */\n  background-image: none; /* 2 */\n}\n\n/*\nUse the modern Firefox focus style for all focusable elements.\n*/\n\n:-moz-focusring {\n  outline: auto;\n}\n\n/*\nRemove the additional `:invalid` styles in Firefox. (https://github.com/mozilla/gecko-dev/blob/2f9eacd9d3d995c937b4251a5557d95d494c9be1/layout/style/res/forms.css#L728-L737)\n*/\n\n:-moz-ui-invalid {\n  box-shadow: none;\n}\n\n/*\nAdd the correct vertical alignment in Chrome and Firefox.\n*/\n\nprogress {\n  vertical-align: baseline;\n}\n\n/*\nCorrect the cursor style of increment and decrement buttons in Safari.\n*/\n\n::-webkit-inner-spin-button,\n::-webkit-outer-spin-button {\n  height: auto;\n}\n\n/*\n1. Correct the odd appearance in Chrome and Safari.\n2. Correct the outline style in Safari.\n*/\n\n[type='search'] {\n  -webkit-appearance: textfield; /* 1 */\n  outline-offset: -2px; /* 2 */\n}\n\n/*\nRemove the inner padding in Chrome and Safari on macOS.\n*/\n\n::-webkit-search-decoration {\n  -webkit-appearance: none;\n}\n\n/*\n1. Correct the inability to style clickable types in iOS and Safari.\n2. Change font properties to `inherit` in Safari.\n*/\n\n::-webkit-file-upload-button {\n  -webkit-appearance: button; /* 1 */\n  font: inherit; /* 2 */\n}\n\n/*\nAdd the correct display in Chrome and Safari.\n*/\n\nsummary {\n  display: list-item;\n}\n\n/*\nRemoves the default spacing and border for appropriate elements.\n*/\n\nblockquote,\ndl,\ndd,\nh1,\nh2,\nh3,\nh4,\nh5,\nh6,\nhr,\nfigure,\np,\npre {\n  margin: 0;\n}\n\nfieldset {\n  margin: 0;\n  padding: 0;\n}\n\nlegend {\n  padding: 0;\n}\n\nol,\nul,\nmenu {\n  list-style: none;\n  margin: 0;\n  padding: 0;\n}\n\n/*\nPrevent resizing textareas horizontally by default.\n*/\n\ntextarea {\n  resize: vertical;\n}\n\n/*\n1. Reset the default placeholder opacity in Firefox. (https://github.com/tailwindlabs/tailwindcss/issues/3300)\n2. Set the default placeholder color to the user's configured gray 400 color.\n*/\n\ninput::-moz-placeholder, textarea::-moz-placeholder {\n  opacity: 1; /* 1 */\n  color: #9ca3af; /* 2 */\n}\n\ninput::placeholder,\ntextarea::placeholder {\n  opacity: 1; /* 1 */\n  color: #9ca3af; /* 2 */\n}\n\n/*\nSet the default cursor for buttons.\n*/\n\nbutton,\n[role=\"button\"] {\n  cursor: pointer;\n}\n\n/*\nMake sure disabled buttons don't get the pointer cursor.\n*/\n:disabled {\n  cursor: default;\n}\n\n/*\n1. Make replaced elements `display: block` by default. (https://github.com/mozdevs/cssremedy/issues/14)\n2. Add `vertical-align: middle` to align replaced elements more sensibly by default. (https://github.com/jensimmons/cssremedy/issues/14#issuecomment-634934210)\n   This can trigger a poorly considered lint error in some tools but is included by design.\n*/\n\nimg,\nsvg,\nvideo,\ncanvas,\naudio,\niframe,\nembed,\nobject {\n  display: block; /* 1 */\n  vertical-align: middle; /* 2 */\n}\n\n/*\nConstrain images and videos to the parent width and preserve their intrinsic aspect ratio. (https://github.com/mozdevs/cssremedy/issues/14)\n*/\n\nimg,\nvideo {\n  max-width: 100%;\n  height: auto;\n}\n\n*, ::before, ::after {\n  --tw-border-spacing-x: 0;\n  --tw-border-spacing-y: 0;\n  --tw-translate-x: 0;\n  --tw-translate-y: 0;\n  --tw-rotate: 0;\n  --tw-skew-x: 0;\n  --tw-skew-y: 0;\n  --tw-scale-x: 1;\n  --tw-scale-y: 1;\n  --tw-pan-x:  ;\n  --tw-pan-y:  ;\n  --tw-pinch-zoom:  ;\n  --tw-scroll-snap-strictness: proximity;\n  --tw-ordinal:  ;\n  --tw-slashed-zero:  ;\n  --tw-numeric-figure:  ;\n  --tw-numeric-spacing:  ;\n  --tw-numeric-fraction:  ;\n  --tw-ring-inset:  ;\n  --tw-ring-offset-width: 0px;\n  --tw-ring-offset-color: #fff;\n  --tw-ring-color: rgb(59 130 246 / 0.5);\n  --tw-ring-offset-shadow: 0 0 #0000;\n  --tw-ring-shadow: 0 0 #0000;\n  --tw-shadow: 0 0 #0000;\n  --tw-shadow-colored: 0 0 #0000;\n  --tw-blur:  ;\n  --tw-brightness:  ;\n  --tw-contrast:  ;\n  --tw-grayscale:  ;\n  --tw-hue-rotate:  ;\n  --tw-invert:  ;\n  --tw-saturate:  ;\n  --tw-sepia:  ;\n  --tw-drop-shadow:  ;\n  --tw-backdrop-blur:  ;\n  --tw-backdrop-brightness:  ;\n  --tw-backdrop-contrast:  ;\n  --tw-backdrop-grayscale:  ;\n  --tw-backdrop-hue-rotate:  ;\n  --tw-backdrop-invert:  ;\n  --tw-backdrop-opacity:  ;\n  --tw-backdrop-saturate:  ;\n  --tw-backdrop-sepia:  ;\n}\n\n::-webkit-backdrop {\n  --tw-border-spacing-x: 0;\n  --tw-border-spacing-y: 0;\n  --tw-translate-x: 0;\n  --tw-translate-y: 0;\n  --tw-rotate: 0;\n  --tw-skew-x: 0;\n  --tw-skew-y: 0;\n  --tw-scale-x: 1;\n  --tw-scale-y: 1;\n  --tw-pan-x:  ;\n  --tw-pan-y:  ;\n  --tw-pinch-zoom:  ;\n  --tw-scroll-snap-strictness: proximity;\n  --tw-ordinal:  ;\n  --tw-slashed-zero:  ;\n  --tw-numeric-figure:  ;\n  --tw-numeric-spacing:  ;\n  --tw-numeric-fraction:  ;\n  --tw-ring-inset:  ;\n  --tw-ring-offset-width: 0px;\n  --tw-ring-offset-color: #fff;\n  --tw-ring-color: rgb(59 130 246 / 0.5);\n  --tw-ring-offset-shadow: 0 0 #0000;\n  --tw-ring-shadow: 0 0 #0000;\n  --tw-shadow: 0 0 #0000;\n  --tw-shadow-colored: 0 0 #0000;\n  --tw-blur:  ;\n  --tw-brightness:  ;\n  --tw-contrast:  ;\n  --tw-grayscale:  ;\n  --tw-hue-rotate:  ;\n  --tw-invert:  ;\n  --tw-saturate:  ;\n  --tw-sepia:  ;\n  --tw-drop-shadow:  ;\n  --tw-backdrop-blur:  ;\n  --tw-backdrop-brightness:  ;\n  --tw-backdrop-contrast:  ;\n  --tw-backdrop-grayscale:  ;\n  --tw-backdrop-hue-rotate:  ;\n  --tw-backdrop-invert:  ;\n  --tw-backdrop-opacity:  ;\n  --tw-backdrop-saturate:  ;\n  --tw-backdrop-sepia:  ;\n}\n\n::backdrop {\n  --tw-border-spacing-x: 0;\n  --tw-border-spacing-y: 0;\n  --tw-translate-x: 0;\n  --tw-translate-y: 0;\n  --tw-rotate: 0;\n  --tw-skew-x: 0;\n  --tw-skew-y: 0;\n  --tw-scale-x: 1;\n  --tw-scale-y: 1;\n  --tw-pan-x:  ;\n  --tw-pan-y:  ;\n  --tw-pinch-zoom:  ;\n  --tw-scroll-snap-strictness: proximity;\n  --tw-ordinal:  ;\n  --tw-slashed-zero:  ;\n  --tw-numeric-figure:  ;\n  --tw-numeric-spacing:  ;\n  --tw-numeric-fraction:  ;\n  --tw-ring-inset:  ;\n  --tw-ring-offset-width: 0px;\n  --tw-ring-offset-color: #fff;\n  --tw-ring-color: rgb(59 130 246 / 0.5);\n  --tw-ring-offset-shadow: 0 0 #0000;\n  --tw-ring-shadow: 0 0 #0000;\n  --tw-shadow: 0 0 #0000;\n  --tw-shadow-colored: 0 0 #0000;\n  --tw-blur:  ;\n  --tw-brightness:  ;\n  --tw-contrast:  ;\n  --tw-grayscale:  ;\n  --tw-hue-rotate:  ;\n  --tw-invert:  ;\n  --tw-saturate:  ;\n  --tw-sepia:  ;\n  --tw-drop-shadow:  ;\n  --tw-backdrop-blur:  ;\n  --tw-backdrop-brightness:  ;\n  --tw-backdrop-contrast:  ;\n  --tw-backdrop-grayscale:  ;\n  --tw-backdrop-hue-rotate:  ;\n  --tw-backdrop-invert:  ;\n  --tw-backdrop-opacity:  ;\n  --tw-backdrop-saturate:  ;\n  --tw-backdrop-sepia:  ;\n}\r\n.static {\n  position: static;\n}\r\n.sticky {\n  position: -webkit-sticky;\n  position: sticky;\n}\r\n.-top-1 {\n  top: -0.25rem;\n}\r\n.-left-px {\n  left: -1px;\n}\r\n.left-0 {\n  left: 0px;\n}\r\n.z-10 {\n  z-index: 10;\n}\r\n.my-2\\.5 {\n  margin-top: 0.625rem;\n  margin-bottom: 0.625rem;\n}\r\n.mx-1 {\n  margin-left: 0.25rem;\n  margin-right: 0.25rem;\n}\r\n.my-2 {\n  margin-top: 0.5rem;\n  margin-bottom: 0.5rem;\n}\r\n.mt-3 {\n  margin-top: 0.75rem;\n}\r\n.flex {\n  display: flex;\n}\r\n.table {\n  display: table;\n}\r\n.h-12 {\n  height: 3rem;\n}\r\n.h-16 {\n  height: 4rem;\n}\r\n.h-10 {\n  height: 2.5rem;\n}\r\n.h-5 {\n  height: 1.25rem;\n}\r\n.w-0 {\n  width: 0px;\n}\r\n.w-12 {\n  width: 3rem;\n}\r\n.w-fit {\n  width: -webkit-fit-content;\n  width: -moz-fit-content;\n  width: fit-content;\n}\r\n.w-full {\n  width: 100%;\n}\r\n.min-w-full {\n  min-width: 100%;\n}\r\n.max-w-full {\n  max-width: 100%;\n}\r\n.transform {\n  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));\n}\r\n@-webkit-keyframes pulse {\n\n  50% {\n    opacity: .5;\n  }\n}\r\n@keyframes pulse {\n\n  50% {\n    opacity: .5;\n  }\n}\r\n.animate-pulse {\n  -webkit-animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;\n          animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;\n}\r\n.cursor-pointer {\n  cursor: pointer;\n}\r\n.flex-col {\n  flex-direction: column;\n}\r\n.items-center {\n  align-items: center;\n}\r\n.justify-center {\n  justify-content: center;\n}\r\n.justify-between {\n  justify-content: space-between;\n}\r\n.space-x-2 > :not([hidden]) ~ :not([hidden]) {\n  --tw-space-x-reverse: 0;\n  margin-right: calc(0.5rem * var(--tw-space-x-reverse));\n  margin-left: calc(0.5rem * calc(1 - var(--tw-space-x-reverse)));\n}\r\n.space-y-0\\.5 > :not([hidden]) ~ :not([hidden]) {\n  --tw-space-y-reverse: 0;\n  margin-top: calc(0.125rem * calc(1 - var(--tw-space-y-reverse)));\n  margin-bottom: calc(0.125rem * var(--tw-space-y-reverse));\n}\r\n.space-y-0 > :not([hidden]) ~ :not([hidden]) {\n  --tw-space-y-reverse: 0;\n  margin-top: calc(0px * calc(1 - var(--tw-space-y-reverse)));\n  margin-bottom: calc(0px * var(--tw-space-y-reverse));\n}\r\n.space-x-1 > :not([hidden]) ~ :not([hidden]) {\n  --tw-space-x-reverse: 0;\n  margin-right: calc(0.25rem * var(--tw-space-x-reverse));\n  margin-left: calc(0.25rem * calc(1 - var(--tw-space-x-reverse)));\n}\r\n.overflow-auto {\n  overflow: auto;\n}\r\n.whitespace-nowrap {\n  white-space: nowrap;\n}\r\n.rounded {\n  border-radius: 0.25rem;\n}\r\n.rounded-full {\n  border-radius: 9999px;\n}\r\n.border {\n  border-width: 1px;\n}\r\n.border-b {\n  border-bottom-width: 1px;\n}\r\n.border-gray-700 {\n  --tw-border-opacity: 1;\n  border-color: rgb(55 65 81 / var(--tw-border-opacity));\n}\r\n.bg-slate-100 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(241 245 249 / var(--tw-bg-opacity));\n}\r\n.bg-gray-100 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(243 244 246 / var(--tw-bg-opacity));\n}\r\n.bg-zinc-100 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(244 244 245 / var(--tw-bg-opacity));\n}\r\n.bg-neutral-100 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(245 245 245 / var(--tw-bg-opacity));\n}\r\n.bg-stone-100 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(245 245 244 / var(--tw-bg-opacity));\n}\r\n.bg-red-100 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(254 226 226 / var(--tw-bg-opacity));\n}\r\n.bg-orange-100 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(255 237 213 / var(--tw-bg-opacity));\n}\r\n.bg-amber-100 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(254 243 199 / var(--tw-bg-opacity));\n}\r\n.bg-yellow-100 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(254 249 195 / var(--tw-bg-opacity));\n}\r\n.bg-lime-100 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(236 252 203 / var(--tw-bg-opacity));\n}\r\n.bg-green-100 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(220 252 231 / var(--tw-bg-opacity));\n}\r\n.bg-emerald-100 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(209 250 229 / var(--tw-bg-opacity));\n}\r\n.bg-teal-100 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(204 251 241 / var(--tw-bg-opacity));\n}\r\n.bg-cyan-100 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(207 250 254 / var(--tw-bg-opacity));\n}\r\n.bg-sky-100 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(224 242 254 / var(--tw-bg-opacity));\n}\r\n.bg-blue-100 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(219 234 254 / var(--tw-bg-opacity));\n}\r\n.bg-indigo-100 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(224 231 255 / var(--tw-bg-opacity));\n}\r\n.bg-violet-100 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(237 233 254 / var(--tw-bg-opacity));\n}\r\n.bg-purple-100 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(243 232 255 / var(--tw-bg-opacity));\n}\r\n.bg-fuchsia-100 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(250 232 255 / var(--tw-bg-opacity));\n}\r\n.bg-pink-100 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(252 231 243 / var(--tw-bg-opacity));\n}\r\n.bg-rose-100 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(255 228 230 / var(--tw-bg-opacity));\n}\r\n.bg-gray-50 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(249 250 251 / var(--tw-bg-opacity));\n}\r\n.bg-gray-200 {\n  --tw-bg-opacity: 1;\n  background-color: rgb(229 231 235 / var(--tw-bg-opacity));\n}\r\n.bg-white {\n  --tw-bg-opacity: 1;\n  background-color: rgb(255 255 255 / var(--tw-bg-opacity));\n}\r\n.fill-gray-700 {\n  fill: #374151;\n}\r\n.p-6 {\n  padding: 1.5rem;\n}\r\n.px-4 {\n  padding-left: 1rem;\n  padding-right: 1rem;\n}\r\n.py-1 {\n  padding-top: 0.25rem;\n  padding-bottom: 0.25rem;\n}\r\n.py-2 {\n  padding-top: 0.5rem;\n  padding-bottom: 0.5rem;\n}\r\n.px-3 {\n  padding-left: 0.75rem;\n  padding-right: 0.75rem;\n}\r\n.text-center {\n  text-align: center;\n}\r\n.text-start {\n  text-align: start;\n}\r\n.text-sm {\n  font-size: 0.875rem;\n  line-height: 1.25rem;\n}\r\n.text-lg {\n  font-size: 1.125rem;\n  line-height: 1.75rem;\n}\r\n.text-4xl {\n  font-size: 2.25rem;\n  line-height: 2.5rem;\n}\r\n.font-semibold {\n  font-weight: 600;\n}\r\n.font-bold {\n  font-weight: 700;\n}\r\n.uppercase {\n  text-transform: uppercase;\n}\r\n.capitalize {\n  text-transform: capitalize;\n}\r\n.text-slate-800 {\n  --tw-text-opacity: 1;\n  color: rgb(30 41 59 / var(--tw-text-opacity));\n}\r\n.text-slate-700 {\n  --tw-text-opacity: 1;\n  color: rgb(51 65 85 / var(--tw-text-opacity));\n}\r\n.text-gray-800 {\n  --tw-text-opacity: 1;\n  color: rgb(31 41 55 / var(--tw-text-opacity));\n}\r\n.text-gray-700 {\n  --tw-text-opacity: 1;\n  color: rgb(55 65 81 / var(--tw-text-opacity));\n}\r\n.text-zinc-800 {\n  --tw-text-opacity: 1;\n  color: rgb(39 39 42 / var(--tw-text-opacity));\n}\r\n.text-zinc-700 {\n  --tw-text-opacity: 1;\n  color: rgb(63 63 70 / var(--tw-text-opacity));\n}\r\n.text-neutral-800 {\n  --tw-text-opacity: 1;\n  color: rgb(38 38 38 / var(--tw-text-opacity));\n}\r\n.text-neutral-700 {\n  --tw-text-opacity: 1;\n  color: rgb(64 64 64 / var(--tw-text-opacity));\n}\r\n.text-stone-800 {\n  --tw-text-opacity: 1;\n  color: rgb(41 37 36 / var(--tw-text-opacity));\n}\r\n.text-stone-700 {\n  --tw-text-opacity: 1;\n  color: rgb(68 64 60 / var(--tw-text-opacity));\n}\r\n.text-red-800 {\n  --tw-text-opacity: 1;\n  color: rgb(153 27 27 / var(--tw-text-opacity));\n}\r\n.text-red-700 {\n  --tw-text-opacity: 1;\n  color: rgb(185 28 28 / var(--tw-text-opacity));\n}\r\n.text-orange-800 {\n  --tw-text-opacity: 1;\n  color: rgb(154 52 18 / var(--tw-text-opacity));\n}\r\n.text-orange-700 {\n  --tw-text-opacity: 1;\n  color: rgb(194 65 12 / var(--tw-text-opacity));\n}\r\n.text-amber-800 {\n  --tw-text-opacity: 1;\n  color: rgb(146 64 14 / var(--tw-text-opacity));\n}\r\n.text-amber-700 {\n  --tw-text-opacity: 1;\n  color: rgb(180 83 9 / var(--tw-text-opacity));\n}\r\n.text-yellow-800 {\n  --tw-text-opacity: 1;\n  color: rgb(133 77 14 / var(--tw-text-opacity));\n}\r\n.text-yellow-700 {\n  --tw-text-opacity: 1;\n  color: rgb(161 98 7 / var(--tw-text-opacity));\n}\r\n.text-lime-800 {\n  --tw-text-opacity: 1;\n  color: rgb(63 98 18 / var(--tw-text-opacity));\n}\r\n.text-lime-700 {\n  --tw-text-opacity: 1;\n  color: rgb(77 124 15 / var(--tw-text-opacity));\n}\r\n.text-green-800 {\n  --tw-text-opacity: 1;\n  color: rgb(22 101 52 / var(--tw-text-opacity));\n}\r\n.text-green-700 {\n  --tw-text-opacity: 1;\n  color: rgb(21 128 61 / var(--tw-text-opacity));\n}\r\n.text-emerald-800 {\n  --tw-text-opacity: 1;\n  color: rgb(6 95 70 / var(--tw-text-opacity));\n}\r\n.text-emerald-700 {\n  --tw-text-opacity: 1;\n  color: rgb(4 120 87 / var(--tw-text-opacity));\n}\r\n.text-teal-800 {\n  --tw-text-opacity: 1;\n  color: rgb(17 94 89 / var(--tw-text-opacity));\n}\r\n.text-teal-700 {\n  --tw-text-opacity: 1;\n  color: rgb(15 118 110 / var(--tw-text-opacity));\n}\r\n.text-cyan-800 {\n  --tw-text-opacity: 1;\n  color: rgb(21 94 117 / var(--tw-text-opacity));\n}\r\n.text-cyan-700 {\n  --tw-text-opacity: 1;\n  color: rgb(14 116 144 / var(--tw-text-opacity));\n}\r\n.text-sky-800 {\n  --tw-text-opacity: 1;\n  color: rgb(7 89 133 / var(--tw-text-opacity));\n}\r\n.text-sky-700 {\n  --tw-text-opacity: 1;\n  color: rgb(3 105 161 / var(--tw-text-opacity));\n}\r\n.text-blue-800 {\n  --tw-text-opacity: 1;\n  color: rgb(30 64 175 / var(--tw-text-opacity));\n}\r\n.text-blue-700 {\n  --tw-text-opacity: 1;\n  color: rgb(29 78 216 / var(--tw-text-opacity));\n}\r\n.text-indigo-800 {\n  --tw-text-opacity: 1;\n  color: rgb(55 48 163 / var(--tw-text-opacity));\n}\r\n.text-indigo-700 {\n  --tw-text-opacity: 1;\n  color: rgb(67 56 202 / var(--tw-text-opacity));\n}\r\n.text-violet-800 {\n  --tw-text-opacity: 1;\n  color: rgb(91 33 182 / var(--tw-text-opacity));\n}\r\n.text-violet-700 {\n  --tw-text-opacity: 1;\n  color: rgb(109 40 217 / var(--tw-text-opacity));\n}\r\n.text-purple-800 {\n  --tw-text-opacity: 1;\n  color: rgb(107 33 168 / var(--tw-text-opacity));\n}\r\n.text-purple-700 {\n  --tw-text-opacity: 1;\n  color: rgb(126 34 206 / var(--tw-text-opacity));\n}\r\n.text-fuchsia-800 {\n  --tw-text-opacity: 1;\n  color: rgb(134 25 143 / var(--tw-text-opacity));\n}\r\n.text-fuchsia-700 {\n  --tw-text-opacity: 1;\n  color: rgb(162 28 175 / var(--tw-text-opacity));\n}\r\n.text-pink-800 {\n  --tw-text-opacity: 1;\n  color: rgb(157 23 77 / var(--tw-text-opacity));\n}\r\n.text-pink-700 {\n  --tw-text-opacity: 1;\n  color: rgb(190 24 93 / var(--tw-text-opacity));\n}\r\n.text-rose-800 {\n  --tw-text-opacity: 1;\n  color: rgb(159 18 57 / var(--tw-text-opacity));\n}\r\n.text-rose-700 {\n  --tw-text-opacity: 1;\n  color: rgb(190 18 60 / var(--tw-text-opacity));\n}\r\n.text-gray-500 {\n  --tw-text-opacity: 1;\n  color: rgb(107 114 128 / var(--tw-text-opacity));\n}\r\n.text-gray-600 {\n  --tw-text-opacity: 1;\n  color: rgb(75 85 99 / var(--tw-text-opacity));\n}\r\n.shadow {\n  --tw-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);\n  --tw-shadow-colored: 0 1px 3px 0 var(--tw-shadow-color), 0 1px 2px -1px var(--tw-shadow-color);\n  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);\n}\r\n.shadow-xl {\n  --tw-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);\n  --tw-shadow-colored: 0 20px 25px -5px var(--tw-shadow-color), 0 8px 10px -6px var(--tw-shadow-color);\n  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);\n}\r\n.filter {\n  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);\n}\r\n\r\n\r\n[data-sort-direction]{\r\n    width: 9px;\r\n    cursor: pointer;\r\n}\r\n[data-sort-direction] path {\r\n    fill:darkgray\r\n}\r\n[data-sort-direction][active] path {\r\n    fill:rgb(90, 90, 90)\r\n}\r\n[data-sort-direction=\"desc\"] {\r\n    transform: rotate(180deg);\r\n}\r\n[data-type=\"filter\"] {\r\n  width: 18px;\r\n  cursor: pointer;\r\n}\r\n[data-type=\"filter\"] path {\r\n  transition: fill .1s ease-in-out;\r\n  fill:#888888\r\n}\r\n[data-type=\"filter\"]:hover path {\r\n  fill:#444444\r\n}\r\n\r\n* {\r\n    box-sizing: border-box;\r\n}\r\n\r\n::-webkit-scrollbar {\r\n  width: 4px ;\r\n  height: 4px;\r\n}\r\n\r\n::-webkit-scrollbar-track {\r\n  background: #ececec;\r\n  border-radius: 20px;\r\n}\r\n\r\n::-webkit-scrollbar-thumb {\r\n  background:darkgray;\r\n  border-radius: 20px;\r\n}\r\n\r\n::-webkit-scrollbar-thumb:hover {\r\n  background: gray;\r\n}", "",{"version":3,"sources":["webpack://./src/styles/main.css"],"names":[],"mappings":"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AAmB;AAAnB;EAAA,kBAAmB;EAAnB;AAAmB;AAAnB;EAAA,kBAAmB;EAAnB;AAAmB;AAAnB;EAAA,kBAAmB;EAAnB;AAAmB;AAAnB;EAAA,kBAAmB;EAAnB;AAAmB;AAAnB;EAAA,kBAAmB;EAAnB;AAAmB;AAAnB;EAAA,kBAAmB;EAAnB;AAAmB;AAAnB;EAAA,kBAAmB;EAAnB;AAAmB;AAAnB;EAAA,kBAAmB;EAAnB;AAAmB;AAAnB;EAAA,kBAAmB;EAAnB;AAAmB;AAAnB;EAAA,kBAAmB;EAAnB;AAAmB;AAAnB;EAAA,kBAAmB;EAAnB;AAAmB;AAAnB;EAAA;AAAmB;AAAnB;EAAA;AAAmB;AAAnB;EAAA,kBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,mBAAmB;EAAnB;AAAmB;AAAnB;EAAA,qBAAmB;EAAnB;AAAmB;AAAnB;EAAA;AAAmB;AAAnB;EAAA;AAAmB;AAAnB;EAAA,mBAAmB;EAAnB;AAAmB;AAAnB;EAAA,mBAAmB;EAAnB;AAAmB;AAAnB;EAAA,kBAAmB;EAAnB;AAAmB;AAAnB;EAAA;AAAmB;AAAnB;EAAA;AAAmB;AAAnB;EAAA;AAAmB;AAAnB;EAAA;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,oBAAmB;EAAnB;AAAmB;AAAnB;EAAA,0EAAmB;EAAnB,8FAAmB;EAAnB;AAAmB;AAAnB;EAAA,gFAAmB;EAAnB,oGAAmB;EAAnB;AAAmB;AAAnB;EAAA;AAAmB;;;AAGnB;IACI,UAAU;IACV,eAAe;AACnB;AACA;IACI;AACJ;AACA;IACI;AACJ;AACA;IACI,yBAAyB;AAC7B;AACA;EACE,WAAW;EACX,eAAe;AACjB;AACA;EACE,gCAAgC;EAChC;AACF;AACA;EACE;AACF;;AAEA;IACI,sBAAsB;AAC1B;;AAEA;EACE,WAAW;EACX,WAAW;AACb;;AAEA;EACE,mBAAmB;EACnB,mBAAmB;AACrB;;AAEA;EACE,mBAAmB;EACnB,mBAAmB;AACrB;;AAEA;EACE,gBAAgB;AAClB","sourcesContent":["@tailwind base;\r\n@tailwind components;\r\n@tailwind utilities;\r\n\r\n\r\n[data-sort-direction]{\r\n    width: 9px;\r\n    cursor: pointer;\r\n}\r\n[data-sort-direction] path {\r\n    fill:darkgray\r\n}\r\n[data-sort-direction][active] path {\r\n    fill:rgb(90, 90, 90)\r\n}\r\n[data-sort-direction=\"desc\"] {\r\n    transform: rotate(180deg);\r\n}\r\n[data-type=\"filter\"] {\r\n  width: 18px;\r\n  cursor: pointer;\r\n}\r\n[data-type=\"filter\"] path {\r\n  transition: fill .1s ease-in-out;\r\n  fill:#888888\r\n}\r\n[data-type=\"filter\"]:hover path {\r\n  fill:#444444\r\n}\r\n\r\n* {\r\n    box-sizing: border-box;\r\n}\r\n\r\n::-webkit-scrollbar {\r\n  width: 4px ;\r\n  height: 4px;\r\n}\r\n\r\n::-webkit-scrollbar-track {\r\n  background: #ececec;\r\n  border-radius: 20px;\r\n}\r\n\r\n::-webkit-scrollbar-thumb {\r\n  background:darkgray;\r\n  border-radius: 20px;\r\n}\r\n\r\n::-webkit-scrollbar-thumb:hover {\r\n  background: gray;\r\n}"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -1262,15 +1643,17 @@ var __webpack_exports__ = {};
   \**********************/
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "HtmlTable": () => (/* reexport safe */ _modules_Table__WEBPACK_IMPORTED_MODULE_1__.HtmlTable),
-/* harmony export */   "JsonTable": () => (/* reexport safe */ _modules_Table__WEBPACK_IMPORTED_MODULE_1__.JsonTable)
+/* harmony export */   "HTMLTable": () => (/* reexport safe */ _modules_HTMLTable__WEBPACK_IMPORTED_MODULE_2__.HTMLTable),
+/* harmony export */   "Table": () => (/* reexport safe */ _modules_Table__WEBPACK_IMPORTED_MODULE_1__.Table)
 /* harmony export */ });
 /* harmony import */ var _styles_main_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./styles/main.css */ "./src/styles/main.css");
 /* harmony import */ var _modules_Table__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./modules/Table */ "./src/modules/Table.js");
+/* harmony import */ var _modules_HTMLTable__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./modules/HTMLTable */ "./src/modules/HTMLTable.js");
 
 
-document.querySelectorAll(`[${_modules_Table__WEBPACK_IMPORTED_MODULE_1__.HtmlTable.attributes.tableContainer}]`).forEach(table => {
-  table.tableInstance = new _modules_Table__WEBPACK_IMPORTED_MODULE_1__.HtmlTable(table);
+
+document.querySelectorAll(`[${_modules_HTMLTable__WEBPACK_IMPORTED_MODULE_2__.HTMLTable.attributes.tableContainer}]`).forEach(wrapper => {
+  wrapper.tableInstance = new _modules_HTMLTable__WEBPACK_IMPORTED_MODULE_2__.HTMLTable(wrapper);
 });
 
 })();

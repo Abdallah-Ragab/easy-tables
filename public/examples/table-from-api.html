@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>example table api</title>
+</head>
+<body>
+    <h2>API Table</h2>
+    <div id="table-container-api"></div>
+    <div class="flex">
+        <div class="rounded px-4 py-1 mx-1 my-2 bg-rose-100 text-rose-700 cursor-pointer" onclick="handleClickUpdateEmptyTable(this)">Get Empty Table</div>
+        <div class="rounded px-4 py-1 mx-1 my-2 bg-rose-100 text-rose-700 cursor-pointer" onclick="handleClickUpdateEmptyBody(this)">Get Empty Body</div>
+        <div class="rounded px-4 py-1 mx-1 my-2 bg-rose-100 text-rose-700 cursor-pointer" onclick="handleClickUpdateBoth(this)">Update Table</div>
+        <div class="rounded px-4 py-1 mx-1 my-2 bg-rose-100 text-rose-700 cursor-pointer" onclick="handleClickUpdateData(this)">Update Data</div>
+    </div>
+    <div class="flex">
+        <div class="rounded px-4 py-1 mx-1 my-2 bg-rose-100 text-rose-700 cursor-pointer" data-page="1" onclick="handleClickGoToPage(this)">1</div>
+        <div class="rounded px-4 py-1 mx-1 my-2 bg-rose-100 text-rose-700 cursor-pointer" data-page="2" onclick="handleClickGoToPage(this)">2</div>
+        <div class="rounded px-4 py-1 mx-1 my-2 bg-rose-100 text-rose-700 cursor-pointer" data-page="3" onclick="handleClickGoToPage(this)">3</div>
+        <div class="rounded px-4 py-1 mx-1 my-2 bg-rose-100 text-rose-700 cursor-pointer" data-page="4" onclick="handleClickGoToPage(this)">4</div>
+        <div class="rounded px-4 py-1 mx-1 my-2 bg-rose-100 text-rose-700 cursor-pointer" data-page="5" onclick="handleClickGoToPage(this)">5</div>
+    </div>
+</body>
+</html>
+<!-- <script src="../../dist/development.bundle.js"></script> -->
+<script src="../../dist/production.bundle.js"></script>
+<script>
+
+    const TableAPI = new easytables.Table(
+        wrapper = "#table-container-api",
+        rows = {url: "http://127.0.0.1:1002/", onsuccess: (res)=>res.json().then((data)=>data.rows)},
+        options = {url: "http://127.0.0.1:1002/", onsuccess: (res)=>res.json().then((data)=>data.options)}
+    )
+    const handleClickGoToPage = (e) => {
+        const page = e.getAttribute("data-page")
+        TableAPI.update(
+            rows = {url: `http://127.0.0.1:1002/?page=${page}`, onsuccess: (res)=>res.json().then((data)=>data.rows)},
+        )
+    }
+    const handleClickUpdateBoth = () => {
+        TableAPI.update(
+            rows = {url: "http://127.0.0.1:1002/?page=2", onsuccess: (res)=>res.json().then((data)=>data.rows)},
+            options = {url: "http://127.0.0.1:1002/?page=2", onsuccess: (res)=>res.json().then((data)=>data.options)}
+        )
+    }
+    const handleClickUpdateData = () => {
+        TableAPI.update(
+            rows = {url: "http://127.0.0.1:1002/?page=2", onsuccess: (res)=>res.json().then((data)=>data.rows)}
+        )
+    }
+    const handleClickUpdateEmptyTable = () => {
+        TableAPI.update(
+            rows = {url: "http://127.0.0.1:1002/?empty_array"},
+            options = {url: "http://127.0.0.1:1002/?empty_object"}
+        )
+    }
+    const handleClickUpdateEmptyBody = () => {
+        TableAPI.update(
+            rows = {url: "http://127.0.0.1:1002/?empty_array"},
+        )
+    }
+</script>
+<style>
+    body {
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        align-items: center;
+    }
+    #table-container-json {
+        width: fit-content;
+        min-width: 400px;
+        max-height: 400px;
+    }
+</style>
+
+<style>
+    @property --rotate {
+  syntax: "<angle>";
+  initial-value: 132deg;
+  inherits: false;
+}
+
+
+.card {
+  background: #191c29;
+  width: fit-content;
+  height: fit-content;
+  padding: 3px;
+  position: relative;
+  border-radius: 6px;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  display: flex;
+  font-size: 20px;
+  color: rgb(88 199 250 / 100%);
+  cursor: pointer;
+  font-family: cursive;
+}
+
+.card:hover {
+  color: rgb(88 199 250 / 100%);
+  transition: color 1s;
+}
+.card:hover:before, .card:hover:after {
+  animation: none;
+  opacity: 0;
+}
+
+
+.card::before {
+  content: "";
+  width: 104%;
+  height: 102%;
+  border-radius: 8px;
+  background-image: linear-gradient(
+    var(--rotate)
+    , #5ddcff, #3c67e3 43%, #4e00c2);
+    position: absolute;
+    z-index: -1;
+    top: -1%;
+    left: -2%;
+    animation: spin 2.5s linear infinite;
+}
+
+.card::after {
+  position: absolute;
+  content: "";
+  top: calc(var(--card-height) / 6);
+  left: 0;
+  right: 0;
+  z-index: -1;
+  height: 100%;
+  width: 100%;
+  margin: 0 auto;
+  transform: scale(0.8);
+  filter: blur(calc(var(--card-height) / 6));
+  background-image: linear-gradient(
+    var(--rotate)
+    , #5ddcff, #3c67e3 43%, #4e00c2);
+    opacity: 1;
+  transition: opacity .5s;
+  animation: spin 2.5s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    --rotate: 0deg;
+  }
+  100% {
+    --rotate: 360deg;
+  }
+}
+
+a {
+  color: #212534;
+  text-decoration: none;
+  font-family: sans-serif;
+  font-weight: bold;
+  margin-top: 2rem;
+}
+</style>

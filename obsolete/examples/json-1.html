@@ -1,6 +1,22 @@
-const jsonTable = new easytables.JsonTable(
-    '#table-container-json',
-    {
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>example table json 1</title>
+</head>
+<body>
+    <h2>HTML Table</h2>
+    <div id="table-container-json">
+    </div>
+</body>
+</html>
+<script src="../../dist/development.bundle.js"></script>
+<script>
+    const jsonTable = new easytables.JSONTable(
+        wrapper = '#table-container-json',
+        data = {
         "columns" : [
             {
                 "text" : "username",
@@ -14,10 +30,6 @@ const jsonTable = new easytables.JsonTable(
             {
                 "text" : "email",
                 "filter" : ()=>{console.log("filtering by email ..")},
-            },
-            {
-                "text" : "avatar",
-                "type" : "image",
             },
             {
                 "text" : "status",
@@ -59,31 +71,40 @@ const jsonTable = new easytables.JsonTable(
                 "username" : 'kyle232',
                 "phone number" : "464564631",
                 "email" : "nomadkyle12@mail.com",
-                "avatar" : "https://picsum.photos/300/300",
                 "status" : "online",
             },
             {
                 "username" : 'ahmed565',
                 "phone number" : "56465465",
                 "email" : "ahmedemad21@mail.com",
-                "avatar" : "https://picsum.photos/300/300",
                 "status" : "online",
             },
             {
                 "username" : 'salah11',
                 "phone number" : "52415651",
                 "email" : "mosalah@mail.com",
-                "avatar" : "https://picsum.photos/300/300",
                 "status" : "Pending",
             },
             {
                 "username" : 'samehthesecond',
                 "phone number" : "46546464",
                 "email" : "sameh2th@mail.com",
-                "avatar" : "https://picsum.photos/300/300",
                 "status" : "offline",
             },
         ]
     },
-    '2'
-)
+        uniqueIdentifierIndex="2",
+    )
+</script>
+<style>
+    body {
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        align-items: center;
+    }
+    #table-container-json {
+        width: fit-content;
+        min-width: 50%;
+    }
+</style>

@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>example table json</title>
+</head>
+<body>
+    <h2>API Table</h2>
+    <div id="table-container-api"></div>
+</body>
+</html>
+<!-- <script src="../../dist/development.bundle.js"></script> -->
+<script src="../../dist/production.bundle.js"></script>
+<script>
+
+    const Table = new easytables.Table(
+        wrapper = "#table-container-api",
+        rows = [
+        {
+            "id": 1,
+            "name": "Katrina Skiles",
+            "image": "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/568.jpg",
+            "gender": "female",
+            "email": "Alicia_Hegmann25@yahoo.com",
+            "phone": "+1 075-054-727",
+            "job": "Forward Identity Supervisor",
+            "department": "Kids",
+            "Company": "productize one-to-one users",
+            "state": "offline",
+            "htmlavatar": {
+                "username": "Katrina_Skiles"
+            }
+        },
+        {
+            "id": 2,
+            "name": "Archie Ratke",
+            "image": "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/974.jpg",
+            "gender": "male",
+            "email": "Jewell_Bins54@hotmail.com",
+            "phone": "+1 781-325-108",
+            "job": "Chief Research Architect",
+            "department": "Electronics",
+            "Company": "seize robust e-tailers",
+            "state": "offline",
+            "htmlavatar": {
+                "username": "Archie.Ratke7"
+            }
+        },
+        {
+            "id": 3,
+            "name": "Nina Harris",
+            "image": "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/135.jpg",
+            "gender": "female",
+            "email": "Abel49@hotmail.com",
+            "phone": "+1 355-522-050",
+            "job": "Legacy Group Architect",
+            "department": "Sports",
+            "Company": "drive wireless infomediaries",
+            "state": "offline",
+            "htmlavatar": {
+                "username": "Nina.Harris"
+            }
+        },
+        {
+            "id": 4,
+            "name": "Jack Koelpin",
+            "image": "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/922.jpg",
+            "gender": "male",
+            "email": "Rey8@hotmail.com",
+            "phone": "+1 658-576-947",
+            "job": "Product Solutions Planner",
+            "department": "Beauty",
+            "Company": "exploit real-time e-tailers",
+            "state": "online",
+            "htmlavatar": {
+                "username": "Jack.Koelpin7"
+            }
+        },
+        {
+            "id": 5,
+            "name": "Dallas Stroman",
+            "image": "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/112.jpg",
+            "gender": "male",
+            "email": "Jakob.Fahey@yahoo.com",
+            "phone": "+1 362-262-497",
+            "job": "Lead Response Planner",
+            "department": "Outdoors",
+            "Company": "seize killer paradigms",
+            "state": "offline",
+            "htmlavatar": {
+                "username": "Dallas42"
+            }
+        },
+        {
+            "id": 6,
+            "name": "Pablo Larson",
+            "image": "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/445.jpg",
+            "gender": "male",
+            "email": "Rhoda_McLaughlin@gmail.com",
+            "phone": "+1 864-227-557",
+            "job": "Regional Tactics Assistant",
+            "department": "Garden",
+            "Company": "synergize impactful e-business",
+            "state": "online",
+            "htmlavatar": {
+                "username": "Pablo.Larson"
+            }
+        },
+        {
+            "id": 7,
+            "name": "Oscar McDermott",
+            "image": "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/182.jpg",
+            "gender": "male",
+            "email": "Avis_Gutmann@gmail.com",
+            "phone": "+1 680-871-950",
+            "job": "Investor Paradigm Supervisor",
+            "department": "Industrial",
+            "Company": "engineer B2C eyeballs",
+            "state": "offline",
+            "htmlavatar": {
+                "username": "Oscar43"
+            }
+        },
+        {
+            "id": 8,
+            "name": "Hattie Muller",
+            "image": "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/1247.jpg",
+            "gender": "female",
+            "email": "Trisha55@yahoo.com",
+            "phone": "+1 389-973-566",
+            "job": "Lead Configuration Associate",
+            "department": "Tools",
+            "Company": "incentivize interactive e-business",
+            "state": "online",
+            "htmlavatar": {
+                "username": "Hattie60"
+            }
+        },
+        {
+            "id": 9,
+            "name": "Todd Rau",
+            "image": "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/1075.jpg",
+            "gender": "male",
+            "email": "Reginald_Parker35@hotmail.com",
+            "phone": "+1 497-247-387",
+            "job": "Lead Accounts Planner",
+            "department": "Books",
+            "Company": "generate real-time technologies",
+            "state": "offline",
+            "htmlavatar": {
+                "username": "Todd.Rau"
+            }
+        },
+        {
+            "id": 10,
+            "name": "Bert Rowe",
+            "image": "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/65.jpg",
+            "gender": "male",
+            "email": "Shannon.Kris@yahoo.com",
+            "phone": "+1 521-297-648",
+            "job": "Product Response Analyst",
+            "department": "Shoes",
+            "Company": "deploy one-to-one web services",
+            "state": "offline",
+            "htmlavatar": {
+                "username": "Bert.Rowe92"
+            }
+        }
+    ],
+        options = {
+          "uniqueID": "id",
+          "headers": {
+              "id": {
+                  "render": false
+              },
+              "name": {
+                  "text": "Full Name",
+                  "type": "bold"
+              },
+              "image": {
+                  "text": "Avatar",
+                  "type": "image",
+                  "sort": false
+              },
+              "gender": {
+                  "type": "label",
+                  "colorCode": [
+                      {
+                          "condition": "equal",
+                          "value": "female",
+                          "color": "pink"
+                      },
+                      {
+                          "condition": "equal",
+                          "value": "male",
+                          "color": "blue"
+                      }
+                  ]
+              },
+              "state": {
+                  "type": "label",
+                  "colorCode": [
+                      {
+                          "condition": "equal",
+                          "value": "online",
+                          "color": "green"
+                      },
+                      {
+                          "condition": "equal",
+                          "value": "offline",
+                          "color": "red"
+                      }
+                  ]
+              },
+              "edit": {
+                  "type": "button",
+                  "color": "red"
+              },
+              "htmlavatar": {
+                  "text": "Cool Html Avatar",
+                  "type": "html",
+                  "sort": false,
+                  "centered" : true,
+                  "template": "<img src='https://avatars.dicebear.com/api/bottts/\${data['username']}.svg' alt='Avatar' class='avatar'>"
+              }
+          }
+        }
+    )
+</script>
+<style>
+    body {
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        align-items: center;
+    }
+    #table-container-json {
+        width: fit-content;
+        min-width: 400px;
+        max-height: 400px;
+    }
+</style>
+<style>
+  .avatar {
+    vertical-align: middle;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+}
+</style>

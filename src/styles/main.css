@@ -21,7 +21,11 @@
   cursor: pointer;
 }
 [data-type="filter"] path {
-  fill:rgb(90, 90, 90)
+  transition: fill .1s ease-in-out;
+  fill:#888888
+}
+[data-type="filter"]:hover path {
+  fill:#444444
 }
 
 * {

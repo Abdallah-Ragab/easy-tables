@@ -1,7 +1,9 @@
 dist/development.*
 src
 public
+obsolete
 postcss.config.js
 tailwind.config.js
 webpack.development.js
 webpack.production.js
+toc.backup
