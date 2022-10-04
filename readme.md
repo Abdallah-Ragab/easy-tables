@@ -8,18 +8,18 @@
   - [1. **Using Attributes**:](#1-using-attributes)
     - [**The table container**](#the-table-container--create-a-div-element-with-the-attribute-table-container-)
     - [**The table element**](#the-table-element--create-the-table-inside-the-container-using-the-following-structure-)
-    - [**The unique identifier**](#the-unique-identifier--the-unique-identifier-is-a-column-whose-value-is-unique-for-each-column-its-used-to-identify-the-selected-rows-by-returning-the-value-of-the-unique-identifiers-cell-of-the-selected-row-each-row-should-have-a-unique-identifier-set-by-either-adding-the-attribute-unique-identifier-to-a-head-column-like-the-following-)
-    - [**Custom data selectors**](#custom-data-selectors--if-the-the-td-or-th-tags-are-not-a-direct-parent-of-the-cell-text-the-data-container-attribute-should-be-added-to-the-direct-parent-of-the-text-for-example-)
+    - [**The unique identifier**](#the-unique-identifier--the-unique-identifier-is-a-column-whose-value-is-unique-for-each-row-its-used-to-identify-the-selected-rows-by-returning-the-value-of-the-unique-identifiers-cell-of-the-selected-row-each-row-should-have-a-unique-identifier-set-by-either-adding-the-attribute-unique-identifier-to-a-head-column-like-the-following-)
+    - [**Custom data selectors**](#custom-data-selectors--if-the-td-or-th-tags-are-not-a-direct-parent-of-the-cell-value-or-the-the-header-text-the-data-container-attribute-should-be-added-to-the-direct-parent-of-the-text-or-value-for-example-)
     - [**Columns without data**](#columns-without-data--if-any-columns-does-not-have-a-data-inside-them-and-should-not-have-a-sorting-functionality-like-columns-that-contains-buttons-or-any-other-html-elements-you-should-add-the-attribute-non-data-to-there-perspective-th-tags-for-example-)
-    - [**Enable sorting by columns**](#enable-sorting-by-columns--to-enable-sorting-add-the-attribute-sort-to-the-container-)
-    - [**Enable selecting rows**](#enable-selecting-rows--to-enable-selecting-add-the-attribute-select-to-the-container-)
+    - [**Enable sorting by columns**](#enable-sorting-by-columns-to-enable-sorting-add-the-attribute-sort-to-the-container-)
+    - [**Enable selecting rows**](#enable-selecting-rows-to-enable-selecting-add-the-attribute-select-to-the-container-)
   - [2. **Using JavaScript**:](#2-using-javascript)
     - [**The table container**](#the-table-container--create-a-div-element-with-the-attribute-table-container--1)
     - [**The table element**](#the-table-element--create-the-table-inside-the-container-using-the-following-structure--1)
     - [**Initiate the table**](#initiate-the-table--using-the-following-structure-)
     - [**"wrapper" parameter**](#wrapper-parameter--the-css-selector-for-the-created-container-for-example--my-container)
     - [**The unique identifier : "uniqueIdentifierIndex" parameter**](#the-unique-identifier--uniqueidentifierindex-parameter--the-index-of-the-column-thats-value-is-unique-and-can-be-used-to-identify-each-row-for-example-)
-    - [**Columns without data: "ignoredColumns" parameter**](#columns-without-data-ignoredcolumns-parameter--an-array-of-the-indexes-of-the-the-column-that-does-not-have-a-data-inside-them-and-should-not-have-a-sorting-functionality-like-columns-that-contains-buttons-or-any-other-html-elements-for-example-)
+    - [**Columns without data: "ignoredColumns" parameter**](#columns-without-data-ignoredcolumns-parameter--an-array-of-the-indexes-of-the-columns-that-does-not-have-any-data-inside-them-and-should-not-have-sorting-or-filtering-functionality-like-columns-that-contains-buttons-or-any-other-html-elements-for-example-)
     - [**Custom data selectors: "customHeadSelector" parameter**](#custom-data-selectors-customheadselector-parameter--an-object-of-head-columns-where-th-tags-are-not-a-direct-parent-of-the-head-text-therefore-the-css-selectors-of-the-direct-parent-of-the-text-should-be-specified-using-this-object-for-example-)
     - [**Custom data selectors: "customBodySelector" parameter**](#custom-data-selectors-custombodyselector-parameter--an-object-of-row-cells-where-td-tags-are-not-a-direct-parent-of-the-cell-value-therefore-the-css-selectors-of-the-direct-parent-of-the-value-should-be-specified-using-this-object-for-example-)
     - [**Enable sorting by columns: "enableSort" parameter**](#enable-sorting-by-columns-enablesort-parameter--a-boolean-that-specifies-whether-to-enable-the-sorting-functionality-or-not-default-value-is-true)
@@ -37,20 +37,20 @@
     - [5. **button**](#5-button--renders-a-button-that-calls-the-function-set-by-callback-option-when-clicked-data-option-is-false-by-default-takes-the-following-options)
     - [6. **html**](#6-html--renders-html-template-with-variables-data-option-is-false-by-default-takes-the-following-options)
   - [**Headers options**:](#headers-options)
-    - [**type**](#type-is-an-optional-property-that-represents-the-type-of-the-cell-which-can-be-one-of-the-following-default-value-is-text)
-    - [**text**](#text-is-an-optional-property-used-to-set-the-text-of-the-column-if-not-set-the-columns-key-will-be-used)
+    - [**type**](#type-is-an-optional-property-that-represents-the-type-of-the-cell-which-can-be-one-of-the-table-headers-types-default-value-is-text)
+    - [**text**](#text-is-an-optional-property-used-to-set-the-text-of-the-column-header-if-not-set-the-columns-key-will-be-used)
     - [**filter**](#filter-is-an-optional-function-if-set-the-a-filter-button-will-be-added-to-the-column-head-when-clicked-the-function-will-be-called)
-    - [**data**](#data-if-false-the-column-is-considered-static-and-the-sort-and-filter-options-are-disabled-by-default-default-value-is-true)
     - [**sort**](#sort-is-an-optional-property-which-specify-whether-to-enable-sorting-by-this-column-or-not-default-value-is-true)
+    - [**data**](#data-determinate-whether-the-column-value-is-dynamic-data-or-static-for-every-row-if-false-the-column-is-considered-static-and-the-sort-and-filter-options-are-disabled-by-default-default-value-is-true)
     - [**render**](#render-is-an-optional-property-which-specify-whether-to-render-this-column-or-not-default-value-is-true)
-    - [**value**.](#value-is-an-optional-property-specific-for-the-columns-with-static-value-like-button-to-set-the-label-of-the-button-element-when-not-set-the-column-text-or-key-is-used)
+    - [**value**](#value-is-an-optional-property-specific-for-the-columns-with-static-value-like-button-to-set-the-label-of-the-button-element-when-not-set-the-column-text-or-key-is-used)
     - [**colorCode**](#colorcode-is-an-optional-property-specific-for-the-columns-with-the-type-of-label-which-is-an-array-that-can-be-used-to-set-the-color-of-the-label-dynamically-using-a-pre-defined-conditions)
     - [**color**](#color-is-an-optional-property-specific-for-the-columns-with-colors-like-label-and-button-its-used-to-set-the-color-statically-when-the-colorcode-is-not-set)
     - [**template**](#template-is-an-optional-property-specific-for-the-columns-with-the-type-of-html-it-represents-a-html-template-that-gets-rendered-at-the-cells-with-the-type-html-the-template-may-contain-variables-using-the-following-format-datavariable_name)
   - [**Fetching data from an API**](#fetching-data-from-an-api)
-  - [**Retrieving the selected rows**](#retrieving-the-selected-rows)
-  - [**Accessing the class instance of a table initiated by attributes**](#accessing-the-class-instance-of-a-table-initiated-by-attributes)
-
+  - [**Updating the content of the table**](#updating-the-content-of-the-table)
+- [**Retrieving the selected rows**](#retrieving-the-selected-rows)
+- [**Accessing the class instance of a table initiated by attributes**](#accessing-the-class-instance-of-a-table-initiated-by-attributes)
 # **Getting Started** :
 ```
 <script defer src="https://unpkg.com/easy-tables@0.2.0/dist/production.bundle.js"></script>
@@ -78,7 +78,7 @@
       </table>
       ```
 
-  - ### **The unique identifier** : the unique identifier is a column whose value is unique for each column. its used to identify the selected rows by returning the value of the unique identifier's cell of the selected row. each row should have a unique identifier set by either adding the attribute **"unique-identifier"** to a head column like the following :
+  - ### **The unique identifier** : the unique identifier is a column whose value is unique for each row. its used to identify the selected rows by returning the value of the unique identifier's cell of the selected row. each row should have a unique identifier set by either adding the attribute **"unique-identifier"** to a head column like the following :
       ```
       <thead>
           <tr>
@@ -95,14 +95,20 @@
           ...
       </tbody>
       ```
-  - ### **Custom data selectors:** : if the the **"td"** or **"th"** tags are not a direct parent of the cell text, the **"data-container"** attribute should be added to the direct parent of the text. for example :
+  - ### **Custom data selectors** : if the **"td"** or **"th"** tags are not a direct parent of the cell value or the the header text, the **"data-container"** attribute should be added to the direct parent of the text or value. for example :
         ```
+        // in the case of a table head
         <th>
             <div>...</div>
             <span data-container>First Name</span>
         </th>
+        // in the case of a table cell
+        <td>
+            <span>Dr. </span>
+            <span data-container>Edward</span>
+        </td>
         ```
-  - ### **Columns without data:** : if any columns does not have a data inside them and should not have a sorting functionality like columns that contains buttons or any other html elements, you should add the attribute **"non-data"** to there perspective **"th"** tags, for example :
+  - ### **Columns without data** : if any columns does not have a data inside them and should not have a sorting functionality like columns that contains buttons or any other html elements, you should add the attribute **"non-data"** to there perspective **"th"** tags, for example :
         ```
         // A cell with a button:
         <td>
@@ -114,8 +120,8 @@
             Edit
         </th>
         ```
-  - ### **Enable sorting by columns** : to enable sorting add the attribute **"sort"** to the container .
-  - ### **Enable selecting rows** : to enable selecting add the attribute **"select"** to the container .
+  - ### **Enable sorting by columns**: to enable sorting add the attribute **"sort"** to the container .
+  - ### **Enable selecting rows**: to enable selecting add the attribute **"select"** to the container .
 
 ## 2. **Using JavaScript**:
   - ### **The table container** : Create a div element with the attribute **"table-container"** .
@@ -166,7 +172,7 @@
       // the index of the "customer id" column among its siblings is 0
       // therefore the value of "uniqueIdentifierIndex" parameter should be 0
       ``` 
-  - ### **Columns without data: "ignoredColumns" parameter** : An array of the indexes of the the column that does not have a data inside them and should not have a sorting functionality like columns that contains buttons or any other html elements. for example :
+  - ### **Columns without data: "ignoredColumns" parameter** : An array of the indexes of the columns that does not have any data inside them and should not have sorting or filtering functionality. like columns that contains buttons or any other html elements. for example :
       ```
       // giving the following table structure:
       <table>
@@ -211,7 +217,7 @@
       // the "th" tag of the column with the index of 2 is not a direct parent to the text of the column which is "Username".
       // and the direct parent of the column text is the "span" tag
       // the css selector of the span tag starting from the "th" tag is > "div>span"
-      // therefore the value of "ignoredColumns" parameter should be {"2": "div>span", ....}
+      // therefore the value of "customHeadSelector" parameter should be {"2": "div>span", ....}
       ``` 
   - ### **Custom data selectors: "customBodySelector" parameter** : An Object of row cells where **"td"** tags are not a direct parent of the cell value. therefore the css selectors of the direct parent of the value should be specified using this object. for example :
       ```
@@ -229,7 +235,7 @@
       // the "td" tag of the column with the index of 0 is not a direct parent to the cell value which is "Bill".
       // and the direct parent of the cell value is the "span" tag
       // the css selector of the span tag starting from the "td" tag is > "span"
-      // therefore the value of "ignoredColumns" parameter should be {"0": "span", ....}
+      // therefore the value of "customBodySelector" parameter should be {"0": "span", ....}
       ``` 
   - ### **Enable sorting by columns: "enableSort" parameter** : a boolean that specifies whether to enable the sorting functionality or not. default value is **true**. 
   - ### **Enable selecting rows: "enableSelect" parameter** : a boolean that specifies whether to enable the selecting functionality or not. default value is **true**. 
@@ -279,7 +285,7 @@ rows = [
 ### 3.**The "options" parameter** : the options parameter is used to set different options for the table. the parameter can be set directly or by calling an API. Check out how to [**Fetch "options" from an API**.](#fetching-data-from-an-api)
 
 ### The "options" properties are listed below:
-  - ### **uniqueID**: "uniqueID" property holds the key of the unique identifier. the unique identifier is a column whose value is unique for each column. its used to identify the selected rows by returning the value of the unique identifier's cell.
+  - ### **uniqueID**: "uniqueID" property holds the key of the unique identifier. the unique identifier is a column whose value is unique for each row. its used to identify the selected rows by returning the value of the unique identifier's cell.
     for example: 
     ```
     const myTable = new easytables.Table(
@@ -408,16 +414,63 @@ rows = [
 
 ## **Headers options**: 
 
-### **type**: is an optional property that represents the type of the cell which can be one of the following. default value is "text".
-### **text**: is an optional property. used to set the text of the column. if not set the column's key will be used.
+### **type**: is an optional property that represents the type of the cell which can be one of the [**Table headers types**:](#table-headers-types). default value is "text".
+### **text**: is an optional property. used to set the text of the column header. if not set the column's key will be used.
 ### **filter**: is an optional function. if set the a filter button will be added to the column head. when clicked the function will be called.
-### **data**: if false the column is considered static and the "sort" and "filter" options are disabled by default. default value is **true**.
 ### **sort**: is an optional property which specify whether to enable sorting by this column or not. default value is **true**.
+### **data**: determinate whether the column value is dynamic data or static for every row. if false the column is considered static and the "sort" and "filter" options are disabled by default. default value is **true**.
 ### **render**: is an optional property which specify whether to render this column or not. default value is **true**.
 ### **value**: is an optional property specific for the columns with static value like "button" to set the label of the button element. when not set the column text or key is used.
 ### **colorCode**: is an optional property specific for the columns with the type of "label". which is an array that can be used to set the color of the label dynamically using a pre-defined conditions.
+**Example :**
+```
+headers: {
+    "state": {
+        type: "label",
+        colorCode: [
+            // if the value of the label cell is "equal" to "online" the color of the label will be "green"
+            {
+                "condition" : "equal",
+                "value" : "online",
+                "color" : "green"
+            },
+
+            // if the value of the label cell is "equal" to "online" the color of the label will be "green"
+            {
+                "condition" : "equal",
+                "value" : "offline",
+                "color" : "red"
+            },
+        ],
+        color: "blue"
+    }
+}
+```
 ### **color**: is an optional property specific for the columns with colors like "label" and "button". it's used to set the color statically when the "colorCode" is not set.
 ### **template**: is an optional property specific for the columns with the type of "html". it represents a html template that gets rendered at the cells with the type "html". the template may contain variables using the following format `\${data['variable_name']}`.
+**Example :**
+```
+headers: {
+    "card": {
+        text: "Info card",
+        type: "html",
+        template: "<h1>Name: \${data['name']}</h1><h2>Age: \${data['age']}</h2>"
+    }
+}
+```
+and the variable's values can be set for each row by setting the the value of the column key to inside the "rows" parameter to an object. where each property of the object represents a variable. 
+
+**For the previous example the rows parameter should be like this:**
+```
+rows = [
+    {
+        "card" : {
+            name: "Bill",
+            age: "19"
+        }
+    }
+]
+```
 
 ## **Fetching data from an API**: 
 you can fetch the "rows" or "options" parameters from an API where the response should be the value of the parameter with the required structure shown above. to fetch the data from an API, set the parameter's value to an object representing an endpoint of an API, defined as following :
@@ -439,6 +492,35 @@ rows = {
     onsuccess: (data) => {console.log(data); return data}
     onerror: (response) => {console.error(`Fetching Data Failed. code: ${response.status}`)}
 }
+```
+## **Updating the content of the table**: 
+you can update the "rows" or "options" parameters using the Update method to render the same table with different data. the update function takes the same  [rows](#2-the-rows-parameter-) or [options](#3the-options-parameter--the-options-parameter-is-used-to-set-different-options-for-the-table-the-parameter-can-be-set-directly-or-by-calling-an-api-check-out-how-to-fetch-options-from-an-api) parameters from [**The Table initialization**](#initiate-the-table) and can also be updated the same way by using json data or by [**Fetching data from an API**](#fetching-data-from-an-api)
+
+for example:
+```
+myTable.update(
+    rows : [
+        {id: 1, name: "Edward"},
+        ...
+    ]
+    options : {
+        uniqueID: "id",
+        headers:{
+            name: { text: "FullName"}
+        }
+    }
+)
+```
+
+its not required to update both of the [rows](#2-the-rows-parameter-) and [options](#3the-options-parameter--the-options-parameter-is-used-to-set-different-options-for-the-table-the-parameter-can-be-set-directly-or-by-calling-an-api-check-out-how-to-fetch-options-from-an-api) parameters. if only one of them is the updated the older version of the other onw will still be used. for example if you want to fetch the next page of rows you can update the [rows](#2-the-rows-parameter-) only and the same [options](#3the-options-parameter--the-options-parameter-is-used-to-set-different-options-for-the-table-the-parameter-can-be-set-directly-or-by-calling-an-api-check-out-how-to-fetch-options-from-an-api) from [**The Table initialization**](#initiate-the-table) will still be used to render the table.
+
+for example:
+```
+myTable.update(
+    rows : {
+        url: "www.mydatasource.com/api?page=2"
+    }
+)
 ```
 
 ## **Retrieving the selected rows**:
