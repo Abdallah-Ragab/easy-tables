@@ -189,13 +189,16 @@ export class Table extends AbstractTable{
                 const colText = col.text || col_key
                 let extras = {}
 
-                if(!col.hasOwnProperty("data") && (col.type == 'button' || col.type == 'image')){
+                if(!col.hasOwnProperty("data") && (col.type == 'html' || col.type == 'button' || col.type == 'image')){
                     col.data = false
                 }
                 if(col.hasOwnProperty("data") && !col.data){
                     extras['attributes'] = this.constructor.attributes.notData
                     if (!col.hasOwnProperty("sort")) {
                         col.sort = false
+                    }
+                    if (!col.hasOwnProperty("filter")) {
+                        col.filter = false
                     }
                 }
 
@@ -279,7 +282,7 @@ export class Table extends AbstractTable{
                     }
 
                     if(cell.type == 'button' && !(cellExtras['text'])){
-                        cellExtras['text'] = cell.text || cell_key
+                        cellExtras['text'] = cell.value || cell.text || cell_key
                     }
 
                     if(cell.centered === true) {
