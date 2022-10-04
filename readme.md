@@ -1,7 +1,6 @@
 # Easy Tables
 ### A UI Library For Creating Html Tables With Ease. And Making Your Existing Html Tables Responsive With Sorting And Selecting Functionality.
 
-
 # Table of content :
 
 - [**Getting Started**](#getting-started-)
@@ -37,8 +36,18 @@
     - [4. **label**](#4-label--displays-a-colored-label-image-the-color-can-be-set-dynamically-using-the-colorcode-option-which-sets-the-color-based-on-the-value-of-the-column-takes-the-following-options)
     - [5. **button**](#5-button--renders-a-button-that-calls-the-function-set-by-callback-option-when-clicked-data-option-is-false-by-default-takes-the-following-options)
     - [6. **html**](#6-html--renders-html-template-with-variables-data-option-is-false-by-default-takes-the-following-options)
+  - [**Headers options**:](#headers-options)
+    - [**type**](#type-is-an-optional-property-that-represents-the-type-of-the-cell-which-can-be-one-of-the-following-default-value-is-text)
+    - [**text**](#text-is-an-optional-property-used-to-set-the-text-of-the-column-if-not-set-the-columns-key-will-be-used)
+    - [**filter**](#filter-is-an-optional-function-if-set-the-a-filter-button-will-be-added-to-the-column-head-when-clicked-the-function-will-be-called)
+    - [**data**](#data-if-false-the-column-is-considered-static-and-the-sort-and-filter-options-are-disabled-by-default-default-value-is-true)
+    - [**sort**](#sort-is-an-optional-property-which-specify-whether-to-enable-sorting-by-this-column-or-not-default-value-is-true)
+    - [**render**](#render-is-an-optional-property-which-specify-whether-to-render-this-column-or-not-default-value-is-true)
+    - [**value**.](#value-is-an-optional-property-specific-for-the-columns-with-static-value-like-button-to-set-the-label-of-the-button-element-when-not-set-the-column-text-or-key-is-used)
+    - [**colorCode**](#colorcode-is-an-optional-property-specific-for-the-columns-with-the-type-of-label-which-is-an-array-that-can-be-used-to-set-the-color-of-the-label-dynamically-using-a-pre-defined-conditions)
+    - [**color**](#color-is-an-optional-property-specific-for-the-columns-with-colors-like-label-and-button-its-used-to-set-the-color-statically-when-the-colorcode-is-not-set)
+    - [**template**](#template-is-an-optional-property-specific-for-the-columns-with-the-type-of-html-it-represents-a-html-template-that-gets-rendered-at-the-cells-with-the-type-html-the-template-may-contain-variables-using-the-following-format-datavariable_name)
   - [**Fetching data from an API**](#fetching-data-from-an-api)
-  - [**Fetching data from an API**:](#fetching-data-from-an-api)
   - [**Retrieving the selected rows**](#retrieving-the-selected-rows)
   - [**Accessing the class instance of a table initiated by attributes**](#accessing-the-class-instance-of-a-table-initiated-by-attributes)
 
@@ -290,12 +299,8 @@ rows = [
 The value of the "headers" property of the "options" depends on the type of the header. The default type is "text".
 The header types are :
 ### 1. **text** : is the basic header type for data displayed as normal text. the "text" header options are :
-- **"type"** is an optional property that represents the type of the cell which can be one of the following. default value is "text".
-- ***"text"** is an optional property. used to set the text of the column. if not set the column's key will be used.
-- **"filter"** is an optional function. if set the a filter button will be added to the column head. when clicked the function will be called.
-- **"data"** if false the column is considered static and the "sort" and "filter" options are disabled by default. default value is **true**.
-- **"sort"** is an optional property which specify whether to enable sorting by this column or not. default value is **true**.
-- **"render"** is an optional property which specify whether to render this column or not. default value is **true**.
+[**type**](#type-is-an-optional-property-that-represents-the-type-of-the-cell-which-can-be-one-of-the-following-default-value-is-text) : optional, [**text**](#text-is-an-optional-property-used-to-set-the-text-of-the-column-if-not-set-the-columns-key-will-be-used) : optional, [**filter**](#filter-is-an-optional-function-if-set-the-a-filter-button-will-be-added-to-the-column-head-when-clicked-the-function-will-be-called) : optional, [**data**](#data-if-false-the-column-is-considered-static-and-the-sort-and-filter-options-are-disabled-by-default-default-value-is-true) : optional, [**sort**](#sort-is-an-optional-property-which-specify-whether-to-enable-sorting-by-this-column-or-not-default-value-is-true) : optional, [**render**](#render-is-an-optional-property-which-specify-whether-to-render-this-column-or-not-default-value-is-true) : optional
+
 **Example :**
 ```
 headers: {
@@ -308,12 +313,8 @@ headers: {
 }
 ```
 ### 2. **bold** : similer to "text" but displayed in bold font. takes the same header options as "text" :
-- **"type"** is an optional property that represents the type of the cell which can be one of the following. default value is "text".
-- ***"text"** is an optional property. used to set the text of the column. if not set the column's key will be used.
-- **"filter"** is an optional function. if set the a filter button will be added to the column head. when clicked the function will be called.
-- **"data"** if false the column is considered static and the "sort" and "filter" options are disabled by default. default value is **true**.
-- **"sort"** is an optional property which specify whether to enable sorting by this column or not. default value is **true**.
-- **"render"** is an optional property which specify whether to render this column or not. default value is **true**.
+ [**type**](#type-is-an-optional-property-that-represents-the-type-of-the-cell-which-can-be-one-of-the-following-default-value-is-text) : required, [**text**](#text-is-an-optional-property-used-to-set-the-text-of-the-column-if-not-set-the-columns-key-will-be-used) : optional, [**filter**](#filter-is-an-optional-function-if-set-the-a-filter-button-will-be-added-to-the-column-head-when-clicked-the-function-will-be-called) : optional, [**data**](#data-if-false-the-column-is-considered-static-and-the-sort-and-filter-options-are-disabled-by-default-default-value-is-true) : optional, [**sort**](#sort-is-an-optional-property-which-specify-whether-to-enable-sorting-by-this-column-or-not-default-value-is-true) : optional, [**render**](#render-is-an-optional-property-which-specify-whether-to-render-this-column-or-not-default-value-is-true) : optional
+ 
 **Example :**
 ```
 headers: {
@@ -326,10 +327,7 @@ headers: {
 }
 ```
 ### 3. **image** : displays a circular image. uses the data from the "rows" parameter as a source for the image. "data" option is false by default. takes the following options:
-- **"type"** is an optional property that represents the type of the cell which can be one of the following. default value is "text".
-- ***"text"** is an optional property. used to set the text of the column. if not set the column's key will be used.
-- **"render"** is an optional property which specify whether to render this column or not. default value is **true**.
-- **"data"** if false the column is considered static and the "sort" and "filter" options are disabled by default. default value is **true**.
+[**type**](#type-is-an-optional-property-that-represents-the-type-of-the-cell-which-can-be-one-of-the-following-default-value-is-text) : required, [**text**](#text-is-an-optional-property-used-to-set-the-text-of-the-column-if-not-set-the-columns-key-will-be-used) : optional, [**render**](#render-is-an-optional-property-which-specify-whether-to-render-this-column-or-not-default-value-is-true) : optional, [**data**](#data-if-false-the-column-is-considered-static-and-the-sort-and-filter-options-are-disabled-by-default-default-value-is-true) : optional
 
 **Example :**
 ```
@@ -341,14 +339,7 @@ headers: {
 }
 ```
 ### 4. **label** : displays a colored label image. the color can be set dynamically using the "colorCode" option which sets the color based on the value of the column. takes the following options:
-- **"type"** is an optional property that represents the type of the cell which can be one of the following. default value is "text".
-- ***"text"** is an optional property. used to set the text of the column. if not set the column's key will be used.
-- **"filter"** is an optional function. if set the a filter button will be added to the column head. when clicked the function will be called.
-- **"sort"** is an optional property which specify whether to enable sorting by this column or not. default value is **true**.
-- **"render"** is an optional property which specify whether to render this column or not. default value is **true**.
-- **"data"** if false the column is considered static and the "sort" and "filter" options are disabled by default. default value is **true**.
-- **"colorCode"** is an optional property specific for the columns with the type of "label". which is an array that can be used to set the color of the label dynamically using a pre-defined conditions.
-- **"color"** is an optional property specific for the columns with colors like "label" and "button". it's used to set the color statically when the "colorCode" is not set.
+ [**type**](#type-is-an-optional-property-that-represents-the-type-of-the-cell-which-can-be-one-of-the-following-default-value-is-text) : required, [**text**](#text-is-an-optional-property-used-to-set-the-text-of-the-column-if-not-set-the-columns-key-will-be-used) : optional, [**filter**](#filter-is-an-optional-function-if-set-the-a-filter-button-will-be-added-to-the-column-head-when-clicked-the-function-will-be-called) : optional, [**sort**](#sort-is-an-optional-property-which-specify-whether-to-enable-sorting-by-this-column-or-not-default-value-is-true) : optional, [**render**](#render-is-an-optional-property-which-specify-whether-to-render-this-column-or-not-default-value-is-true) : optional, [**data**](#data-if-false-the-column-is-considered-static-and-the-sort-and-filter-options-are-disabled-by-default-default-value-is-true) : optional, [**colorCode**](#colorcode-is-an-optional-property-specific-for-the-columns-with-the-type-of-label-which-is-an-array-that-can-be-used-to-set-the-color-of-the-label-dynamically-using-a-pre-defined-conditions) : optional, [**color**](#color-is-an-optional-property-specific-for-the-columns-with-colors-like-label-and-button-its-used-to-set-the-color-statically-when-the-colorcode-is-not-set) : optional
 
 **Example :**
 ```
@@ -375,14 +366,7 @@ headers: {
 }
 ```
 ### 5. **button** : renders a button that calls the function set by "callback" option when clicked. "data" option is false by default. takes the following options:
-- **"type"** is an optional property that represents the type of the cell which can be one of the following. default value is "text".
-- ***"text"** is an optional property. used to set the text of the column. if not set the column's key will be used.
-- **"filter"** is an optional function. if set the a filter button will be added to the column head. when clicked the function will be called.
-- **"sort"** is an optional property which specify whether to enable sorting by this column or not. default value is **true**.
-- **"render"** is an optional property which specify whether to render this column or not. default value is **true**.
-- **"data"** if false the column is considered static and the "sort" and "filter" options are disabled by default. default value is **true**.
-- **"color"** is an optional property specific for the columns with colors like "label" and "button". it's used to set the color statically when the "colorCode" is not set.
-- **"value"** is an optional property specific for the columns with static value like "button" to set the label of the button element. when not set the column text or key is used.
+ [**type**](#type-is-an-optional-property-that-represents-the-type-of-the-cell-which-can-be-one-of-the-following-default-value-is-text) : required, [**text**](#text-is-an-optional-property-used-to-set-the-text-of-the-column-if-not-set-the-columns-key-will-be-used) : optional, [**render**](#render-is-an-optional-property-which-specify-whether-to-render-this-column-or-not-default-value-is-true) : optional, [**data**](#data-if-false-the-column-is-considered-static-and-the-sort-and-filter-options-are-disabled-by-default-default-value-is-true) : optional, [**color**](#color-is-an-optional-property-specific-for-the-columns-with-colors-like-label-and-button-its-used-to-set-the-color-statically-when-the-colorcode-is-not-set) : optional, [**value**.](#value-is-an-optional-property-specific-for-the-columns-with-static-value-like-button-to-set-the-label-of-the-button-element-when-not-set-the-column-text-or-key-is-used) : optional
 
 **Example :**
 ```
@@ -396,11 +380,7 @@ headers: {
 }
 ```
 ### 6. **html** : renders html template with variables. "data" option is false by default. takes the following options:
-- **"type"** is an optional property that represents the type of the cell which can be one of the following. default value is "text".
-- ***"text"** is an optional property. used to set the text of the column. if not set the column's key will be used.
-- **"render"** is an optional property which specify whether to render this column or not. default value is **true**.
-- **"data"** if false the column is considered static and the "sort" and "filter" options are disabled by default. default value is **true**.
-- **"template"** is an optional property specific for the columns with the type of "html". it represents a html template that gets rendered at the cells with the type "html". the template may contain variables using the following format `\${data['variable_name']}`.
+[**type**](#type-is-an-optional-property-that-represents-the-type-of-the-cell-which-can-be-one-of-the-following-default-value-is-text) : required, [**text**](#text-is-an-optional-property-used-to-set-the-text-of-the-column-if-not-set-the-columns-key-will-be-used) : optional, [**render**](#render-is-an-optional-property-which-specify-whether-to-render-this-column-or-not-default-value-is-true) : optional, [**data**](#data-if-false-the-column-is-considered-static-and-the-sort-and-filter-options-are-disabled-by-default-default-value-is-true) : optional, [**template**](#template-is-an-optional-property-specific-for-the-columns-with-the-type-of-html-it-represents-a-html-template-that-gets-rendered-at-the-cells-with-the-type-html-the-template-may-contain-variables-using-the-following-format-datavariable_name) : required
 
 **Example :**
 ```
@@ -425,6 +405,20 @@ rows = [
     }
 ]
 ```
+
+## **Headers options**: 
+
+### **type**: is an optional property that represents the type of the cell which can be one of the following. default value is "text".
+### **text**: is an optional property. used to set the text of the column. if not set the column's key will be used.
+### **filter**: is an optional function. if set the a filter button will be added to the column head. when clicked the function will be called.
+### **data**: if false the column is considered static and the "sort" and "filter" options are disabled by default. default value is **true**.
+### **sort**: is an optional property which specify whether to enable sorting by this column or not. default value is **true**.
+### **render**: is an optional property which specify whether to render this column or not. default value is **true**.
+### **value**: is an optional property specific for the columns with static value like "button" to set the label of the button element. when not set the column text or key is used.
+### **colorCode**: is an optional property specific for the columns with the type of "label". which is an array that can be used to set the color of the label dynamically using a pre-defined conditions.
+### **color**: is an optional property specific for the columns with colors like "label" and "button". it's used to set the color statically when the "colorCode" is not set.
+### **template**: is an optional property specific for the columns with the type of "html". it represents a html template that gets rendered at the cells with the type "html". the template may contain variables using the following format `\${data['variable_name']}`.
+
 ## **Fetching data from an API**: 
 you can fetch the "rows" or "options" parameters from an API where the response should be the value of the parameter with the required structure shown above. to fetch the data from an API, set the parameter's value to an object representing an endpoint of an API, defined as following :
 ```
